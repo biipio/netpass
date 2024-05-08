@@ -71,7 +71,7 @@ To build `.cia` files, run
 ### Building environment
 To build the environment image - run command:
 ```bash
-docker build -t netpass_builder -f ./Dockerfile ./compiler
+docker build -t netpass_builder -f ./compiler/Dockerfile ./compiler/
 ```
 Build environment image need to be created once and recreated with the same command every time `Dockerfile` changed.
 ### Compilation with Docker 
