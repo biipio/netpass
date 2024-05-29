@@ -30,5 +30,6 @@ str_report_user: Segnala un utente
 str_report_user_hint: Segnala "%s"
 str_cancel: Annulla
 str_submit: Invia
-str_back_alley: Vicolo dietro
+str_back_alley: Vicolo
 str_back_alley_pay: Compra un pass {playcoin}%d
+str_back_alley_message: Cerca altri pass

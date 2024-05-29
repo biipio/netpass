@@ -144,7 +144,10 @@ void N(render)(Scene* sc) {
 	u32 clr = C2D_Color32(0, 0, 0, 0xff);
 	for (int i = 0; i < _data->list->header.cur_size; i++) {
 		int ix = _data->list->header.cur_size - i - 1;
-		C2D_DrawText(&_data->g_entries[ix], C2D_AlignLeft | C2D_WithColor, 30, 35 + i*14 - _data->offset, 0, 0.5, 0.5, clr);
+		int x = 35 + i*14 - _data->offset;
+		if (x > -14 && x < 240) {
+			C2D_DrawText(&_data->g_entries[ix], C2D_AlignLeft | C2D_WithColor, 30, x, 0, 0.5, 0.5, clr);
+		}
 	}
 	int x = 22;
 	int y = 35 + _data->cursor*14 + 3 - _data->offset;
