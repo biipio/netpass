@@ -1,0 +1,7 @@
+--atlas -f rgba -z auto
+battery/battery_0.png
+battery/battery_1.png
+battery/battery_2.png
+battery/battery_3.png
+battery/battery_4.png
+battery/battery_charging.png
