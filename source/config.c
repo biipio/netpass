@@ -34,6 +34,7 @@ Config config = {
 	.month = 0,
 	.day = 0,
 	.price = 0,
+	.time_format = 0
 };
 
 void addIgnoredTitle(u32 title_id) {
@@ -111,6 +112,9 @@ void load(void) {
 		if (strcmp(key, "PRICE") == 0) {
 			config.price = atoi(value);
 		}
+		if (strcmp(key, "TIME_FORMAT") == 0) {
+			config.time_format = atoi(value);
+		}
 		if (strcmp(key, "TITLE_IDS_IGNORED") == 0) {
 			// Open mbox_list now to avoid repeatedly doing it later
 			Result res = 0;
@@ -151,6 +155,8 @@ void configWrite(void) {
 	snprintf(line, 250, "day=%d\n", config.day);
 	fputs(line, f);
 	snprintf(line, 250, "price=%ld\n", config.price);
+	fputs(line, f);
+	snprintf(line, 250, "time_format=%d\n", config.time_format);
 	fputs(line, f);
 	if (config.language == -1) {
 		fputs("language=system\n", f);

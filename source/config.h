@@ -27,6 +27,7 @@ typedef struct {
 	u8 month;
 	u8 day;
 	u32 price;
+	u8 time_format;
 	u32 title_ids_ignored[24];
 } Config;
 
