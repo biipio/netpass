@@ -33,3 +33,8 @@ str_report_user: Denuncia un usuari
 str_back_alley_message: Afanyem alguns passis més
 str_back_alley_pay: Compra un passi {playcoin}%d
 str_back_alley: Carreró
+str_toggle_titles_on: (ENCÈS)
+str_toggle_titles_off: (APAGAT)
+str_toggle_titles: Activa o desactiva jocs
+str_check_inboxes: Comprova bústies d'entrada
+str_toggle_titles_message: Prem {a_button} per començar o parar l'intercanvi de passis.

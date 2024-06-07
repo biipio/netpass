@@ -170,8 +170,8 @@ SceneResult N(process)(Scene* sc) {
 	
 	_data->cursor += ((kDown & KEY_DOWN || kDown & KEY_CPAD_DOWN) && 1) - ((kDown & KEY_UP || kDown & KEY_CPAD_UP) && 1);
 	_data->cursor += ((kDown & KEY_RIGHT || kDown & KEY_CPAD_RIGHT) && 1)*10 - ((kDown & KEY_LEFT || kDown & KEY_CPAD_LEFT) && 1)*10;
-	if (_data->cursor < 0) _data->cursor = 0;
-	if (_data->cursor > (_data->list->header.cur_size-1)) _data->cursor = (_data->list->header.cur_size-1);
+	if (_data->cursor < 0) _data->cursor = (_data->list->header.cur_size-1);
+	if (_data->cursor > (_data->list->header.cur_size-1)) _data->cursor = 0;
 	while(_data->cursor*14 - _data->offset < 2) _data->offset--;
 	while(_data->cursor*14 - _data->offset > 180) _data->offset++;
 	if (kDown & KEY_A) {

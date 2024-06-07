@@ -81,8 +81,8 @@ SceneResult N(process)(Scene* sc) {
 	u32 kDown = hidKeysDown();
 	if (_data) {
 		_data->cursor += ((kDown & KEY_DOWN || kDown & KEY_CPAD_DOWN) && 1) - ((kDown & KEY_UP || kDown & KEY_CPAD_UP) && 1);
-		if (_data->cursor < 0) _data->cursor = 0;
-		if (_data->cursor > (NUM_ENTRIES-1)) _data->cursor = (NUM_ENTRIES-1);
+		if (_data->cursor < 0) _data->cursor = (NUM_ENTRIES-1);
+		if (_data->cursor > (NUM_ENTRIES-1)) _data->cursor = 0;
 		if (kDown & KEY_A) {
 			if (_data->cursor == NUM_ENTRIES-2) {
 				sc->next_scene = getSettingsScene();

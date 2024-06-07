@@ -27,7 +27,12 @@ typedef struct {
 	u8 month;
 	u8 day;
 	u32 price;
+	u32 title_ids_ignored[24];
 } Config;
+
+void addIgnoredTitle(u32 title_id);
+void removeIgnoredTitle(u32 title_id);
+bool isTitleIgnored(u32 title_id);
 
 void configInit(void);
 void configWrite(void);

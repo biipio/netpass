@@ -33,6 +33,7 @@ Result uploadOutboxes(void) {
 	CecMboxListHeader mbox_list;
 	res = cecdOpenAndRead(0, CEC_PATH_MBOX_LIST, sizeof(CecMboxListHeader), (u8*)&mbox_list);
 	if (R_FAILED(res)) return -1;
+	clearIgnoredTitles(&mbox_list);
 	
 	{
 		char url[50];
@@ -132,6 +133,7 @@ Result downloadInboxes(void) {
 	CecBoxInfoHeader box_header;
 	res = cecdOpenAndRead(0, CEC_PATH_MBOX_LIST, sizeof(CecMboxListHeader), (u8*)&mbox_list);
 	if (R_FAILED(res)) return res;
+	clearIgnoredTitles(&mbox_list);
 	for (int i = 0; i < mbox_list.num_boxes; i++) {
 		int title_id = (int)strtol((char*)mbox_list.box_names[i], NULL, 16);
 		if (!title_id) continue;
@@ -200,6 +202,19 @@ Result setLocation(int location) {
 	configWrite();
 	printf("Entered location %d!\n", location);
 	return res;
+}
+
+void clearIgnoredTitles(CecMboxListHeader* mbox_list) {
+	size_t pos = 0;
+	for (size_t i = 0; i < mbox_list->num_boxes; i++) {
+		u32 title_id = strtol((const char*)mbox_list->box_names[i], NULL, 16);
+		if (!isTitleIgnored(title_id)) {
+			if (pos != i) memcpy(mbox_list->box_names[pos], mbox_list->box_names[i], 16);
+			pos++;
+		}
+	}
+	memset(mbox_list->box_names[pos], 0, 16 * (mbox_list->num_boxes - pos));
+	mbox_list->num_boxes = pos;
 }
 
 static s32 main_thread_prio_s = 0;

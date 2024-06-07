@@ -32,3 +32,8 @@ str_submit: 送信する
 str_back_alley_message: 早くすれちがいを密輸するぞ
 str_back_alley_pay: パスを購入する {playcoin}%d
 str_back_alley: 裏路地
+str_toggle_titles: トグルゲーム
+str_check_inboxes: 受信トレイをチェックする
+str_toggle_titles_message: '{a_button}を押して、パスの交換を開始または停止する。'
+str_toggle_titles_on: (オン)
+str_toggle_titles_off: (オフ)

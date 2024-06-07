@@ -18,17 +18,22 @@ str_back: 'Atrás'
 str_language: 'Español'
 str_goto_beach: 'Ir a la Playa'
 str_at_beach: 'Estás en la Playa.'
-str_goto_arcade: 'Ir al Arcade'
-str_at_arcade: 'Estás en el Arcade.'
+str_goto_arcade: 'Ir al Salón Recreativo'
+str_at_arcade: 'Estás en el Salón Recreativo.'
 str_goto_catcafe: 'Ir al Café de Gatos'
 str_at_catcafe: 'Estás en el Café de Gatos.'
 str_system_language: Idioma del Sistema
 str_language_pick: 'Idioma:'
 str_no_location_twice: ¡No puedes entrar dos veces seguidas en el mismo sitio!
-str_report_user: Denunciar un usuario
-str_report_user_hint: Denuncia "%s"
+str_report_user: Denunciar a un usuario
+str_report_user_hint: Denunciar a "%s"
 str_cancel: Cancelar
 str_submit: Enviar
 str_back_alley: Callejón
-str_back_alley_pay: Compra un pase {playcoin}%d
-str_back_alley_message: Vamos a pillar algún pase más
+str_back_alley_pay: Compra un pase por {playcoin}%d
+str_back_alley_message: Consigamos más pases
+str_check_inboxes: Comprobar buzones de entrada
+str_toggle_titles: Activar o desactivar juegos
+str_toggle_titles_on: (ENCENDIDO)
+str_toggle_titles_off: (APAGADO)
+str_toggle_titles_message: Pulsa {a_button} para comenzar o parar la búsqueda de pases.

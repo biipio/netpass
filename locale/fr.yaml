@@ -33,3 +33,8 @@ str_submit: Soumettre
 str_back_alley_message: Allons obtenir plus de passes
 str_back_alley: Ruelle
 str_back_alley_pay: Acheter un pass {playcoin}%d
+str_toggle_titles: Sélectionner les Jeux
+str_toggle_titles_on: (ON)
+str_toggle_titles_off: (OFF)
+str_toggle_titles_message: Appuyez sur {a_button} pour Activer/Désactiver les échanges
+  StreetPass.

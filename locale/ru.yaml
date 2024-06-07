@@ -30,6 +30,6 @@ str_report_user: Пожаловаться на пользователя
 str_report_user_hint: Пожаловаться на "%s"
 str_cancel: Отменить
 str_submit: Подтвердить
-str_back_alley_message: Наберём-ка ещё "пассов"
+str_back_alley_message: Урвём-ка ещё чуток "пассов"
 str_back_alley: Переулок
 str_back_alley_pay: Купить "пасс" {playcoin}%d

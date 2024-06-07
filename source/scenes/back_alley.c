@@ -215,9 +215,9 @@ SceneResult N(process)(Scene* sc) {
 	u32 kDown = hidKeysDown();
 	if (_data) {
 		_data->cursor += ((kDown & KEY_DOWN || kDown & KEY_CPAD_DOWN) && 1) - ((kDown & KEY_UP || kDown & KEY_CPAD_UP) && 1);
-		if (_data->cursor < 0) _data->cursor = 0;
 		if (_data->show_games) {
-			if (_data->cursor > _data->number_games) _data->cursor = _data->number_games;
+			if (_data->cursor < 0) _data->cursor = _data->number_games;
+			if (_data->cursor > _data->number_games) _data->cursor = 0;
 			if (kDown & KEY_A) {
 				if (_data->cursor == _data->number_games) {
 					// go back
@@ -233,7 +233,8 @@ SceneResult N(process)(Scene* sc) {
 				_data->show_games = false;
 			}
 		} else {
-			if (_data->cursor > 1) _data->cursor = 1;
+			if (_data->cursor < 0) _data->cursor = 1;
+			if (_data->cursor > 1) _data->cursor = 0;
 			if (kDown & KEY_A) {
 				if (_data->cursor == 0 && config.price <= MAX_PRICE && config.price <= _data->play_coins->total_coins) {
 					_data->cursor = 0;

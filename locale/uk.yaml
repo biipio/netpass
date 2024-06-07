@@ -31,5 +31,5 @@ str_report_user_hint: Поскаржитися на "%s"
 str_cancel: Скасувати
 str_submit: Пiдтвердити
 str_back_alley: Провулок
-str_back_alley_message: Зберемо-но ще трохи "пассів"
-str_back_alley_pay: Придбати "пасс" {playcoin}%d
+str_back_alley_message: Увiрвемо-но ще трохи "пасiв"
+str_back_alley_pay: Придбати "пас" {playcoin}%d

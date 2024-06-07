@@ -25,3 +25,10 @@ str_at_catcafe: 'Jesteś w Kociej Kawiarni.'
 str_system_language: Język Systemu
 str_language_pick: 'Język:'
 str_no_location_twice: Nie możesz wejść do tej samej lokalizacji dwa razy pod rząd!
+str_back_alley: Tylna Uliczka
+str_back_alley_message: Załatwmy jeszcze kilka spotkań
+str_back_alley_pay: Kup spotkanie {playcoin}%d
+str_report_user: Zgłoś użytkownika
+str_report_user_hint: Zgłoś "%s"
+str_cancel: Anuluj
+str_submit: Wyślij

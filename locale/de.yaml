@@ -33,3 +33,7 @@ str_report_user: Benutzer melden
 str_back_alley: Hintergasse
 str_back_alley_message: Lass uns noch ein paar Pässe holen
 str_back_alley_pay: Kaufe einen Pass {playcoin}%d
+str_toggle_titles: Spiele Ein-/Ausschalten
+str_toggle_titles_message: Drücke {a_button} um den Austausch von Pässen zu aktivieren/deaktivieren.
+str_toggle_titles_on: (AN)
+str_toggle_titles_off: (AUS)

@@ -1,6 +1,6 @@
 /**
  * NetPass
- * Copyright (C) 2024 Sorunome
+ * Copyright (C) 2024 Sorunome, SunOfLife1
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 #include "config.h"
 #include "strings.h"
 #include "utils.h"
+#include "cecd.h"
 #include <ctype.h>
 #include <string.h>
 #include <stdio.h>
@@ -34,6 +35,35 @@ Config config = {
 	.day = 0,
 	.price = 0,
 };
+
+void addIgnoredTitle(u32 title_id) {
+	for (size_t i = 0; i < 24; i++) {
+		// If title_id is already ignored, just return
+		if (config.title_ids_ignored[i] == title_id) return;
+
+		// Add title_id to first empty spot in array
+		if (config.title_ids_ignored[i] == 0) {
+			config.title_ids_ignored[i] = title_id;
+			return;
+		}
+	}
+}
+
+void removeIgnoredTitle(u32 title_id) {
+	for (size_t i = 0; i < 24; i++) {
+		if (config.title_ids_ignored[i] == title_id) {
+			config.title_ids_ignored[i] = 0;
+			return;
+		}
+	}
+}
+
+bool isTitleIgnored(u32 title_id) {
+	for (size_t i = 0; i < 24; i++) {
+		if (config.title_ids_ignored[i] == title_id) return true;
+	}
+	return false;
+}
 
 void load(void) {
 	FILE* f = fopen(config_path, "r");
@@ -81,34 +111,64 @@ void load(void) {
 		if (strcmp(key, "PRICE") == 0) {
 			config.price = atoi(value);
 		}
+		if (strcmp(key, "TITLE_IDS_IGNORED") == 0) {
+			// Open mbox_list now to avoid repeatedly doing it later
+			Result res = 0;
+			CecMboxListHeader mbox_list;
+			res = cecdOpenAndRead(0, CEC_PATH_MBOX_LIST, sizeof(CecMboxListHeader), (u8*)&mbox_list);
+			if (R_FAILED(res)) continue;
+			
+			// Read titles ids
+			for (size_t i = 0; i < 24; i++) {
+				sscanf(&value[9*i], "%lx,", &config.title_ids_ignored[i]);
+				
+				// Remove title id if not in mbox_list
+				if (config.title_ids_ignored[i] == 0) continue;
+				bool found = false;
+				for (size_t j = 0; j < mbox_list.num_boxes; j++) {
+					u32 title_id = strtol((const char*)mbox_list.box_names[j], NULL, 16);
+					if (title_id == config.title_ids_ignored[i]) {
+						found = true;
+						break;
+					}
+				}
+				if (!found) config.title_ids_ignored[i] = 0;
+			}
+		}
 	}
 	fclose(f);
 }
 
 void configWrite(void) {
 	FILE* f = fopen(config_path, "w");
-	char line[200];
-	snprintf(line, 200, "last_location=%d\n", config.last_location);
+	char line[250];
+	snprintf(line, 250, "last_location=%d\n", config.last_location);
 	fputs(line, f);
-	snprintf(line, 200, "year=%d\n", config.year);
+	snprintf(line, 250, "year=%d\n", config.year);
 	fputs(line, f);
-	snprintf(line, 200, "month=%d\n", config.month);
+	snprintf(line, 250, "month=%d\n", config.month);
 	fputs(line, f);
-	snprintf(line, 200, "day=%d\n", config.day);
+	snprintf(line, 250, "day=%d\n", config.day);
 	fputs(line, f);
-	snprintf(line, 200, "price=%ld\n", config.price);
+	snprintf(line, 250, "price=%ld\n", config.price);
 	fputs(line, f);
 	if (config.language == -1) {
 		fputs("language=system\n", f);
 	} else {
 		for (int i = 0; i < NUM_LANGUAGES; i++) {
 			if (config.language == all_languages[i]) {
-				snprintf(line, 200, "language=%s\n", all_languages_str[i]);
+				snprintf(line, 250, "language=%s\n", all_languages_str[i]);
 				fputs(line, f);
 				break;
 			}
 		}
 	}
+	snprintf(line, 250, "title_ids_ignored=");
+	for (size_t i = 0; i < 24; i++) {
+		snprintf(line + 18 + (9*i), 250 - (18 + (9*i)), "%08lx,", config.title_ids_ignored[i]);
+	}
+	snprintf(line + 18 + (9*24), 250 - (18 + (9*24)), "\n");
+	fputs(line, f);
 	
 	fclose(f);
 }

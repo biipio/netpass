@@ -7,7 +7,7 @@
 typedef struct {
 	C2D_TextBuf g_staticBuf;
 	C2D_Text g_title;
-	C2D_Text g_entries[5];
+	C2D_Text g_entries[6];
 	C2D_Text g_languages[NUM_LANGUAGES + 1];
 	int cursor;
 	int selected_language;
@@ -20,11 +20,12 @@ void N(init)(Scene* sc) {
 	_data->g_staticBuf = C2D_TextBufNew(500  + 15*NUM_LANGUAGES);
 	_data->cursor = 0;
 	TextLangParse(&_data->g_title, _data->g_staticBuf, str_settings);
-	TextLangParse(&_data->g_entries[0], _data->g_staticBuf, str_report_user);
-	TextLangParse(&_data->g_entries[1], _data->g_staticBuf, str_language_pick);
-	TextLangParse(&_data->g_entries[2], _data->g_staticBuf, str_download_data);
-	TextLangParse(&_data->g_entries[3], _data->g_staticBuf, str_delete_data);
-	TextLangParse(&_data->g_entries[4], _data->g_staticBuf, str_back);
+	TextLangParse(&_data->g_entries[0], _data->g_staticBuf, str_toggle_titles);
+	TextLangParse(&_data->g_entries[1], _data->g_staticBuf, str_report_user);
+	TextLangParse(&_data->g_entries[2], _data->g_staticBuf, str_language_pick);
+	TextLangParse(&_data->g_entries[3], _data->g_staticBuf, str_download_data);
+	TextLangParse(&_data->g_entries[4], _data->g_staticBuf, str_delete_data);
+	TextLangParse(&_data->g_entries[5], _data->g_staticBuf, str_back);
 	TextLangParse(&_data->g_languages[0], _data->g_staticBuf, str_system_language);
 	for (int i = 0; i < NUM_LANGUAGES; i++) {
 		TextLangSpecificParse(&_data->g_languages[i+1], _data->g_staticBuf, str_language, all_languages[i]);
@@ -37,15 +38,15 @@ void N(init)(Scene* sc) {
 			}
 		}
 	}
-	get_text_dimensions(&_data->g_entries[1], 1, 1, &_data->lang_width, 0);
+	get_text_dimensions(&_data->g_entries[2], 1, 1, &_data->lang_width, 0);
 }
 void N(render)(Scene* sc) {
 	if (!_data) return;
 	C2D_DrawText(&_data->g_title, C2D_AlignLeft, 10, 10, 0, 1, 1);
-	for (int i = 0; i < 5; i++) {
+	for (int i = 0; i < 6; i++) {
 		C2D_DrawText(&_data->g_entries[i], C2D_AlignLeft, 30, 10 + (i+1)*25, 0, 1, 1);
 	}
-	C2D_DrawText(&_data->g_languages[_data->selected_language + 1], C2D_AlignLeft, 35 + _data->lang_width, 35 + 25, 0, 1, 1);
+	C2D_DrawText(&_data->g_languages[_data->selected_language + 1], C2D_AlignLeft, 35 + _data->lang_width, 35 + 50, 0, 1, 1);
 	u32 clr = C2D_Color32(0, 0, 0, 0xff);
 	int x = 10;
 	int y = 10 + (_data->cursor + 1)*25 + 5;
@@ -79,8 +80,8 @@ SceneResult N(process)(Scene* sc) {
 	if (_data) {
 		_data->cursor += ((kDown & KEY_DOWN || kDown & KEY_CPAD_DOWN) && 1) - ((kDown & KEY_UP || kDown & KEY_CPAD_UP) && 1);
 		if (_data->cursor < 0) _data->cursor = 0;
-		if (_data->cursor > 4) _data->cursor = 4;
-		if (_data->cursor == 1) {
+		if (_data->cursor > 5) _data->cursor = 5;
+		if (_data->cursor == 2) {
 			int old_lang = _data->selected_language;
 			_data->selected_language += ((kDown & KEY_RIGHT || kDown & KEY_CPAD_RIGHT) && 1) - ((kDown & KEY_LEFT || kDown & KEY_CPAD_LEFT) && 1);
 			if (_data->selected_language < -1) _data->selected_language = -1;
@@ -92,10 +93,14 @@ SceneResult N(process)(Scene* sc) {
 		}
 		if (kDown & KEY_A) {
 			if (_data->cursor == 0) {
+				sc->next_scene = getToggleTitlesScene();
+				return scene_push;
+			}
+			if (_data->cursor == 1) {
 				sc->next_scene = getReportListScene();
 				return scene_push;
 			}
-			if (_data->cursor == 2) {
+			if (_data->cursor == 3) {
 				sc->next_scene = getLoadingScene(0, lambda(void, (void) {
 					char url[50];
 					snprintf(url, 50, "%s/data", BASE_URL);
@@ -109,7 +114,7 @@ SceneResult N(process)(Scene* sc) {
 				}));
 				return scene_push;
 			}
-			if (_data->cursor == 3) {
+			if (_data->cursor == 4) {
 				sc->next_scene = getLoadingScene(0, lambda(void, (void) {
 					char url[50];
 					snprintf(url, 50, "%s/data", BASE_URL);
@@ -122,7 +127,7 @@ SceneResult N(process)(Scene* sc) {
 				}));
 				return scene_push;
 			}
-			if (_data->cursor == 4) return scene_pop;
+			if (_data->cursor == 5) return scene_pop;
 		}
 	}
 	if (kDown & KEY_B) return scene_pop;
