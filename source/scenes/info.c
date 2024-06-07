@@ -17,14 +17,14 @@
  */
 
 #include "info.h"
+#include "../render.h"
 #include <stdlib.h>
 #define N(x) scenes_scene_namespace_##x
 #define _data ((N(DataStruct)*)sc->d)
-#define WIDTH_SCR 400
-#define HEIGHT_SCR 240
+
 #define MARGIN 20
-#define WIDTH (WIDTH_SCR - 2*MARGIN)
-#define HEIGHT (HEIGHT_SCR - 2*MARGIN)
+#define WIDTH (SCREEN_TOP_WIDTH - 2*MARGIN)
+#define HEIGHT (SCREEN_TOP_HEIGHT - 2*MARGIN)
 
 typedef struct {
 	C2D_TextBuf g_staticBuf;
@@ -36,11 +36,23 @@ void N(init)(Scene* sc) {
 	if (!_data) return;
 	_data->g_staticBuf = C2D_TextBufNew(2000);
 	TextLangParse(&_data->g_info, _data->g_staticBuf, (void*)sc->data);
+	
+	Setting popSetting = sc->pop_scene->setting;
+	sc->setting.bg_top = popSetting.bg_top;
+	sc->setting.bg_bottom = popSetting.bg_bottom;
+	sc->setting.btn_left = popSetting.btn_left;
+	sc->setting.btn_right = popSetting.btn_right;
+	sc->setting.has_gradient = popSetting.has_gradient;
 }
 
-void N(render)(Scene* sc) {
+void N(render_top)(Scene* sc) {
 	C2D_DrawRectSolid(MARGIN, MARGIN, 0, WIDTH, HEIGHT, C2D_Color32(0xCC, 0xCC, 0xCC, 0xFF));
-	C2D_DrawText(&_data->g_info, C2D_AlignLeft, MARGIN + 5, MARGIN + 5, 0, 0.5, 0.5);
+	C2D_DrawText(&_data->g_info, C2D_WithColor, MARGIN + 5, MARGIN + 5, 0, 0.5, 0.5, clr_black);
+}
+
+void N(render_bottom)(Scene* sc) {
+	// C2D_DrawRectSolid(MARGIN, MARGIN, 1, WIDTH, HEIGHT, clr_overlay);
+	// drawC2DText(&_data->g_info, clr_netpass_green, MARGIN + 5, MARGIN + 5, 1, 0.5, 0.5);
 }
 
 void N(exit)(Scene* sc) {
@@ -51,9 +63,8 @@ void N(exit)(Scene* sc) {
 }
 
 SceneResult N(process)(Scene* sc) {
-	hidScanInput();
-	u32 kDown = hidKeysDown();
-	if (kDown & KEY_A) return scene_pop;
+	updateState(sc);
+	if (sc->state.k_down & (KEY_A | KEY_B)) return scene_pop;
 	return scene_continue;
 }
 
@@ -61,7 +72,8 @@ Scene* getInfoScene(LanguageString s) {
 	Scene* scene = malloc(sizeof(Scene));
 	if (!scene) return NULL;
 	scene->init = N(init);
-	scene->render = N(render);
+	scene->render_top = N(render_top);
+	scene->render_bottom = N(render_bottom);
 	scene->exit = N(exit);
 	scene->process = N(process);
 	scene->data = (u32)s;

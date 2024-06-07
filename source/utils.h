@@ -35,6 +35,9 @@ u16 crc16_ccitt(void const *buf, size_t len, uint32_t starting_val);
 Result decryptMii(void* data, MiiData* mii);
 u8* memsearch(u8* buf, size_t buf_len, u8* cmp, size_t cmp_len);
 
+bool isLeftButtonTouched(touchPosition* pos);
+bool isRightButtonTouched(touchPosition* pos);
+
 typedef struct {
 	u32 magic; // 0x4F00
 	u16 total_coins;

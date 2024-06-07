@@ -18,6 +18,7 @@
 
 #include "toggle_titles.h"
 #include "../config.h"
+#include "../render.h"
 #include <stdlib.h>
 
 #define N(x) scenes_toggle_titles_namespace_##x
@@ -79,9 +80,14 @@ void N(init)(Scene* sc) {
 	TextLangParse(&_data->g_back, _data->g_staticBuf, str_back);
 	TextLangParse(&_data->g_on_off[0], _data->g_staticBuf, str_toggle_titles_off);
 	TextLangParse(&_data->g_on_off[1], _data->g_staticBuf, str_toggle_titles_on);
+	
+	sc->setting.bg_top = bg_top_generic;
+	sc->setting.bg_bottom = bg_bottom_generic;
+	sc->setting.btn_left = ui_btn_empty;
+	sc->setting.btn_right = ui_btn_right_close;
 }
 
-void N(render)(Scene* sc) {
+void N(render_top)(Scene* sc) {
 	if (!_data) return;
 	u32 clr = C2D_Color32(0, 0, 0, 0xff);
 	u32 onClr = C2D_Color32(10, 200, 10, 0xff);
@@ -100,6 +106,10 @@ void N(render)(Scene* sc) {
 	int x = 22;
 	int y = _data->cursor*14 + 60 + 3;
 	C2D_DrawTriangle(x, y, clr, x, y + 10, clr, x + 8, y + 5, clr, 1);
+}
+
+void N(render_bottom)(Scene* sc) {
+	if (!_data) return;
 }
 
 void N(exit)(Scene* sc) {
@@ -148,7 +158,8 @@ Scene* getToggleTitlesScene(void) {
 	Scene* scene = malloc(sizeof(Scene));
 	if (!scene) return NULL;
 	scene->init = N(init);
-	scene->render = N(render);
+	scene->render_top = N(render_top);
+	scene->render_bottom = N(render_bottom);
 	scene->exit = N(exit);
 	scene->process = N(process);
 	scene->is_popup = false;

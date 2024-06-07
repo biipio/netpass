@@ -19,6 +19,8 @@
 #include "switch.h"
 #include "../report.h"
 #include "../hmac_sha256/sha256.h"
+#include "../render.h"
+#include "../utils.h"
 #include <stdlib.h>
 #include <malloc.h>
 #define N(x) scenes_report_list_namespace_##x
@@ -29,7 +31,8 @@ typedef struct {
 	ReportList* list;
 	C2D_Text* g_entries;
 	int cursor;
-	int offset;
+	float offset;
+	touchPosition currentPos;
 } N(DataStruct);
 
 // yutzo, diamonds, eddie
@@ -129,29 +132,38 @@ void N(init)(Scene* sc) {
 		ReportListEntry* entry = &_data->list->entries[i];
 		char mii_name[11] = {0};
 		utf16_to_utf8((u8*)mii_name, entry->mii.mii_name, 11);
-		char render_entry[50];
-		snprintf(render_entry, 50, "%s  %04lu-%02d-%02d %02d:%02d:%02d", mii_name,
-			entry->received.year, entry->received.month, entry->received.day,
-			entry->received.hour, entry->received.minute, entry->received.second);
-		C2D_TextFontParse(&_data->g_entries[i], getFontIndex(entry->mii.mii_options.char_set), _data->g_staticBuf, render_entry);
+		C2D_TextFontParse(&_data->g_entries[i], getFontIndex(entry->mii.mii_options.char_set), _data->g_staticBuf, mii_name);
 	}
+	
+	sc->setting.bg_top = bg_top_generic;
+	sc->setting.bg_bottom = bg_bottom_generic;
+	sc->setting.btn_left = ui_btn_empty;
+	sc->setting.btn_right = ui_btn_right_close;
+	sc->setting.has_gradient = true;
 }
 
-void N(render)(Scene* sc) {
+void N(render_top)(Scene* sc) {
 	if (!_data) {
 		return;
 	}
-	u32 clr = C2D_Color32(0, 0, 0, 0xff);
-	for (int i = 0; i < _data->list->header.cur_size; i++) {
-		int ix = _data->list->header.cur_size - i - 1;
-		int x = 35 + i*14 - _data->offset;
-		if (x > -14 && x < 240) {
-			C2D_DrawText(&_data->g_entries[ix], C2D_AlignLeft | C2D_WithColor, 30, x, 0, 0.5, 0.5, clr);
-		}
+
+	// drawUser(&_data->list->entries[_data->cursor]);
+	// u32 clr = C2D_Color32(0, 0, 0, 0xff);
+	// for (int i = 0; i < _data->list->header.cur_size; i++) {
+	// 	int ix = _data->list->header.cur_size - i - 1;
+	// 	C2D_DrawText(&_data->g_entries[ix], C2D_AlignLeft | C2D_WithColor, 30, 35 + i*14 - _data->offset, 0, 0.5, 0.5, clr);
+	// }
+	// int x = 22;
+	// int y = 35 + _data->cursor*14 + 3 - _data->offset;
+	// C2D_DrawTriangle(x, y, clr, x, y +10, clr, x + 8, y + 5, clr, 1);
+}
+
+void N(render_bottom)(Scene* sc) {
+	if (!_data) {
+		return;
 	}
-	int x = 22;
-	int y = 35 + _data->cursor*14 + 3 - _data->offset;
-	C2D_DrawTriangle(x, y, clr, x, y +10, clr, x + 8, y + 5, clr, 1);
+	
+	renderOptionButtons(_data->g_entries, _data->list->header.cur_size, _data->cursor, _data->offset, -1);
 }
 
 void N(exit)(Scene* sc) {
@@ -166,14 +178,41 @@ void N(exit)(Scene* sc) {
 SceneResult N(process)(Scene* sc) {
 	hidScanInput();
 	u32 kDown = hidKeysDown();
+	u32 kDownRepeat = hidKeysDownRepeat();
 	if (!_data) return scene_pop;
-	
-	_data->cursor += ((kDown & KEY_DOWN || kDown & KEY_CPAD_DOWN) && 1) - ((kDown & KEY_UP || kDown & KEY_CPAD_UP) && 1);
-	_data->cursor += ((kDown & KEY_RIGHT || kDown & KEY_CPAD_RIGHT) && 1)*10 - ((kDown & KEY_LEFT || kDown & KEY_CPAD_LEFT) && 1)*10;
-	if (_data->cursor < 0) _data->cursor = (_data->list->header.cur_size-1);
-	if (_data->cursor > (_data->list->header.cur_size-1)) _data->cursor = 0;
+
+	touchPosition prevPos = _data->currentPos;
+	hidTouchRead(&_data->currentPos);
+
+	_data->cursor += (kDownRepeat & KEY_DOWN && 1) - (kDownRepeat & KEY_UP && 1);
+	_data->cursor += (kDownRepeat & KEY_RIGHT && 1)*10 - (kDownRepeat & KEY_LEFT && 1)*10;
+	if (kDown & KEY_DOWN || kDown & KEY_UP || kDown & KEY_RIGHT || kDown & KEY_LEFT) {
+		if (_data->cursor < 0) _data->cursor = (_data->list->header.cur_size - 1);
+		if (_data->cursor > (_data->list->header.cur_size - 1)) _data->cursor = 0;
+	} else if (kDownRepeat & KEY_DOWN || kDownRepeat & KEY_UP || kDownRepeat & KEY_RIGHT || kDownRepeat & KEY_LEFT) {
+		if (_data->cursor < 0) _data->cursor = 0;
+		if (_data->cursor > (_data->list->header.cur_size - 1)) _data->cursor = (_data->list->header.cur_size - 1);
+	}
+
 	while(_data->cursor*14 - _data->offset < 2) _data->offset--;
 	while(_data->cursor*14 - _data->offset > 180) _data->offset++;
+	// Update offset
+	// if (_data->cursor >= 0) {
+	// 	if (_data->cursor > _data->offset + 3) _data->offset = _data->cursor - 3;
+	// 	if (_data->cursor < _data->offset) _data->offset = _data->cursor;
+	// }
+
+	if ((prevPos.px > 0 || prevPos.px > 0) && (_data->currentPos.px == 0 && _data->currentPos.py == 0)) {
+		// Back button
+		if (isRightButtonTouched(&prevPos)) {
+			return scene_pop;
+		}
+	}
+
+	if (kDown & KEY_B) {
+		_data->cursor = -1;
+	}
+	
 	if (kDown & KEY_A) {
 		int selected_i = _data->list->header.cur_size - _data->cursor - 1;
 		return N(report)(sc, selected_i);
@@ -187,7 +226,8 @@ Scene* getReportListScene(void) {
 	Scene* scene = malloc(sizeof(Scene));
 	if (!scene) return NULL;
 	scene->init = N(init);
-	scene->render = N(render);
+	scene->render_top = N(render_top);
+	scene->render_bottom = N(render_bottom);
 	scene->exit = N(exit);
 	scene->process = N(process);
 	scene->is_popup = false;
