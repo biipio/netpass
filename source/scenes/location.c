@@ -86,7 +86,7 @@ SceneResult N(process)(Scene* sc) {
 		_data->cursor += (state.k_down_repeat & KEY_DOWN && 1) - (state.k_down_repeat & KEY_UP && 1);
 		_data->cursor += (state.k_down_repeat & KEY_RIGHT && 1)*10 - (state.k_down_repeat & KEY_LEFT && 1)*10;
 		int list_max = (NUM_ENTRIES - 1);
-		if (state.k_down & (KEY_DOWN | KEY_UP | KEY_RIGHT | KEY_LEFT)) {
+		if (state.k_down & (KEY_DOWN | KEY_UP)) {
 			if (_data->cursor < 0) _data->cursor = list_max;
 			if (_data->cursor > list_max) _data->cursor = 0;
 		} else if (state.k_down_repeat & (KEY_DOWN | KEY_UP | KEY_RIGHT | KEY_LEFT)) {
