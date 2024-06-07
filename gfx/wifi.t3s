@@ -1,0 +1,5 @@
+--atlas -f rgba -z auto
+wifi/wifi_disconnected.png
+wifi/wifi_1.png
+wifi/wifi_2.png
+wifi/wifi_3.png
