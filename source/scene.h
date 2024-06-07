@@ -24,27 +24,46 @@
 #include "strings.h"
 #include "config.h"
 
-#define SCREEN_TOP_WIDTH 400
-#define SCREEN_TOP_HEIGHT 240
-
 typedef enum {scene_stop, scene_continue, scene_switch, scene_push, scene_pop} SceneResult;
 
 typedef struct Scene Scene;
 
+typedef struct {
+	u32 k_down;
+	u32 k_down_repeat;
+	u32 k_held;
+	u32 k_up;
+	touchPosition pos_prev;
+	touchPosition pos_current;
+} State;
+
+typedef struct {
+	int bg_top;
+	int bg_bottom;
+	int btn_left;
+	int btn_right;
+	bool has_gradient;
+	bool use_previews;
+} Setting;
+
 struct Scene {
 	void (*init)(Scene*);
-	void (*render)(Scene*);
+	void (*render_top)(Scene*);
+	void (*render_bottom)(Scene*);
 	void (*exit)(Scene*);
 	SceneResult (*process)(Scene*);
 	Scene* next_scene;
 	Scene* pop_scene;
 	u32 data;
+	State state;
+	Setting setting;
 
 	void* d;
 	bool is_popup;
 	bool need_free;
 };
 
+void updateState(Scene* state);
 Scene* processScene(Scene* scene);
 
 #include "scenes/loading.h"

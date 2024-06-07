@@ -18,6 +18,17 @@
 
 #include "scene.h"
 #include <malloc.h>
+#include <3ds.h>
+
+void updateState(Scene* scene) {
+	hidScanInput();
+	scene->state.k_down = hidKeysDown();
+	scene->state.k_down_repeat = hidKeysDownRepeat();
+	scene->state.k_held = hidKeysHeld();
+	scene->state.k_up = hidKeysUp();
+	scene->state.pos_prev = scene->state.pos_current;
+	hidTouchRead(&scene->state.pos_current);
+}
 
 Scene* processScene(Scene* scene) {
 	SceneResult res = scene->process(scene);

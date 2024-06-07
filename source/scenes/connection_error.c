@@ -17,6 +17,7 @@
  */
 
 #include "connection_error.h"
+#include "../render.h"
 #include <stdlib.h>
 #include <curl/curl.h>
 #define N(x) scenes_error_namespace_##x
@@ -59,12 +60,23 @@ void N(init)(Scene* sc) {
 	}
 	C2D_TextFontParse(&_data->g_title, str_font, _data->g_staticBuf, str);
 	C2D_TextFontParse(&_data->g_subtext, subtext_font, _data->g_staticBuf, subtext);
+
+	sc->setting.bg_top = bg_top_generic;
+	sc->setting.bg_bottom = bg_bottom_generic;
+	sc->setting.btn_left = ui_btn_left_home;
+	sc->setting.btn_right = ui_btn_right_close;
 }
 
-void N(render)(Scene* sc) {
+void N(render_top)(Scene* sc) {
 	if (!_data) return;
 	C2D_DrawText(&_data->g_title, C2D_AlignLeft, 10, 10, 0, 0.5, 0.5);
 	C2D_DrawText(&_data->g_subtext, C2D_AlignLeft, 10, 35, 0, 0.5, 0.5);
+}
+
+void N(render_bottom)(Scene* sc) {
+	if (!_data) return;
+	// C2D_DrawText(&_data->g_title, C2D_AlignLeft, 10, 10, 0, 0.5, 0.5);
+	// C2D_DrawText(&_data->g_subtext, C2D_AlignLeft, 10, 35, 0, 0.5, 0.5);
 }
 
 void N(exit)(Scene* sc) {
@@ -75,9 +87,8 @@ void N(exit)(Scene* sc) {
 }
 
 SceneResult N(process)(Scene* sc) {
-	hidScanInput();
-	u32 kDown = hidKeysDown();
-	if (kDown & KEY_START) return scene_stop;
+	updateState(sc);
+	if (sc->state.k_down & KEY_START) return scene_stop;
 	return scene_continue;
 }
 
@@ -85,7 +96,8 @@ Scene* getConnectionErrorScene(Result res) {
 	Scene* scene = malloc(sizeof(Scene));
 	if (!scene) return NULL;
 	scene->init = N(init);
-	scene->render = N(render);
+	scene->render_top = N(render_top);
+	scene->render_bottom = N(render_bottom);
 	scene->exit = N(exit);
 	scene->process = N(process);
 	scene->data = (u32)res;
