@@ -281,7 +281,8 @@ SceneResult N(process)(Scene* sc) {
 				}
 
 				// picked a game
-				return N(buy_pass)(sc, _data->cursor);
+				return scene_continue;
+				// return N(buy_pass)(sc, _data->cursor);
 			}
 		} else {
 			if (state.k_up & KEY_TOUCH) {
