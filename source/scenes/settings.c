@@ -113,6 +113,7 @@ void N(render_bottom)(Scene* sc) {
 	if (!_data) return;
 	
 	renderOptionButtons(_data->g_entries, NUM_ENTRIES, _data->cursor, _data->offset, -1);
+	// TODO: render version and mini flags if they should be visible
 }
 
 void N(exit)(Scene* sc) {
@@ -129,7 +130,7 @@ SceneResult N(process)(Scene* sc) {
 		// Update cursor
 		_data->cursor += (state.k_down_repeat & KEY_DOWN && 1) - (state.k_down_repeat & KEY_UP && 1);
 		_data->cursor += (state.k_down_repeat & KEY_RIGHT && 1)*10 - (state.k_down_repeat & KEY_LEFT && 1)*10;
-		int list_max = (NUM_ENTRIES - 1);
+		int list_max = (NUM_ENTRIES);
 		if (state.k_down & (KEY_DOWN | KEY_UP)) {
 			if (_data->cursor < 0) _data->cursor = list_max;
 			if (_data->cursor > list_max) _data->cursor = 0;
@@ -141,7 +142,6 @@ SceneResult N(process)(Scene* sc) {
 		// Update offset
 		if (_data->cursor >= 0) {
 			// TODO: treat as pixel, not list index
-			// TODO: leave room for version and mini flags at the bottom
 			if (_data->cursor > _data->offset + 3) _data->offset = _data->cursor - 3;
 			if (_data->cursor < _data->offset) _data->offset = _data->cursor;
 		}
