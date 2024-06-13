@@ -138,7 +138,7 @@ void renderOptionButton(C2D_Text* text, float x, float y, float z, bool isFocus,
 }
 
 void renderOptionButtons(C2D_Text* entries, size_t n, int cursor, float offset, int grayedOut) {
-    // TODO: properly account for state.offset being a pixel thing rather than list index
+    // TODO: properly account for offset being a pixel thing rather than list index
 
 	const int x = (SCREEN_BOTTOM_WIDTH - 258)/2;
 	const int z = 0;
@@ -277,6 +277,12 @@ void renderTopScreen(Scene* scene) {
 	
 	// Render top bar
     renderTopBar();
+
+	// Render fade if necessary
+	if (scene->app_state == app_exiting) {
+		u32 clr = C2D_Color32(0, 0, 0, scene->setting.fade_alpha);
+		C2D_DrawRectSolid(0, 0, 0, SCREEN_TOP_WIDTH, SCREEN_TOP_HEIGHT, clr);
+	}
 }
 
 void renderBottomScreen(Scene* scene) {
@@ -298,6 +304,12 @@ void renderBottomScreen(Scene* scene) {
 	// Render left and right buttons
 	renderImage(&spr_btn, setting.btn_left, 0, 0, 0);
 	renderImage(&spr_btn, setting.btn_right, SCREEN_BOTTOM_WIDTH - 49, 0, 0);
+
+	// Render fade if necessary
+	if (scene->app_state == app_exiting) {
+		u32 clr = C2D_Color32(0, 0, 0, scene->setting.fade_alpha);
+		C2D_DrawRectSolid(0, 0, 0, SCREEN_BOTTOM_WIDTH, SCREEN_BOTTOM_HEIGHT, clr);
+	}
 }
 
 void renderScene(Scene* scene) {

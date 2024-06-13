@@ -89,7 +89,10 @@ void N(exit)(Scene* sc) {
 }
 
 SceneResult N(process)(Scene* sc) {
-	if (sc->input_state.k_down & KEY_START) return scene_stop;
+	if (sc->input_state.k_down & KEY_START) {
+		sc->app_state = app_exiting;
+		return scene_continue;
+	}
 	return scene_continue;
 }
 

@@ -20,6 +20,9 @@
 #include <malloc.h>
 #include <3ds.h>
 
+#define FADE_ALPHA_VAL 4
+#define FADE_ALPHA_LIMIT (255 - (255 % FADE_ALPHA_VAL))
+
 void updateInputState(Scene* scene) {
 	hidScanInput();
 	scene->input_state.k_down = hidKeysDown();
@@ -31,6 +34,18 @@ void updateInputState(Scene* scene) {
 }
 
 Scene* processScene(Scene* scene) {
+	if (scene->app_state == app_exiting) {
+		if (scene->setting.fade_alpha >= FADE_ALPHA_LIMIT) {
+			scene->exit(scene);
+			if (scene->need_free) {
+				free(scene);
+			}
+			return 0;
+		}
+		scene->setting.fade_alpha += FADE_ALPHA_VAL;
+		return scene;
+	}
+
 	if (scene->app_state == app_idle)
 		updateInputState(scene);
 	SceneResult res = scene->process(scene);
