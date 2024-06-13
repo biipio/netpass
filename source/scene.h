@@ -35,7 +35,7 @@ typedef struct {
 	u32 k_up;
 	touchPosition pos_prev;
 	touchPosition pos_current;
-} State;
+} InputState;
 
 typedef struct {
 	int bg_top;
@@ -55,7 +55,7 @@ struct Scene {
 	Scene* next_scene;
 	Scene* pop_scene;
 	u32 data;
-	State state;
+	InputState input_state;
 	Setting setting;
 
 	void* d;
@@ -63,7 +63,7 @@ struct Scene {
 	bool need_free;
 };
 
-void updateState(Scene* state);
+void updateState(Scene* scene);
 Scene* processScene(Scene* scene);
 
 #include "scenes/loading.h"
