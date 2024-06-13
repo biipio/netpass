@@ -138,11 +138,15 @@ SceneResult N(process)(Scene* sc) {
 						return getHomeScene();
 					})), lambda(void, (void) {}));
 					return scene_switch;
-					// return scene_stop;
+					// sc->app_state = app_exiting;
+					// return scene_continue;
 			}
 		}
 	}
-	if (state.k_down & KEY_START) return scene_stop;
+	if (state.k_down & KEY_START) {
+		sc->app_state = app_exiting;
+		return scene_continue;
+	}
 	if (state.k_down & KEY_SELECT) {
 		sc->next_scene = getSettingsScene();
 		return scene_push;

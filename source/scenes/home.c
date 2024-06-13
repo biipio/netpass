@@ -113,7 +113,8 @@ SceneResult N(process)(Scene* sc) {
 		if (state.k_up & KEY_TOUCH) {
 			// Home button
 			if (isLeftButtonTouched(&state.pos_prev)) {
-				return scene_stop;
+				sc->app_state = app_exiting;
+				return scene_continue;
 			}
 
 			// Settings button
@@ -150,7 +151,10 @@ SceneResult N(process)(Scene* sc) {
 			return scene_switch;
 		}
 	}
-	if (state.k_down & KEY_START) return scene_stop;
+	if (state.k_down & KEY_START) {
+		sc->app_state = app_exiting;
+		return scene_continue;
+	}
 	if (state.k_down & KEY_SELECT) {
 		sc->next_scene = getSettingsScene();
 		return scene_push;
