@@ -124,7 +124,7 @@ void N(init)(Scene* sc) {
 		sc->d = NULL;
 		return;
 	}
-	_data->cursor = 0;
+	_data->cursor = -1;
 	_data->offset = 0;
 	_data->g_staticBuf = C2D_TextBufNew(40 * _data->list->header.cur_size);
 
@@ -217,6 +217,11 @@ SceneResult N(process)(Scene* sc) {
 	}
 	
 	if (state.k_down & KEY_A) {
+		if (_data->cursor < 0) {
+			_data->cursor = 0;
+			return scene_continue;
+		}
+
 		int selected_i = _data->list->header.cur_size - _data->cursor - 1;
 		return N(report)(sc, selected_i);
 	}
