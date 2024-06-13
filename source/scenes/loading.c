@@ -31,6 +31,7 @@ typedef struct {
 void N(threadFn)(Scene* sc) {
 	((void(*)(void))(sc->data))();
 	_data->thread_done = true;
+	sc->app_state = app_idle;
 }
 
 void N(init)(Scene* sc) {
@@ -45,6 +46,8 @@ void N(init)(Scene* sc) {
 
 	_data->thread_done = false;
 	_data->thread = threadCreate((void(*)(void*))N(threadFn), sc, 8*1024, main_thread_prio()-1, -2, false);
+
+	sc->app_state = app_loading;
 }
 
 void N(render_top)(Scene* sc) {

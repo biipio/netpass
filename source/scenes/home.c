@@ -54,6 +54,8 @@ void N(init)(Scene* sc) {
 	sc->setting.btn_right = ui_btn_right_settings;
 	sc->setting.has_gradient = true;
 	sc->setting.use_previews = true;
+
+	sc->app_state = app_idle;
 }
 
 void N(render_top)(Scene* sc) {
