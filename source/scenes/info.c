@@ -43,6 +43,8 @@ void N(init)(Scene* sc) {
 	sc->setting.btn_left = popSetting.btn_left;
 	sc->setting.btn_right = popSetting.btn_right;
 	sc->setting.has_gradient = popSetting.has_gradient;
+
+	sc->app_state = sc->pop_scene->app_state;
 }
 
 void N(render_top)(Scene* sc) {

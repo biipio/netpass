@@ -65,6 +65,8 @@ void N(init)(Scene* sc) {
 	sc->setting.bg_bottom = bg_bottom_generic;
 	sc->setting.btn_left = ui_btn_left_home;
 	sc->setting.btn_right = ui_btn_right_close;
+
+	sc->app_state = app_idle;
 }
 
 void N(render_top)(Scene* sc) {
