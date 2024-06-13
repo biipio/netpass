@@ -22,12 +22,12 @@
 
 void updateState(Scene* scene) {
 	hidScanInput();
-	scene->state.k_down = hidKeysDown();
-	scene->state.k_down_repeat = hidKeysDownRepeat();
-	scene->state.k_held = hidKeysHeld();
-	scene->state.k_up = hidKeysUp();
-	scene->state.pos_prev = scene->state.pos_current;
-	hidTouchRead(&scene->state.pos_current);
+	scene->input_state.k_down = hidKeysDown();
+	scene->input_state.k_down_repeat = hidKeysDownRepeat();
+	scene->input_state.k_held = hidKeysHeld();
+	scene->input_state.k_up = hidKeysUp();
+	scene->input_state.pos_prev = scene->input_state.pos_current;
+	hidTouchRead(&scene->input_state.pos_current);
 }
 
 Scene* processScene(Scene* scene) {

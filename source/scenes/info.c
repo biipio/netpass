@@ -64,7 +64,7 @@ void N(exit)(Scene* sc) {
 
 SceneResult N(process)(Scene* sc) {
 	updateState(sc);
-	if (sc->state.k_down & (KEY_A | KEY_B)) return scene_pop;
+	if (sc->input_state.k_down & (KEY_A | KEY_B)) return scene_pop;
 	return scene_continue;
 }
 

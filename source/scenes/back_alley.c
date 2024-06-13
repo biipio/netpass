@@ -232,7 +232,7 @@ void N(exit)(Scene* sc) {
 
 SceneResult N(process)(Scene* sc) {
 	updateState(sc);
-	State state = sc->state;
+	InputState state = sc->input_state;
 	if (_data) {
 		// Update cursor
 		_data->cursor += (state.k_down_repeat & KEY_DOWN && 1) - (state.k_down_repeat & KEY_UP && 1);
