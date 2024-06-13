@@ -81,7 +81,6 @@ void N(exit)(Scene* sc) {
 }
 
 SceneResult N(process)(Scene* sc) {
-	updateState(sc);
 	InputState state = sc->input_state;
 	if (_data) {
 		// Update cursor

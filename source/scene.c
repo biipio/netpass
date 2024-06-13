@@ -20,7 +20,7 @@
 #include <malloc.h>
 #include <3ds.h>
 
-void updateState(Scene* scene) {
+void updateInputState(Scene* scene) {
 	hidScanInput();
 	scene->input_state.k_down = hidKeysDown();
 	scene->input_state.k_down_repeat = hidKeysDownRepeat();
@@ -31,6 +31,8 @@ void updateState(Scene* scene) {
 }
 
 Scene* processScene(Scene* scene) {
+	if (scene->app_state == app_idle)
+		updateInputState(scene);
 	SceneResult res = scene->process(scene);
 	switch (res) {
 	case scene_continue:
