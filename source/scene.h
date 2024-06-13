@@ -65,7 +65,6 @@ struct Scene {
 	bool need_free;
 };
 
-void updateState(Scene* scene);
 Scene* processScene(Scene* scene);
 
 #include "scenes/loading.h"
