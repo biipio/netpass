@@ -238,7 +238,7 @@ SceneResult N(process)(Scene* sc) {
 		// Update cursor
 		_data->cursor += (state.k_down_repeat & KEY_DOWN && 1) - (state.k_down_repeat & KEY_UP && 1);
 		_data->cursor += (state.k_down_repeat & KEY_RIGHT && 1)*10 - (state.k_down_repeat & KEY_LEFT && 1)*10;
-		int list_max = _data->show_games ? _data->number_games : 0;
+		int list_max = _data->show_games ? (_data->number_games - 1) : 0;
 		if (state.k_down & (KEY_DOWN | KEY_UP)) {
 			if (_data->cursor < 0) _data->cursor = list_max;
 			if (_data->cursor > list_max) _data->cursor = 0;
@@ -247,33 +247,41 @@ SceneResult N(process)(Scene* sc) {
 			if (_data->cursor > list_max) _data->cursor = list_max;
 		}
 
+		// Update offset
+		if (_data->cursor >= 0) {
+			// TODO: treat as pixel, not list index
+			if (_data->cursor > _data->offset + 3) _data->offset = _data->cursor - 3;
+			if (_data->cursor < _data->offset) _data->offset = _data->cursor;
+		}
+
 		if (_data->show_games) {
 			if (state.k_up & KEY_TOUCH) {
 				// Close button
 				if (isRightButtonTouched(&state.pos_prev)) {
 					// Go back
-					_data->cursor = 0;
+					_data->cursor = -1;
 					_data->show_games = false;
 				}
 			}
 
-			if (state.k_down & KEY_A) {
-				if (_data->cursor == _data->number_games) {
-					// go back
-					_data->cursor = 0;
-					_data->show_games = false;
-				} else {
-					// picked a game
-					return N(buy_pass)(sc, _data->cursor);
-				}
-			}
 			if (state.k_down & KEY_B) {
 				if (_data->cursor < 0) {
-					_data->cursor = 0;
+					// Go back
+					_data->cursor = -1;
 					_data->show_games = false;
 				} else {
 					_data->cursor = -1;
 				}
+			}
+
+			if (state.k_down & KEY_A) {
+				if (_data->cursor < 0) {
+					_data->cursor = 0;
+					return scene_continue;
+				}
+
+				// picked a game
+				return N(buy_pass)(sc, _data->cursor);
 			}
 		} else {
 			if (state.k_up & KEY_TOUCH) {
@@ -283,17 +291,23 @@ SceneResult N(process)(Scene* sc) {
 				}
 			}
 
-			if (state.k_down & KEY_A) {
-				if (_data->cursor == 0 && config.price <= MAX_PRICE && config.price <= _data->play_coins->total_coins) {
-					_data->cursor = 0;
-					_data->show_games = true;
-				}
-			}
 			if (state.k_down & KEY_B) {
 				if (_data->cursor < 0) {
 					return scene_pop;
 				} else {
 					_data->cursor = -1;
+				}
+			}
+
+			if (state.k_down & KEY_A) {
+				if (_data->cursor < 0) {
+					_data->cursor = 0;
+					return scene_continue;
+				}
+				
+				if (_data->cursor == 0 && config.price <= MAX_PRICE && config.price <= _data->play_coins->total_coins) {
+					_data->cursor = -1;
+					_data->show_games = true;
 				}
 			}
 		}
