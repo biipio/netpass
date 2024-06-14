@@ -33,3 +33,8 @@ str_submit: Пiдтвердити
 str_back_alley: Провулок
 str_back_alley_message: Увiрвемо-но ще трохи "пасiв"
 str_back_alley_pay: Придбати "пас" {playcoin}%d
+str_check_inboxes: Перевiрити вхiднi данi
+str_toggle_titles: Перемкнути iгри
+str_toggle_titles_message: Натиснiть {a_button}, щоб почати або зупинити обмiн "пасами".
+str_toggle_titles_on: (УВIМКНЕНО)
+str_toggle_titles_off: (ВИМКНЕНО)

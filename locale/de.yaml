@@ -37,3 +37,4 @@ str_toggle_titles: Spiele Ein-/Ausschalten
 str_toggle_titles_message: Drücke {a_button} um den Austausch von Pässen zu aktivieren/deaktivieren.
 str_toggle_titles_on: (AN)
 str_toggle_titles_off: (AUS)
+str_check_inboxes: Eingänge prüfen

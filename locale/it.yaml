@@ -36,3 +36,6 @@ str_back_alley_message: Cerca altri pass
 str_toggle_titles_message: Premi {un_tasto} per iniziare o smettere di scambiare i
   pass
 str_check_inboxes: Controlla gli inboxes
+str_toggle_titles_on: (ON)
+str_toggle_titles_off: (OFF)
+str_toggle_titles: Giochi

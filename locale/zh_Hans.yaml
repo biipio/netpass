@@ -32,3 +32,8 @@ str_submit: 提交
 str_back_alley_pay: 购买擦肩信息 {playcoin}%d
 str_back_alley: 后巷
 str_back_alley_message: 让我们搞点新的擦肩信息吧
+str_check_inboxes: 检查擦肩收件箱
+str_toggle_titles: 切换擦肩游戏
+str_toggle_titles_on: (启用)
+str_toggle_titles_off: (禁用)
+str_toggle_titles_message: 按 {a_button} 切换是否交换擦肩信息。

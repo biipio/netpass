@@ -29,10 +29,10 @@ str_cancel: キャンセル
 str_report_user: ユーザーを通報する
 str_report_user_hint: '"%s" を通報する'
 str_submit: 送信する
-str_back_alley_message: 早くすれちがいを密輸するぞ
+str_back_alley_message: 今すぐすれちがいを購入する
 str_back_alley_pay: パスを購入する {playcoin}%d
-str_back_alley: 裏路地
-str_toggle_titles: トグルゲーム
+str_back_alley: 路地裏
+str_toggle_titles: ゲームを切り替える
 str_check_inboxes: 受信トレイをチェックする
 str_toggle_titles_message: '{a_button}を押して、パスの交換を開始または停止する。'
 str_toggle_titles_on: (オン)
