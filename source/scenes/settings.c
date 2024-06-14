@@ -38,6 +38,7 @@ typedef struct {
 	int cursor;
 	float offset;
 	int selected_language;
+	bool time_format_modified;
 	SettingsMenu current_menu;
 } N(DataStruct);
 
@@ -174,7 +175,14 @@ SceneResult N(process)(Scene* sc) {
 				case MENU_DEFAULT:
 					return scene_pop;
 				case MENU_LANGUAGE:
+					_data->cursor = -1;
+					_data->offset = 0;
+					_data->current_menu = MENU_DEFAULT;
+					break;
 				case MENU_TIME_FORMAT:
+					if (_data->time_format_modified) {
+						configWrite();
+					}
 					_data->cursor = -1;
 					_data->offset = 0;
 					_data->current_menu = MENU_DEFAULT;
@@ -189,7 +197,14 @@ SceneResult N(process)(Scene* sc) {
 				case MENU_DEFAULT:
 					return scene_pop;
 				case MENU_LANGUAGE:
+					_data->cursor = -1;
+					_data->offset = 0;
+					_data->current_menu = MENU_DEFAULT;
+					break;
 				case MENU_TIME_FORMAT:
+					if (_data->time_format_modified) {
+						configWrite();
+					}
 					_data->cursor = -1;
 					_data->offset = 0;
 					_data->current_menu = MENU_DEFAULT;
@@ -275,12 +290,15 @@ SceneResult N(process)(Scene* sc) {
 
 			case MENU_TIME_FORMAT:
 			{
+				config.time_format = _data->cursor;
+				_data->time_format_modified = true;
 				break;
 			}
 			}
 		}
 	}
 	if (state.k_down & KEY_START) {
+		if (_data->time_format_modified) configWrite();
 		sc->app_state = app_exiting;
 		return scene_continue;
 	}
