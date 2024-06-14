@@ -195,23 +195,23 @@ void N(render_top)(Scene* sc) {
 	C2D_DrawText(&_data->g_header, C2D_AlignLeft | C2D_WithColor, 10, 10, 0, 1, 1, clr);
 	C2D_DrawText(&_data->g_subtext, C2D_AlignLeft | C2D_WithColor, 11, 35, 0, 0.5, 0.5, clr);
 	if (_data->show_games) {
-		int i = 0;
-		for (; i < _data->number_games; i++) {
-			C2D_DrawText(&_data->g_game_titles[i], C2D_AlignLeft | C2D_WithColor, 30, 55 + (i*14), 0, 0.5, 0.5, clr);
-		}
-		C2D_DrawText(&_data->g_back, C2D_AlignLeft | C2D_WithColor, 30, 55 + (i*14), 0, 0.5, 0.5, clr);
+		// int i = 0;
+		// for (; i < _data->number_games; i++) {
+		// 	C2D_DrawText(&_data->g_game_titles[i], C2D_AlignLeft | C2D_WithColor, 30, 55 + (i*14), 0, 0.5, 0.5, clr);
+		// }
+		// C2D_DrawText(&_data->g_back, C2D_AlignLeft | C2D_WithColor, 30, 55 + (i*14), 0, 0.5, 0.5, clr);
 
-		int x = 22;
-		int y = _data->cursor*14 + 55 + 3;
-		C2D_DrawTriangle(x, y, clr, x, y +10, clr, x + 8, y + 5, clr, 1);
+		// int x = 22;
+		// int y = _data->cursor*14 + 55 + 3;
+		// C2D_DrawTriangle(x, y, clr, x, y +10, clr, x + 8, y + 5, clr, 1);
 	} else {
-		bool grayed_out = config.price > MAX_PRICE || config.price > _data->play_coins->total_coins;
-		C2D_DrawText(&_data->g_paytext, C2D_AlignLeft | C2D_WithColor, 30, 55, 0, 1, 1, grayed_out ? C2D_Color32(0, 0, 0, 0x80) : clr);
-		C2D_DrawText(&_data->g_back, C2D_AlignLeft | C2D_WithColor, 30, 80, 0, 1, 1, clr);
+		// bool grayed_out = config.price > MAX_PRICE || config.price > _data->play_coins->total_coins;
+		// C2D_DrawText(&_data->g_paytext, C2D_AlignLeft | C2D_WithColor, 30, 55, 0, 1, 1, grayed_out ? C2D_Color32(0, 0, 0, 0x80) : clr);
+		// C2D_DrawText(&_data->g_back, C2D_AlignLeft | C2D_WithColor, 30, 80, 0, 1, 1, clr);
 
-		int x = 10;
-		int y = _data->cursor*25 + 55 + 5;
-		C2D_DrawTriangle(x, y, clr, x, y + 18, clr, x + 15, y + 9, clr, 1);
+		// int x = 10;
+		// int y = _data->cursor*25 + 55 + 5;
+		// C2D_DrawTriangle(x, y, clr, x, y + 18, clr, x + 15, y + 9, clr, 1);
 	}
 }
 
@@ -219,7 +219,7 @@ void N(render_bottom)(Scene* sc) {
 	if (!_data) return;
 
 	if (_data->show_games) {
-		renderOptionButtons(&_data->g_not_implemented, 1, -1, 0, 0);
+		renderOptionButtons(_data->g_game_titles, _data->number_games, _data->cursor, _data->offset, -1);
 	} else {
 		renderOptionButtons(&_data->g_paytext, 1, _data->cursor, _data->offset, -1);
 	}
@@ -260,6 +260,7 @@ SceneResult N(process)(Scene* sc) {
 				if (isRightButtonTouched(&state.pos_prev)) {
 					// Go back
 					_data->cursor = -1;
+					_data->offset = 0;
 					_data->show_games = false;
 				}
 			}
@@ -268,6 +269,7 @@ SceneResult N(process)(Scene* sc) {
 				if (_data->cursor < 0) {
 					// Go back
 					_data->cursor = -1;
+					_data->offset = 0;
 					_data->show_games = false;
 				} else {
 					_data->cursor = -1;
@@ -308,6 +310,7 @@ SceneResult N(process)(Scene* sc) {
 				
 				if (_data->cursor == 0 && config.price <= MAX_PRICE && config.price <= _data->play_coins->total_coins) {
 					_data->cursor = -1;
+					_data->offset = 0;
 					_data->show_games = true;
 				}
 			}
