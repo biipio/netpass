@@ -148,12 +148,6 @@ SceneResult N(process)(Scene* sc) {
 		}
 
 		if (state.k_up & KEY_TOUCH) {
-			// Home button
-			if (isLeftButtonTouched(&state.pos_prev)) {
-				sc->app_state = app_exiting;
-				return scene_continue;
-			}
-
 			// Back button
 			if (isRightButtonTouched(&state.pos_prev)) {
 				return scene_pop;
