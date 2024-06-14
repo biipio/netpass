@@ -55,3 +55,5 @@ str_friday: Fri
 str_saturday: Sat
 str_last_met: "Last met on %02u-%02u-%u"
 str_credits: Credits
+str_24_hour: 24 Hour
+str_12_hour: 12 Hour

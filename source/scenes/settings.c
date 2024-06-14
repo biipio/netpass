@@ -31,6 +31,7 @@ typedef struct {
 	C2D_Text g_title;
 	C2D_Text g_entries[NUM_ENTRIES];
 	C2D_Text g_languages[NUM_LANGUAGES + 1];
+	C2D_Text g_timeFormats[2];
 	C2D_Text g_versionText;
 	int cursor;
 	float offset;
@@ -67,6 +68,9 @@ void N(init)(Scene* sc) {
 	TextLangParse(&_data->g_entries[4], _data->g_staticBuf, str_download_data);
 	TextLangParse(&_data->g_entries[5], _data->g_staticBuf, str_delete_data);
 	TextLangParse(&_data->g_entries[6], _data->g_staticBuf, str_credits);
+
+	TextLangParse(&_data->g_timeFormats[0], _data->g_staticBuf, str_24_hour);
+	TextLangParse(&_data->g_timeFormats[1], _data->g_staticBuf, str_12_hour);
 	
 	sc->setting.bg_top = bg_top_generic;
 	sc->setting.bg_bottom = bg_bottom_generic;
