@@ -26,6 +26,8 @@
 
 #define NUM_ENTRIES 7
 
+typedef enum {MENU_DEFAULT, MENU_LANGUAGE, MENU_TIME_FORMAT} SettingsMenu;
+
 typedef struct {
 	C2D_TextBuf g_staticBuf;
 	C2D_Text g_title;
@@ -36,7 +38,7 @@ typedef struct {
 	int cursor;
 	float offset;
 	int selected_language;
-	touchPosition currentPos;
+	SettingsMenu current_menu;
 } N(DataStruct);
 
 void N(load_language_text)(Scene* sc) {
@@ -60,6 +62,8 @@ void N(init)(Scene* sc) {
 	_data->g_staticBuf = C2D_TextBufNew(500 + 15*NUM_LANGUAGES);
 	_data->cursor = -1;
 	_data->offset = 0;
+	_data->selected_language = -2; // means uninitialized
+	_data->current_menu = MENU_DEFAULT;
 	TextLangParse(&_data->g_title, _data->g_staticBuf, str_settings);
 	TextLangParse(&_data->g_entries[0], _data->g_staticBuf, str_toggle_titles);
 	TextLangParse(&_data->g_entries[1], _data->g_staticBuf, str_report_user);
@@ -117,8 +121,19 @@ void N(render_top)(Scene* sc) {
 void N(render_bottom)(Scene* sc) {
 	if (!_data) return;
 	
-	renderOptionButtons(_data->g_entries, NUM_ENTRIES, _data->cursor, _data->offset, -1);
-	// TODO: render version and mini flags if they should be visible
+	switch (_data->current_menu) {
+	case MENU_DEFAULT:
+		renderOptionButtons(_data->g_entries, NUM_ENTRIES, _data->cursor, _data->offset, -1);
+		// TODO: render version and mini flags if they should be visible
+		break;
+	case MENU_LANGUAGE:
+		if (_data->selected_language < -1) N(load_language_text)(sc);
+		renderOptionButtons(_data->g_languages, NUM_LANGUAGES + 1, _data->cursor, _data->offset, -1);
+		break;
+	case MENU_TIME_FORMAT:
+		renderOptionButtons(_data->g_timeFormats, 2, _data->cursor, _data->offset, -1);
+		break;
+	}
 }
 
 void N(exit)(Scene* sc) {
@@ -133,8 +148,10 @@ SceneResult N(process)(Scene* sc) {
 	if (_data) {
 		// Update cursor
 		_data->cursor += (state.k_down_repeat & KEY_DOWN && 1) - (state.k_down_repeat & KEY_UP && 1);
-		_data->cursor += (state.k_down_repeat & KEY_RIGHT && 1)*10 - (state.k_down_repeat & KEY_LEFT && 1)*10;
-		int list_max = (NUM_ENTRIES);
+		_data->cursor += (state.k_down_repeat & KEY_RIGHT && 1)*4 - (state.k_down_repeat & KEY_LEFT && 1)*4;
+		int list_max = NUM_ENTRIES;
+		if (_data->current_menu == MENU_LANGUAGE) list_max = NUM_LANGUAGES;
+		if (_data->current_menu == MENU_TIME_FORMAT) list_max = 2;
 		if (state.k_down & (KEY_DOWN | KEY_UP)) {
 			if (_data->cursor < 0) _data->cursor = list_max;
 			if (_data->cursor > list_max) _data->cursor = 0;
@@ -153,13 +170,31 @@ SceneResult N(process)(Scene* sc) {
 		if (state.k_up & KEY_TOUCH) {
 			// Back button
 			if (isRightButtonTouched(&state.pos_prev)) {
-				return scene_pop;
+				switch (_data->current_menu) {
+				case MENU_DEFAULT:
+					return scene_pop;
+				case MENU_LANGUAGE:
+				case MENU_TIME_FORMAT:
+					_data->cursor = -1;
+					_data->offset = 0;
+					_data->current_menu = MENU_DEFAULT;
+					break;
+				}
 			}
 		}
 		
 		if (state.k_down & KEY_B) {
-			if (_data->cursor < 0){
-				return scene_pop;
+			if (_data->cursor < 0) {
+				switch (_data->current_menu) {
+				case MENU_DEFAULT:
+					return scene_pop;
+				case MENU_LANGUAGE:
+				case MENU_TIME_FORMAT:
+					_data->cursor = -1;
+					_data->offset = 0;
+					_data->current_menu = MENU_DEFAULT;
+					break;
+				}
 			} else {
 				_data->cursor = -1;
 			}
@@ -181,42 +216,67 @@ SceneResult N(process)(Scene* sc) {
 				return scene_continue;
 			}
 
-			if (_data->cursor == 0) {
-				sc->next_scene = getToggleTitlesScene();
-				return scene_push;
+			switch (_data->current_menu) {
+			case MENU_DEFAULT:
+			{
+				if (_data->cursor == 0) {
+					sc->next_scene = getToggleTitlesScene();
+					return scene_push;
+				}
+				if (_data->cursor == 1) {
+					sc->next_scene = getReportListScene();
+					return scene_push;
+				}
+				if (_data->cursor == 2) {
+					_data->cursor = _data->selected_language + 1;
+					_data->offset = 0;
+					_data->current_menu = MENU_LANGUAGE;
+				}
+				if (_data->cursor == 3) {
+					_data->cursor = config.time_format;
+					_data->offset = 0;
+					_data->current_menu = MENU_TIME_FORMAT;
+				}
+				if (_data->cursor == 4) {
+					sc->next_scene = getLoadingScene(0, lambda(void, (void) {
+						char url[50];
+						snprintf(url, 50, "%s/data", BASE_URL);
+						Result res = httpRequest("GET", url, 0, 0, (void*)1, "/netpass_data.txt");
+						if (R_FAILED(res)) {
+							printf("ERROR downloading all data: %ld\n", res);
+							return;
+						}
+						printf("Successfully downloaded all data!\n");
+						printf("File stored at sdmc:/netpass_data.txt\n");
+					}));
+					return scene_push;
+				}
+				if (_data->cursor == 5) {
+					sc->next_scene = getLoadingScene(0, lambda(void, (void) {
+						char url[50];
+						snprintf(url, 50, "%s/data", BASE_URL);
+						Result res = httpRequest("DELETE", url, 0, 0, 0, 0);
+						if (R_FAILED(res)) {
+							printf("ERROR deleting all data: %ld\n", res);
+							return;
+						}
+						printf("Successfully sent request to delete all data! This can take up to 15 days.\n");
+					}));
+					return scene_push;
+				}
+				// TODO: show credits when cursor == 6
+				break;
 			}
-			if (_data->cursor == 1) {
-				sc->next_scene = getReportListScene();
-				return scene_push;
+			
+			case MENU_LANGUAGE:
+			{
+				break;
 			}
-			// TODO: open menu to change language
-			// TODO: open menu to change time format
-			if (_data->cursor == 4) {
-				sc->next_scene = getLoadingScene(0, lambda(void, (void) {
-					char url[50];
-					snprintf(url, 50, "%s/data", BASE_URL);
-					Result res = httpRequest("GET", url, 0, 0, (void*)1, "/netpass_data.txt");
-					if (R_FAILED(res)) {
-						printf("ERROR downloading all data: %ld\n", res);
-						return;
-					}
-					printf("Successfully downloaded all data!\n");
-					printf("File stored at sdmc:/netpass_data.txt\n");
-				}));
-				return scene_push;
+
+			case MENU_TIME_FORMAT:
+			{
+				break;
 			}
-			if (_data->cursor == 5) {
-				sc->next_scene = getLoadingScene(0, lambda(void, (void) {
-					char url[50];
-					snprintf(url, 50, "%s/data", BASE_URL);
-					Result res = httpRequest("DELETE", url, 0, 0, 0, 0);
-					if (R_FAILED(res)) {
-						printf("ERROR deleting all data: %ld\n", res);
-						return;
-					}
-					printf("Successfully sent request to delete all data! This can take up to 15 days.\n");
-				}));
-				return scene_push;
 			}
 		}
 	}
