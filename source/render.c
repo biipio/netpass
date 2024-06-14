@@ -121,20 +121,25 @@ void renderOptionButton(C2D_Text* text, float x, float y, float z, bool isFocus,
 		renderImage(&spr_btn, ui_btn_text_selected, x - 5, y - 4, z);
 	}
 
-	float tHeight;
-	get_text_dimensions(text, 0.8f, 0.8f, NULL, &tHeight);
-	float textX = x + img_btn_text.subtex->width/2;
-	float textY = y + (img_btn_text.subtex->height - tHeight)/2;
+	u16 button_width = img_btn_text.subtex->width;
+	u16 button_height = img_btn_text.subtex->height;
+	float scale_x = 0.8f;
+	float scale_y = 0.8f;
+	get_scale_for_fit(text, button_width - 10, button_height - 4, &scale_x, &scale_y);
+	
+	float text_height;
+	get_text_dimensions(text, scale_x, scale_y, NULL, &text_height);
+	float text_x = x + button_width/2;
+	float text_y = y + (button_height - text_height)/2;
+
 	u32 flags = C2D_AlignCenter | C2D_WithColor;
-	u32 clr;
+	u32 clr = clr_netpass_green;
 	if (isGrayedOut) {
 		clr = clr_gray;
 	} else if (isFocus) {
 		clr = clr_focus_blue;
-	} else {
-		clr = clr_netpass_green;
 	}
-	C2D_DrawText(text, flags, textX, textY, z, 0.8f, 0.8f, clr);
+	C2D_DrawText(text, flags, text_x, text_y, z, scale_x, scale_y, clr);
 }
 
 void renderOptionButtons(C2D_Text* entries, size_t n, int cursor, float offset, int grayedOut) {
