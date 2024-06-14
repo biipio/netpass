@@ -222,7 +222,7 @@ SceneResult N(process)(Scene* sc) {
 			return scene_continue;
 		}
 
-		int selected_i = _data->list->header.cur_size - _data->cursor - 1;
+		int selected_i = _data->cursor;
 		return N(report)(sc, selected_i);
 	}
 	if (state.k_down & KEY_START) {
