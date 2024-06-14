@@ -35,9 +35,23 @@ typedef struct {
 	int cursor;
 	float offset;
 	int selected_language;
-	float lang_width;
 	touchPosition currentPos;
 } N(DataStruct);
+
+void N(load_language_text)(Scene* sc) {
+	TextLangParse(&_data->g_languages[0], _data->g_staticBuf, str_system_language);
+	for (int i = 0; i < NUM_LANGUAGES; i++) {
+		TextLangSpecificParse(&_data->g_languages[i+1], _data->g_staticBuf, str_language, all_languages[i]);
+	}
+	_data->selected_language = -1;
+	if (config.language != -1) {
+		for (int i = 0; i < NUM_LANGUAGES; i++) {
+			if (all_languages[i] == config.language) {
+				_data->selected_language = i;
+			}
+		}
+	}
+}
 
 void N(init)(Scene* sc) {
 	sc->d = malloc(sizeof(N(DataStruct)));
@@ -53,21 +67,6 @@ void N(init)(Scene* sc) {
 	TextLangParse(&_data->g_entries[4], _data->g_staticBuf, str_download_data);
 	TextLangParse(&_data->g_entries[5], _data->g_staticBuf, str_delete_data);
 	TextLangParse(&_data->g_entries[6], _data->g_staticBuf, str_credits);
-	// TextLangParse(&_data->g_languages[0], _data->g_staticBuf, str_system_language);
-	// for (int i = 0; i < NUM_LANGUAGES; i++) {
-	// 	TextLangSpecificParse(&_data->g_languages[i+1], _data->g_staticBuf, str_language, all_languages[i]);
-	// }
-	_data->selected_language = -1;
-	if (config.language != -1) {
-		for (int i = 0; i < NUM_LANGUAGES; i++) {
-			if (all_languages[i] == config.language) {
-				_data->selected_language = i;
-			}
-		}
-	}
-	// Only load language string for currently selected language
-	TextLangSpecificParse(&_data->g_languages[_data->selected_language+1], _data->g_staticBuf, str_language, all_languages[_data->selected_language]);
-	get_text_dimensions(&_data->g_entries[1], 1, 1, &_data->lang_width, 0);
 	
 	sc->setting.bg_top = bg_top_generic;
 	sc->setting.bg_bottom = bg_bottom_generic;
