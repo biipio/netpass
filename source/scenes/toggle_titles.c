@@ -34,7 +34,7 @@ typedef struct {
 	u32 title_ids[24];
 	C2D_Text g_back;
 	int cursor;
-	int offset;
+	float offset;
 	int number_games;
 } N(DataStruct);
 
@@ -127,52 +127,52 @@ void N(exit)(Scene* sc) {
 
 SceneResult N(process)(Scene* sc) {
 	InputState state = sc->input_state;
-	if (_data) {
-		// Update cursor
-		_data->cursor += (state.k_down_repeat & KEY_DOWN && 1) - (state.k_down_repeat & KEY_UP && 1);
-		_data->cursor += (state.k_down_repeat & KEY_RIGHT && 1)*10 - (state.k_down_repeat & KEY_LEFT && 1)*10;
-		int list_max = _data->number_games;
-		if (state.k_down & (KEY_DOWN | KEY_UP)) {
-			if (_data->cursor < 0) _data->cursor = list_max;
-			if (_data->cursor > list_max) _data->cursor = 0;
-		} else if (state.k_down_repeat & (KEY_DOWN | KEY_UP | KEY_RIGHT | KEY_LEFT)) {
-			if (_data->cursor < 0) _data->cursor = 0;
-			if (_data->cursor > list_max) _data->cursor = list_max;
-		}
+	if (!_data) return scene_continue;
 
-		// Update offset
-		if (_data->cursor >= 0) {
-			// TODO: treat as pixel, not list index
-			if (_data->cursor > _data->offset + 3) _data->offset = _data->cursor - 3;
-			if (_data->cursor < _data->offset) _data->offset = _data->cursor;
-		}
+	// Update cursor
+	_data->cursor += (state.k_down_repeat & KEY_DOWN && 1) - (state.k_down_repeat & KEY_UP && 1);
+	_data->cursor += (state.k_down_repeat & KEY_RIGHT && 1)*10 - (state.k_down_repeat & KEY_LEFT && 1)*10;
+	int list_max = _data->number_games;
+	if (state.k_down & (KEY_DOWN | KEY_UP)) {
+		if (_data->cursor < 0) _data->cursor = list_max;
+		if (_data->cursor > list_max) _data->cursor = 0;
+	} else if (state.k_down_repeat & (KEY_DOWN | KEY_UP | KEY_RIGHT | KEY_LEFT)) {
+		if (_data->cursor < 0) _data->cursor = 0;
+		if (_data->cursor > list_max) _data->cursor = list_max;
+	}
 
-		if (state.k_up & KEY_TOUCH) {
-			// Back button
-			if (isRightButtonTouched(&state.pos_prev)) {
-				return scene_pop;
-			}
-		}
+	// Update offset
+	if (_data->cursor >= 0) {
+		// TODO: treat as pixel, not list index
+		if (_data->cursor > _data->offset + 3) _data->offset = _data->cursor - 3;
+		if (_data->cursor < _data->offset) _data->offset = _data->cursor;
+	}
 
-		if (state.k_down & KEY_B) {
+	if (state.k_up & KEY_TOUCH) {
+		// Back button
+		if (isRightButtonTouched(&state.pos_prev)) {
+			return scene_pop;
+		}
+	}
+
+	if (state.k_down & KEY_B) {
+		return scene_pop;
+	}
+
+	if (state.k_down & KEY_A) {
+		// "Back" is selected, exit this scene
+		if (_data->cursor == _data->number_games) {
 			return scene_pop;
 		}
 
-		if (state.k_down & KEY_A) {
-			// "Back" is selected, exit this scene
-			if (_data->cursor == _data->number_games) {
-				return scene_pop;
-			}
-
-			// Add title to ignore list / Remove title from ignore list
-			u32 title_id = _data->title_ids[_data->cursor];
-			if (isTitleIgnored(title_id)) {
-				removeIgnoredTitle(title_id);
-			} else {
-				addIgnoredTitle(title_id);
-			}
-			return scene_continue;
+		// Add title to ignore list / Remove title from ignore list
+		u32 title_id = _data->title_ids[_data->cursor];
+		if (isTitleIgnored(title_id)) {
+			removeIgnoredTitle(title_id);
+		} else {
+			addIgnoredTitle(title_id);
 		}
+		return scene_continue;
 	}
 
 	return scene_continue;

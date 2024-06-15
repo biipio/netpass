@@ -87,70 +87,70 @@ Result N(location_res);
 
 SceneResult N(process)(Scene* sc) {
 	InputState state = sc->input_state;
-	if (_data) {
-		// Update cursor
-		_data->cursor += (state.k_down_repeat & KEY_DOWN && 1) - (state.k_down_repeat & KEY_UP && 1);
-		_data->cursor += (state.k_down_repeat & KEY_RIGHT && 1)*10 - (state.k_down_repeat & KEY_LEFT && 1)*10;
-		int list_max = (NUM_LOCATIONS - 1);
-		if (state.k_down & (KEY_DOWN | KEY_UP)) {
-			if (_data->cursor < 0) _data->cursor = list_max;
-			if (_data->cursor > list_max) _data->cursor = 0;
-		} else if (state.k_down_repeat & (KEY_DOWN | KEY_UP | KEY_RIGHT | KEY_LEFT)) {
-			if (_data->cursor < 0) _data->cursor = 0;
-			if (_data->cursor > list_max) _data->cursor = list_max;
+	if (!_data) return scene_continue;
+
+	// Update cursor
+	_data->cursor += (state.k_down_repeat & KEY_DOWN && 1) - (state.k_down_repeat & KEY_UP && 1);
+	_data->cursor += (state.k_down_repeat & KEY_RIGHT && 1)*10 - (state.k_down_repeat & KEY_LEFT && 1)*10;
+	int list_max = (NUM_LOCATIONS - 1);
+	if (state.k_down & (KEY_DOWN | KEY_UP)) {
+		if (_data->cursor < 0) _data->cursor = list_max;
+		if (_data->cursor > list_max) _data->cursor = 0;
+	} else if (state.k_down_repeat & (KEY_DOWN | KEY_UP | KEY_RIGHT | KEY_LEFT)) {
+		if (_data->cursor < 0) _data->cursor = 0;
+		if (_data->cursor > list_max) _data->cursor = list_max;
+	}
+
+	// Update offset
+	if (_data->cursor >= 0) {
+		// TODO: treat as pixel, not list index
+		if (_data->cursor > _data->offset + 3) _data->offset = _data->cursor - 3;
+		if (_data->cursor < _data->offset) _data->offset = _data->cursor;
+	}
+	
+	// Change background depending on currently hovered location
+	sc->setting.bg_top = _data->cursor + 2;
+	sc->setting.bg_bottom = bg_bottom_generic;
+
+	if (state.k_up & KEY_TOUCH) {
+		// Home button
+		if (isLeftButtonTouched(&state.pos_prev)) {
+			sc->app_state = app_exiting;
+			return scene_continue;
 		}
 
-		// Update offset
-		if (_data->cursor >= 0) {
-			// TODO: treat as pixel, not list index
-			if (_data->cursor > _data->offset + 3) _data->offset = _data->cursor - 3;
-			if (_data->cursor < _data->offset) _data->offset = _data->cursor;
+		// Settings button
+		if (isRightButtonTouched(&state.pos_prev)) {
+			sc->next_scene = getSettingsScene();
+			return scene_push;
 		}
-		
-		// Change background depending on currently hovered location
-		sc->setting.bg_top = _data->cursor + 2;
-		sc->setting.bg_bottom = bg_bottom_generic;
+	}
+	
+	if (state.k_down & KEY_B) {
+		_data->cursor = -1;
+	}
 
-		if (state.k_up & KEY_TOUCH) {
-			// Home button
-			if (isLeftButtonTouched(&state.pos_prev)) {
-				sc->app_state = app_exiting;
-				return scene_continue;
-			}
-
-			// Settings button
-			if (isRightButtonTouched(&state.pos_prev)) {
-				sc->next_scene = getSettingsScene();
-				return scene_push;
-			}
-		}
-		
-		if (state.k_down & KEY_B) {
-			_data->cursor = -1;
+	if (state.k_down & KEY_A) {
+		if (_data->cursor < 0) {
+			_data->cursor = 0;
+			return scene_continue;
 		}
 
-		if (state.k_down & KEY_A) {
-			if (_data->cursor < 0) {
-				_data->cursor = 0;
-				return scene_continue;
-			}
-
-			// load location scene
-			if (_data->cursor == config.last_location) {
-				sc->next_scene = getInfoScene(str_no_location_twice);
-				return scene_push;
-			}
-			location = _data->cursor;
-
-			sc->next_scene = getLoadingScene(getSwitchScene(lambda(Scene*, (void) {
-			// 	if (R_FAILED(N(location_res))) return getHomeScene();
-				return getLocationScene(location);
-			})), lambda(void, (void) {
-			// 	N(location_res) = setLocation(location);
-			// 	triggerDownloadInboxes();
-			}));
-			return scene_switch;
+		// load location scene
+		if (_data->cursor == config.last_location) {
+			sc->next_scene = getInfoScene(str_no_location_twice);
+			return scene_push;
 		}
+		location = _data->cursor;
+
+		sc->next_scene = getLoadingScene(getSwitchScene(lambda(Scene*, (void) {
+		// 	if (R_FAILED(N(location_res))) return getHomeScene();
+			return getLocationScene(location);
+		})), lambda(void, (void) {
+		// 	N(location_res) = setLocation(location);
+		// 	triggerDownloadInboxes();
+		}));
+		return scene_switch;
 	}
 	
 	return scene_continue;

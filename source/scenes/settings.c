@@ -152,76 +152,77 @@ void N(exit)(Scene* sc) {
 
 SceneResult N(process)(Scene* sc) {
 	InputState state = sc->input_state;
-	if (_data) {
-		// Update cursor
-		_data->cursor += (state.k_down_repeat & KEY_DOWN && 1) - (state.k_down_repeat & KEY_UP && 1);
-		_data->cursor += (state.k_down_repeat & KEY_RIGHT && 1)*4 - (state.k_down_repeat & KEY_LEFT && 1)*4;
-		int list_max = NUM_ENTRIES;
-		if (_data->current_menu == MENU_LANGUAGE) list_max = NUM_LANGUAGES;
-		if (_data->current_menu == MENU_TIME_FORMAT) list_max = 2;
-		if (state.k_down & (KEY_DOWN | KEY_UP)) {
-			if (_data->cursor < 0) _data->cursor = list_max;
-			if (_data->cursor > list_max) _data->cursor = 0;
-		} else if (state.k_down_repeat & (KEY_DOWN | KEY_UP | KEY_RIGHT | KEY_LEFT)) {
-			if (_data->cursor < 0) _data->cursor = 0;
-			if (_data->cursor > list_max) _data->cursor = list_max;
-		}
+	if (!_data) return scene_continue;
 
-		// Update offset
-		if (_data->cursor >= 0) {
-			// TODO: treat as pixel, not list index
-			if (_data->cursor > _data->offset + 3) _data->offset = _data->cursor - 3;
-			if (_data->cursor < _data->offset) _data->offset = _data->cursor;
-		}
+	// Update cursor
+	_data->cursor += (state.k_down_repeat & KEY_DOWN && 1) - (state.k_down_repeat & KEY_UP && 1);
+	_data->cursor += (state.k_down_repeat & KEY_RIGHT && 1)*4 - (state.k_down_repeat & KEY_LEFT && 1)*4;
+	int list_max = NUM_ENTRIES;
+	if (_data->current_menu == MENU_LANGUAGE) list_max = NUM_LANGUAGES;
+	if (_data->current_menu == MENU_TIME_FORMAT) list_max = 2;
+	if (state.k_down & (KEY_DOWN | KEY_UP)) {
+		if (_data->cursor < 0) _data->cursor = list_max;
+		if (_data->cursor > list_max) _data->cursor = 0;
+	} else if (state.k_down_repeat & (KEY_DOWN | KEY_UP | KEY_RIGHT | KEY_LEFT)) {
+		if (_data->cursor < 0) _data->cursor = 0;
+		if (_data->cursor > list_max) _data->cursor = list_max;
+	}
 
-		if (state.k_up & KEY_TOUCH) {
-			// Back button
-			if (isRightButtonTouched(&state.pos_prev)) {
-				switch (_data->current_menu) {
-				case MENU_DEFAULT:
-					return scene_pop;
-				case MENU_LANGUAGE:
-					_data->cursor = -1;
-					_data->offset = 0;
-					_data->current_menu = MENU_DEFAULT;
-					break;
-				case MENU_TIME_FORMAT:
-					if (_data->time_format_modified) {
-						configWrite();
-						_data->time_format_modified = false;
-					}
-					_data->cursor = -1;
-					_data->offset = 0;
-					_data->current_menu = MENU_DEFAULT;
-					break;
-				}
-			}
-		}
-		
-		if (state.k_down & KEY_B) {
-			if (_data->cursor < 0) {
-				switch (_data->current_menu) {
-				case MENU_DEFAULT:
-					return scene_pop;
-				case MENU_LANGUAGE:
-					_data->cursor = -1;
-					_data->offset = 0;
-					_data->current_menu = MENU_DEFAULT;
-					break;
-				case MENU_TIME_FORMAT:
-					if (_data->time_format_modified) {
-						configWrite();
-						_data->time_format_modified = false;
-					}
-					_data->cursor = -1;
-					_data->offset = 0;
-					_data->current_menu = MENU_DEFAULT;
-					break;
-				}
-			} else {
+	// Update offset
+	if (_data->cursor >= 0) {
+		// TODO: treat as pixel, not list index
+		if (_data->cursor > _data->offset + 3) _data->offset = _data->cursor - 3;
+		if (_data->cursor < _data->offset) _data->offset = _data->cursor;
+	}
+
+	if (state.k_up & KEY_TOUCH) {
+		// Back button
+		if (isRightButtonTouched(&state.pos_prev)) {
+			switch (_data->current_menu) {
+			case MENU_DEFAULT:
+				return scene_pop;
+			case MENU_LANGUAGE:
 				_data->cursor = -1;
+				_data->offset = 0;
+				_data->current_menu = MENU_DEFAULT;
+				break;
+			case MENU_TIME_FORMAT:
+				if (_data->time_format_modified) {
+					configWrite();
+					_data->time_format_modified = false;
+				}
+				_data->cursor = -1;
+				_data->offset = 0;
+				_data->current_menu = MENU_DEFAULT;
+				break;
 			}
 		}
+	}
+	
+	if (state.k_down & KEY_B) {
+		if (_data->cursor < 0) {
+			switch (_data->current_menu) {
+			case MENU_DEFAULT:
+				return scene_pop;
+			case MENU_LANGUAGE:
+				_data->cursor = -1;
+				_data->offset = 0;
+				_data->current_menu = MENU_DEFAULT;
+				break;
+			case MENU_TIME_FORMAT:
+				if (_data->time_format_modified) {
+					configWrite();
+					_data->time_format_modified = false;
+				}
+				_data->cursor = -1;
+				_data->offset = 0;
+				_data->current_menu = MENU_DEFAULT;
+				break;
+			}
+		} else {
+			_data->cursor = -1;
+		}
+	}
 
 		// if (_data->cursor == 1) {
 		// 	int old_lang = _data->selected_language;
@@ -238,71 +239,75 @@ SceneResult N(process)(Scene* sc) {
 				_data->cursor = 0;
 				return scene_continue;
 			}
+	if (state.k_down & KEY_A) {
+		if (_data->cursor < 0) {
+			_data->cursor = 0;
+			return scene_continue;
+		}
 
-			switch (_data->current_menu) {
-			case MENU_DEFAULT:
-			{
-				if (_data->cursor == 0) {
-					sc->next_scene = getToggleTitlesScene();
-					return scene_push;
-				}
-				if (_data->cursor == 1) {
-					sc->next_scene = getReportListScene();
-					return scene_push;
-				}
-				if (_data->cursor == 2) {
-					_data->cursor = _data->selected_language + 1;
-					_data->offset = 0;
-					_data->current_menu = MENU_LANGUAGE;
-				}
-				if (_data->cursor == 3) {
-					_data->cursor = config.time_format;
-					_data->offset = 0;
-					_data->current_menu = MENU_TIME_FORMAT;
-				}
-				if (_data->cursor == 4) {
-					sc->next_scene = getLoadingScene(0, lambda(void, (void) {
-						char url[50];
-						snprintf(url, 50, "%s/data", BASE_URL);
-						Result res = httpRequest("GET", url, 0, 0, (void*)1, "/netpass_data.txt");
-						if (R_FAILED(res)) {
-							printf("ERROR downloading all data: %ld\n", res);
-							return;
-						}
-						printf("Successfully downloaded all data!\n");
-						printf("File stored at sdmc:/netpass_data.txt\n");
-					}));
-					return scene_push;
-				}
-				if (_data->cursor == 5) {
-					sc->next_scene = getLoadingScene(0, lambda(void, (void) {
-						char url[50];
-						snprintf(url, 50, "%s/data", BASE_URL);
-						Result res = httpRequest("DELETE", url, 0, 0, 0, 0);
-						if (R_FAILED(res)) {
-							printf("ERROR deleting all data: %ld\n", res);
-							return;
-						}
-						printf("Successfully sent request to delete all data! This can take up to 15 days.\n");
-					}));
-					return scene_push;
-				}
-				// TODO: show credits when cursor == 6
-				break;
+		switch (_data->current_menu) {
+		case MENU_DEFAULT:
+		{
+			if (_data->cursor == 0) {
+				sc->next_scene = getToggleTitlesScene();
+				return scene_push;
 			}
-			
-			case MENU_LANGUAGE:
-			{
-				break;
+			if (_data->cursor == 1) {
+				sc->next_scene = getReportListScene();
+				return scene_push;
 			}
+			if (_data->cursor == 2) {
+				_data->cursor = _data->selected_language + 1;
+				_data->offset = 0;
+				_data->current_menu = MENU_LANGUAGE;
+			}
+			if (_data->cursor == 3) {
+				_data->cursor = config.time_format;
+				_data->offset = 0;
+				_data->current_menu = MENU_TIME_FORMAT;
+			}
+			if (_data->cursor == 4) {
+				sc->next_scene = getLoadingScene(0, lambda(void, (void) {
+					char url[50];
+					snprintf(url, 50, "%s/data", BASE_URL);
+					Result res = httpRequest("GET", url, 0, 0, (void*)1, "/netpass_data.txt");
+					if (R_FAILED(res)) {
+						printf("ERROR downloading all data: %ld\n", res);
+						return;
+					}
+					printf("Successfully downloaded all data!\n");
+					printf("File stored at sdmc:/netpass_data.txt\n");
+				}));
+				return scene_push;
+			}
+			if (_data->cursor == 5) {
+				sc->next_scene = getLoadingScene(0, lambda(void, (void) {
+					char url[50];
+					snprintf(url, 50, "%s/data", BASE_URL);
+					Result res = httpRequest("DELETE", url, 0, 0, 0, 0);
+					if (R_FAILED(res)) {
+						printf("ERROR deleting all data: %ld\n", res);
+						return;
+					}
+					printf("Successfully sent request to delete all data! This can take up to 15 days.\n");
+				}));
+				return scene_push;
+			}
+			// TODO: show credits when cursor == 6
+			break;
+		}
+		
+		case MENU_LANGUAGE:
+		{
+			break;
+		}
 
-			case MENU_TIME_FORMAT:
-			{
-				config.time_format = _data->cursor;
-				_data->time_format_modified = true;
-				break;
-			}
-			}
+		case MENU_TIME_FORMAT:
+		{
+			config.time_format = _data->cursor;
+			_data->time_format_modified = true;
+			break;
+		}
 		}
 	}
 

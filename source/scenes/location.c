@@ -83,65 +83,65 @@ void N(exit)(Scene* sc) {
 
 SceneResult N(process)(Scene* sc) {
 	InputState state = sc->input_state;
-	if (_data) {
-		// Update cursor
-		_data->cursor += (state.k_down_repeat & KEY_DOWN && 1) - (state.k_down_repeat & KEY_UP && 1);
-		_data->cursor += (state.k_down_repeat & KEY_RIGHT && 1)*10 - (state.k_down_repeat & KEY_LEFT && 1)*10;
-		int list_max = (NUM_ENTRIES - 1);
-		if (state.k_down & (KEY_DOWN | KEY_UP)) {
-			if (_data->cursor < 0) _data->cursor = list_max;
-			if (_data->cursor > list_max) _data->cursor = 0;
-		} else if (state.k_down_repeat & (KEY_DOWN | KEY_UP | KEY_RIGHT | KEY_LEFT)) {
-			if (_data->cursor < 0) _data->cursor = 0;
-			if (_data->cursor > list_max) _data->cursor = list_max;
+	if (!_data) return scene_continue;
+
+	// Update cursor
+	_data->cursor += (state.k_down_repeat & KEY_DOWN && 1) - (state.k_down_repeat & KEY_UP && 1);
+	_data->cursor += (state.k_down_repeat & KEY_RIGHT && 1)*10 - (state.k_down_repeat & KEY_LEFT && 1)*10;
+	int list_max = (NUM_ENTRIES - 1);
+	if (state.k_down & (KEY_DOWN | KEY_UP)) {
+		if (_data->cursor < 0) _data->cursor = list_max;
+		if (_data->cursor > list_max) _data->cursor = 0;
+	} else if (state.k_down_repeat & (KEY_DOWN | KEY_UP | KEY_RIGHT | KEY_LEFT)) {
+		if (_data->cursor < 0) _data->cursor = 0;
+		if (_data->cursor > list_max) _data->cursor = list_max;
+	}
+
+	if (state.k_up & KEY_TOUCH) {
+		// Back alley button
+		if (isLeftButtonTouched(&state.pos_prev)) {
+			sc->next_scene = getBackAlleyScene();
+			return scene_push;
+		}
+		
+		// Settings button
+		if (isRightButtonTouched(&state.pos_prev)) {
+			sc->next_scene = getSettingsScene();
+			return scene_push;
+		}
+	}
+
+	if (state.k_down & KEY_B) {
+		if (_data->cursor < 0) {
+			sc->next_scene = getLoadingScene(getSwitchScene(lambda(Scene*, (void) {
+				return getHomeScene();
+			})), lambda(void, (void) {}));
+			return scene_switch;
+		} else {
+			_data->cursor = -1;
+		}
+		// _data->cursor = -1;
+	}
+
+	if (state.k_down & KEY_A) {
+		if (_data->cursor < 0) {
+			_data->cursor = 0;
+			return scene_continue;
 		}
 
-		if (state.k_up & KEY_TOUCH) {
-			// Back alley button
-			if (isLeftButtonTouched(&state.pos_prev)) {
-				sc->next_scene = getBackAlleyScene();
-				return scene_push;
-			}
-			
-			// Settings button
-			if (isRightButtonTouched(&state.pos_prev)) {
-				sc->next_scene = getSettingsScene();
-				return scene_push;
-			}
+		if (_data->cursor == 0) {
+			sc->next_scene = getLoadingScene(0, lambda(void, (void) {
+				// downloadInboxes();
+			}));
+			return scene_push;
 		}
-
-		if (state.k_down & KEY_B) {
-			if (_data->cursor < 0) {
-				sc->next_scene = getLoadingScene(getSwitchScene(lambda(Scene*, (void) {
-					return getHomeScene();
-				})), lambda(void, (void) {}));
-				return scene_switch;
-			} else {
-				_data->cursor = -1;
-			}
-			// _data->cursor = -1;
-		}
-
-		if (state.k_down & KEY_A) {
-			if (_data->cursor < 0) {
-				_data->cursor = 0;
-				return scene_continue;
-			}
-
-			switch (_data->cursor) {
-				case 0:
-					sc->next_scene = getLoadingScene(0, lambda(void, (void) {
-						// downloadInboxes();
-					}));
-					return scene_push;
-				case 1:
-					sc->next_scene = getLoadingScene(getSwitchScene(lambda(Scene*, (void) {
-						return getHomeScene();
-					})), lambda(void, (void) {}));
-					return scene_switch;
-					// sc->app_state = app_exiting;
-					// return scene_continue;
-			}
+		if (_data->cursor == 1) {
+			sc->next_scene = getLoadingScene(getSwitchScene(lambda(Scene*, (void) {
+				return getHomeScene();
+			})), lambda(void, (void) {}));
+			return scene_switch;
+			// sc->app_state = app_exiting;
+			// return scene_continue;
 		}
 	}
 	
