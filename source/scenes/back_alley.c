@@ -18,6 +18,7 @@
 
 #include "back_alley.h"
 #include "../utils.h"
+#include "../api.h"
 #include "../render.h"
 #include <stdlib.h>
 #include <time.h>
@@ -137,6 +138,7 @@ bool N(init_gamelist)(Scene* sc) {
 	CecMboxListHeader mbox_list;
 	res = cecdOpenAndRead(0, CEC_PATH_MBOX_LIST, sizeof(CecMboxListHeader), (u8*)&mbox_list);
 	if (R_FAILED(res)) return false;
+	clearIgnoredTitles(&mbox_list);
 	_data->number_games = mbox_list.num_boxes;
 	u16 title_name_utf16[50];
 	char title_name[50];
