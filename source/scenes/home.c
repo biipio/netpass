@@ -156,10 +156,6 @@ SceneResult N(process)(Scene* sc) {
 		sc->app_state = app_exiting;
 		return scene_continue;
 	}
-	if (state.k_down & KEY_SELECT) {
-		sc->next_scene = getSettingsScene();
-		return scene_push;
-	}
 	return scene_continue;
 }
 
