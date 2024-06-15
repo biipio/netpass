@@ -46,8 +46,13 @@ Scene* processScene(Scene* scene) {
 		return scene;
 	}
 
-	if (scene->app_state == app_idle)
+	if (scene->app_state == app_idle) {
 		updateInputState(scene);
+		if (scene->input_state.k_down & KEY_START) {
+			scene->app_state = app_exiting;
+			return scene_continue;
+		}
+	}
 	SceneResult res = scene->process(scene);
 	switch (res) {
 	case scene_continue:

@@ -152,10 +152,7 @@ SceneResult N(process)(Scene* sc) {
 			return scene_switch;
 		}
 	}
-	if (state.k_down & KEY_START) {
-		sc->app_state = app_exiting;
-		return scene_continue;
-	}
+	
 	return scene_continue;
 }
 

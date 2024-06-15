@@ -118,6 +118,7 @@ void N(render_bottom)(Scene* sc) {
 }
 
 void N(exit)(Scene* sc) {
+	configWrite();
 	if (_data) {
 		C2D_TextBufDelete(_data->g_staticBuf);
 		free(_data);
@@ -149,20 +150,17 @@ SceneResult N(process)(Scene* sc) {
 		if (state.k_up & KEY_TOUCH) {
 			// Back button
 			if (isRightButtonTouched(&state.pos_prev)) {
-				configWrite();
 				return scene_pop;
 			}
 		}
 
 		if (state.k_down & KEY_B) {
-			configWrite();
 			return scene_pop;
 		}
 
 		if (state.k_down & KEY_A) {
 			// "Back" is selected, exit this scene
 			if (_data->cursor == _data->number_games) {
-				configWrite();
 				return scene_pop;
 			}
 
@@ -176,11 +174,7 @@ SceneResult N(process)(Scene* sc) {
 			return scene_continue;
 		}
 	}
-	if (sc->input_state.k_down & KEY_START) {
-		configWrite();
-		sc->app_state = app_exiting;
-		return scene_continue;
-	}
+
 	return scene_continue;
 }
 

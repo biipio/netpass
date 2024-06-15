@@ -226,10 +226,7 @@ SceneResult N(process)(Scene* sc) {
 		int selected_i = _data->cursor;
 		return N(report)(sc, selected_i);
 	}
-	if (state.k_down & KEY_START) {
-		sc->app_state = app_exiting;
-		return scene_continue;
-	}
+	
 	return scene_continue;
 }
 

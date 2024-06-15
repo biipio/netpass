@@ -140,6 +140,11 @@ void N(render_bottom)(Scene* sc) {
 
 void N(exit)(Scene* sc) {
 	if (_data) {
+		if (_data->time_format_modified) {
+			configWrite();
+			_data->time_format_modified = false;
+		}
+
 		C2D_TextBufDelete(_data->g_staticBuf);
 		free(_data);
 	}
@@ -183,6 +188,7 @@ SceneResult N(process)(Scene* sc) {
 				case MENU_TIME_FORMAT:
 					if (_data->time_format_modified) {
 						configWrite();
+						_data->time_format_modified = false;
 					}
 					_data->cursor = -1;
 					_data->offset = 0;
@@ -205,6 +211,7 @@ SceneResult N(process)(Scene* sc) {
 				case MENU_TIME_FORMAT:
 					if (_data->time_format_modified) {
 						configWrite();
+						_data->time_format_modified = false;
 					}
 					_data->cursor = -1;
 					_data->offset = 0;
@@ -298,11 +305,7 @@ SceneResult N(process)(Scene* sc) {
 			}
 		}
 	}
-	if (state.k_down & KEY_START) {
-		if (_data->time_format_modified) configWrite();
-		sc->app_state = app_exiting;
-		return scene_continue;
-	}
+
 	return scene_continue;
 }
 
