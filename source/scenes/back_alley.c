@@ -183,6 +183,7 @@ void N(init)(Scene* sc) {
 	TextLangParse(&_data->g_back, _data->g_staticBuf, str_back);
 	C2D_TextParse(&_data->g_not_implemented, _data->g_staticBuf, "This is not implemented yet.");
 
+	sc->setting.fade_alpha = 0;
 	sc->setting.bg_top = bg_top_generic;
 	sc->setting.bg_bottom = bg_bottom_generic;
 	sc->setting.btn_left = ui_btn_empty;

@@ -39,6 +39,7 @@ void N(init)(Scene* sc) {
 	if (!_data) return;
 	// _data->g_staticBuf = C2D_TextBufNew(100);
 
+	sc->setting.fade_alpha = 0;
 	sc->setting.bg_top = bg_top_generic;
 	sc->setting.bg_bottom = bg_bottom_generic;
 	sc->setting.btn_left = ui_btn_empty;

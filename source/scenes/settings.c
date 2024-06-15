@@ -77,6 +77,7 @@ void N(init)(Scene* sc) {
 	TextLangParse(&_data->g_timeFormats[0], _data->g_staticBuf, str_24_hour);
 	TextLangParse(&_data->g_timeFormats[1], _data->g_staticBuf, str_12_hour);
 	
+	sc->setting.fade_alpha = 0;
 	sc->setting.bg_top = bg_top_generic;
 	sc->setting.bg_bottom = bg_bottom_generic;
 	sc->setting.btn_left = ui_btn_empty;

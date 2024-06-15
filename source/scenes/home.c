@@ -48,6 +48,7 @@ void N(init)(Scene* sc) {
 	TextLangParse(&_data->g_entries[4], _data->g_staticBuf, str_arcade);
 	TextLangParse(&_data->g_entries[5], _data->g_staticBuf, str_catcafe);
 
+	sc->setting.fade_alpha = 0;
 	sc->setting.bg_top = bg_top_home;
 	sc->setting.bg_bottom = bg_bottom_generic;
 	sc->setting.btn_left = ui_btn_left_home;

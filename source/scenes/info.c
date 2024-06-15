@@ -38,6 +38,7 @@ void N(init)(Scene* sc) {
 	TextLangParse(&_data->g_info, _data->g_staticBuf, (void*)sc->data);
 	
 	Setting popSetting = sc->pop_scene->setting;
+	sc->setting.fade_alpha = 0;
 	sc->setting.bg_top = popSetting.bg_top;
 	sc->setting.bg_bottom = popSetting.bg_bottom;
 	sc->setting.btn_left = popSetting.btn_left;
