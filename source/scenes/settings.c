@@ -39,22 +39,31 @@ typedef struct {
 	float offset;
 	int selected_language;
 	bool time_format_modified;
+	bool language_text_loaded;
 	SettingsMenu current_menu;
 } N(DataStruct);
+
+void N(save_language)(Scene* sc) {
+	int selected_lang = (_data->selected_language == -1) ? -1 : all_languages[_data->selected_language];
+	if (config.language != selected_lang) {
+		config.language = selected_lang;
+		configWrite();
+	}
+}
+
+void N(save_time_format)(Scene* sc) {
+	if (_data->time_format_modified) {
+		configWrite();
+		_data->time_format_modified = false;
+	}
+}
 
 void N(load_language_text)(Scene* sc) {
 	TextLangParse(&_data->g_languages[0], _data->g_staticBuf, str_system_language);
 	for (int i = 0; i < NUM_LANGUAGES; i++) {
 		TextLangSpecificParse(&_data->g_languages[i+1], _data->g_staticBuf, str_language, all_languages[i]);
 	}
-	_data->selected_language = -1;
-	if (config.language != -1) {
-		for (int i = 0; i < NUM_LANGUAGES; i++) {
-			if (all_languages[i] == config.language) {
-				_data->selected_language = i;
-			}
-		}
-	}
+	_data->language_text_loaded = true;
 }
 
 void N(init)(Scene* sc) {
@@ -63,8 +72,9 @@ void N(init)(Scene* sc) {
 	_data->g_staticBuf = C2D_TextBufNew(500 + 15*NUM_LANGUAGES);
 	_data->cursor = -1;
 	_data->offset = 0;
-	_data->selected_language = -2; // means uninitialized
 	_data->current_menu = MENU_DEFAULT;
+	_data->time_format_modified = false;
+	_data->language_text_loaded = false;
 	TextLangParse(&_data->g_title, _data->g_staticBuf, str_settings);
 	TextLangParse(&_data->g_entries[0], _data->g_staticBuf, str_toggle_titles);
 	TextLangParse(&_data->g_entries[1], _data->g_staticBuf, str_report_user);
@@ -76,6 +86,15 @@ void N(init)(Scene* sc) {
 
 	TextLangParse(&_data->g_timeFormats[0], _data->g_staticBuf, str_24_hour);
 	TextLangParse(&_data->g_timeFormats[1], _data->g_staticBuf, str_12_hour);
+	
+	_data->selected_language = -1;
+	if (config.language != -1) {
+		for (int i = 0; i < NUM_LANGUAGES; i++) {
+			if (all_languages[i] == config.language) {
+				_data->selected_language = i;
+			}
+		}
+	}
 	
 	sc->setting.fade_alpha = 0;
 	sc->setting.bg_top = bg_top_generic;
@@ -129,7 +148,7 @@ void N(render_bottom)(Scene* sc) {
 		// TODO: render version and mini flags if they should be visible
 		break;
 	case MENU_LANGUAGE:
-		if (_data->selected_language < -1) N(load_language_text)(sc);
+		if (!_data->language_text_loaded) N(load_language_text)(sc);
 		renderOptionButtons(_data->g_languages, NUM_LANGUAGES + 1, _data->cursor, _data->offset, -1);
 		break;
 	case MENU_TIME_FORMAT:
@@ -140,11 +159,8 @@ void N(render_bottom)(Scene* sc) {
 
 void N(exit)(Scene* sc) {
 	if (_data) {
-		if (_data->time_format_modified) {
-			configWrite();
-			_data->time_format_modified = false;
-		}
-
+		N(save_language)(sc);
+		N(save_time_format)(sc);
 		C2D_TextBufDelete(_data->g_staticBuf);
 		free(_data);
 	}
@@ -182,15 +198,13 @@ SceneResult N(process)(Scene* sc) {
 			case MENU_DEFAULT:
 				return scene_pop;
 			case MENU_LANGUAGE:
+				N(save_language)(sc);
 				_data->cursor = -1;
 				_data->offset = 0;
 				_data->current_menu = MENU_DEFAULT;
 				break;
 			case MENU_TIME_FORMAT:
-				if (_data->time_format_modified) {
-					configWrite();
-					_data->time_format_modified = false;
-				}
+				N(save_time_format)(sc);
 				_data->cursor = -1;
 				_data->offset = 0;
 				_data->current_menu = MENU_DEFAULT;
@@ -205,15 +219,13 @@ SceneResult N(process)(Scene* sc) {
 			case MENU_DEFAULT:
 				return scene_pop;
 			case MENU_LANGUAGE:
+				N(save_language)(sc);
 				_data->cursor = -1;
 				_data->offset = 0;
 				_data->current_menu = MENU_DEFAULT;
 				break;
 			case MENU_TIME_FORMAT:
-				if (_data->time_format_modified) {
-					configWrite();
-					_data->time_format_modified = false;
-				}
+				N(save_time_format)(sc);
 				_data->cursor = -1;
 				_data->offset = 0;
 				_data->current_menu = MENU_DEFAULT;
@@ -224,21 +236,6 @@ SceneResult N(process)(Scene* sc) {
 		}
 	}
 
-		// if (_data->cursor == 1) {
-		// 	int old_lang = _data->selected_language;
-		// 	_data->selected_language += (kDown & KEY_RIGHT && 1) - (kDown & KEY_LEFT && 1);
-		// 	if (_data->selected_language < -1) _data->selected_language = -1;
-		// 	if (_data->selected_language > NUM_LANGUAGES-1) _data->selected_language = NUM_LANGUAGES-1;
-		// 	if (old_lang != _data->selected_language) {
-		// 		config.language = _data->selected_language == -1 ? -1 : all_languages[_data->selected_language];
-		// 		configWrite();
-		// 	}
-		// }
-		if (state.k_down & KEY_A) {
-			if (_data->cursor < 0) {
-				_data->cursor = 0;
-				return scene_continue;
-			}
 	if (state.k_down & KEY_A) {
 		if (_data->cursor < 0) {
 			_data->cursor = 0;
@@ -299,6 +296,7 @@ SceneResult N(process)(Scene* sc) {
 		
 		case MENU_LANGUAGE:
 		{
+			_data->selected_language = _data->cursor - 1;
 			break;
 		}
 
