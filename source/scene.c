@@ -50,7 +50,7 @@ Scene* processScene(Scene* scene) {
 		updateInputState(scene);
 		if (scene->input_state.k_down & KEY_START) {
 			scene->app_state = app_exiting;
-			return scene_continue;
+			return scene;
 		}
 	}
 	SceneResult res = scene->process(scene);
