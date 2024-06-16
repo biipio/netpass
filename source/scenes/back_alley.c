@@ -241,7 +241,7 @@ SceneResult N(process)(Scene* sc) {
 
 	// Update cursor
 	_data->cursor += (state.k_down_repeat & KEY_DOWN && 1) - (state.k_down_repeat & KEY_UP && 1);
-	_data->cursor += (state.k_down_repeat & KEY_RIGHT && 1)*10 - (state.k_down_repeat & KEY_LEFT && 1)*10;
+	_data->cursor += (state.k_down_repeat & KEY_RIGHT && 1)*4 - (state.k_down_repeat & KEY_LEFT && 1)*4;
 	int list_max = _data->show_games ? (_data->number_games - 1) : 0;
 	if (state.k_down & (KEY_DOWN | KEY_UP)) {
 		if (_data->cursor < 0) _data->cursor = list_max;
