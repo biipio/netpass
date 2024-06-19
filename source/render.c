@@ -18,10 +18,10 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <time.h>
 #include "render.h"
 #include "strings.h"
 #include "config.h"
+#include "datetime.h"
 
 static C2D_TextBuf g_dynamicBuf;
 
@@ -209,15 +209,14 @@ void renderTopBar() {
 
 	renderImage(&spr_misc, ui_misc_bar, 0, 0, 0);
 
-	// https://github.com/devkitPro/3ds-examples/blob/master/time/rtc/source/main.c
-	time_t unixTime = time(NULL);
-    struct tm* ts = gmtime((const time_t *)&unixTime);
+	DateTime dt;
+    getSystemTime(&dt);
 
     // Date
-	const char* monthStr = _s(*months[ts->tm_mon]);
-	const char* weekdayStr = _s(*weekdays[ts->tm_wday]);
+	const char* monthStr = _s(*months[dt.month - 1]);
+	const char* weekdayStr = _s(*weekdays[dt.weekday]);
 	char dateStr[25];
-	snprintf(dateStr, 25, "%s, %s %d", weekdayStr, monthStr, ts->tm_mday);
+	snprintf(dateStr, 25, "%s, %s %d", weekdayStr, monthStr, dt.day);
 
 	C2D_Text dateText;
 	C2D_TextParse(&dateText, g_dynamicBuf, dateStr);
@@ -227,11 +226,11 @@ void renderTopBar() {
 	char timeStr[9];
 	switch (config.time_format) {
 	case 0: // 24 hour
-		snprintf(timeStr, 6, "%02u:%02u", ts->tm_hour%25, ts->tm_min%61);
+		snprintf(timeStr, 6, "%02u:%02u", dt.hour%25, dt.minute%61);
 		break;
 	case 1: // 12 hour
-		char* format = ts->tm_hour > 12 ? "%2u:%02u PM" : "%2u:%02u AM";
-		snprintf(timeStr, 9, format, ((ts->tm_hour + 11) % 12) + 1, ts->tm_min);
+		char* format = dt.hour > 12 ? "%2u:%02u PM" : "%2u:%02u AM";
+		snprintf(timeStr, 9, format, ((dt.hour + 11) % 12) + 1, dt.minute);
 		break;
 	}
 

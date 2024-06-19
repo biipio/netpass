@@ -17,7 +17,6 @@
  */
 
 #include "datetime.h"
-
 #include <3ds/types.h>
 #include <3ds/result.h>
 #include <3ds/srv.h>
