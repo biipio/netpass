@@ -34,6 +34,7 @@ int main() {
 	amInit();
 	nsInit();
 	aptInit();
+	mcuHwcInit();
 	ptmuInit();
 	// consoleInit(GFX_BOTTOM, NULL);
 	printf("Starting NetPass v%d.%d.%d\n", _VERSION_MAJOR_, _VERSION_MINOR_, _VERSION_MICRO_);
@@ -130,6 +131,7 @@ int main() {
 	//curlExit();
 	romfsExit();
 	ptmuExit();
+	mcuHwcExit();
 	aptExit();
 	nsExit();
 	amExit();

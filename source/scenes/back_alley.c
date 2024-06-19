@@ -20,8 +20,8 @@
 #include "../utils.h"
 #include "../api.h"
 #include "../render.h"
+#include "../datetime.h"
 #include <stdlib.h>
-#include <time.h>
 #define N(x) scenes_back_alley_namespace_##x
 #define _data ((N(DataStruct)*)sc->d)
 #define MAX_PRICE 10
@@ -120,14 +120,14 @@ bool N(init_playcoins)(Scene* sc) {
 	}
 	fclose(f);
 
-	time_t t = time(NULL);
-	struct tm tm = *localtime(&t);
-	if (tm.tm_year + 1900 != config.year || tm.tm_mon + 1 != config.month || tm.tm_mday != config.day) {
+	DateTime dt;
+	getRtcTime(&dt);
+	if (dt.year != config.year || dt.month != config.month || dt.day != config.day) {
 		// our config is from the past day, time to set things up for the new day!
 		config.price = 0;
-		config.year = tm.tm_year + 1900;
-		config.month = tm.tm_mon + 1;
-		config.day = tm.tm_mday;
+		config.year = dt.year;
+		config.month = dt.month;
+		config.day = dt.day;
 		configWrite();
 	}
 	return true;
