@@ -1,10 +1,10 @@
-str_loading: "Laden    "
-str_libcurl_error: "libCURL Fehler (%d): %s"
+str_loading: "Lade    "
+str_libcurl_error: "libCURL-Fehler (%d): %s"
 str_libcurl_date_and_time: 'Stelle sicher, dass Systemzeit und -datum richtig eingestellt
   sind!'
-str_httpstatus_error: 'HTTP Status Code %d'
-str_3ds_error: '3DS Fehler Code %08lx'
-str_at_home: 'Du bist zuhause.'
+str_httpstatus_error: 'HTTP-Statuscode %d'
+str_3ds_error: '3DS-Fehlercode %08lx'
+str_at_home: 'Du bist zu Hause.'
 str_goto_train_station: 'Gehe zum Bahnhof'
 str_at_train_station: 'Du bist am Bahnhof.'
 str_goto_plaza: 'Gehe zum Plaza'
@@ -24,16 +24,17 @@ str_at_beach: Du bist am Strand.
 str_goto_arcade: Gehe zur Spielhalle
 str_at_arcade: Du bist in der Spielhalle.
 str_at_catcafe: Du bist im Katzencafé.
-str_no_location_twice: Du kannst denselben Ort nicht zweimal hintereinander betreten!
+str_no_location_twice: Du kannst nicht zweimal hintereinander zum selben Ort gehen!
 str_goto_catcafe: Gehe zum Katzencafé
 str_report_user_hint: Melde "%s"
 str_cancel: Abbrechen
 str_submit: Absenden
-str_report_user: Benutzer melden
-str_back_alley: Hintergasse
-str_back_alley_message: Lass uns noch ein paar Pässe holen
-str_back_alley_pay: Kaufe einen Pass {playcoin}%d
+str_report_user: Einen Benutzer melden
+str_back_alley: Seitengasse
+str_back_alley_message: Lass uns ein paar Begegnungen holen
+str_back_alley_pay: Kaufe eine Begegnung {playcoin}%d
 str_toggle_titles: Spiele Ein-/Ausschalten
-str_toggle_titles_message: Drücke {a_button} um den Austausch von Pässen zu aktivieren/deaktivieren.
+str_toggle_titles_message: Drücke {a_button}, um den Austausch von Begegnungen ein-/auszuschalten.
 str_toggle_titles_on: (AN)
 str_toggle_titles_off: (AUS)
+str_check_inboxes: Eingänge prüfen

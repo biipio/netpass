@@ -33,3 +33,8 @@ str_submit: Подтвердить
 str_back_alley_message: Урвём-ка ещё чуток "пассов"
 str_back_alley: Переулок
 str_back_alley_pay: Купить "пасс" {playcoin}%d
+str_check_inboxes: Проверить входящие данные
+str_toggle_titles: Переключить игры
+str_toggle_titles_on: (ВКЛЮЧЕНО)
+str_toggle_titles_off: (ВЫКЛЮЧЕНО)
+str_toggle_titles_message: Нажмите {a_button}, чтобы начать или остановить обмен "пассами".

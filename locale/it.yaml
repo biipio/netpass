@@ -33,6 +33,8 @@ str_submit: Invia
 str_back_alley: Vicolo
 str_back_alley_pay: Compra un pass {playcoin}%d
 str_back_alley_message: Cerca altri pass
-str_toggle_titles_message: Premi {un_tasto} per iniziare o smettere di scambiare i
-  pass
-str_check_inboxes: Controlla gli inboxes
+str_toggle_titles_message: Premi {a_button} per iniziare o smettere di scambiare pass.
+str_check_inboxes: Controlla la posta in arrivo
+str_toggle_titles_on: (ON)
+str_toggle_titles_off: (OFF)
+str_toggle_titles: Giochi
