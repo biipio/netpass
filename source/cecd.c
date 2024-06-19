@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "datetime.c"
+#include "datetime.h"
 
 #include <3ds/types.h>
 #include <3ds/result.h>
