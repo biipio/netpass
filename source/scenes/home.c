@@ -28,10 +28,43 @@ typedef struct {
 	C2D_TextBuf g_staticBuf;
 	C2D_Text g_home;
 	C2D_Text g_choose;
-	C2D_Text g_entries[NUM_LOCATIONS];
+	C2D_Text g_locations[NUM_LOCATIONS];
 	int cursor;
 	float offset;
 } N(DataStruct);
+
+static int location_random[NUM_LOCATIONS];
+
+static inline int location_real_to_random(int real) {
+	for (size_t i = 0; i < NUM_LOCATIONS; i++)
+		if (location_random[i] == real) return i;
+	
+	return -1;
+}
+
+void N(randomize_locations)(Scene* sc) {
+	psInit();
+	
+	for (size_t i = 0; i < NUM_LOCATIONS; i++) {
+		location_random[i] = i;
+	}
+
+	u8 rand;
+	for (size_t i = 0; i < NUM_LOCATIONS; i++) {
+		PS_GenerateRandomBytes(&rand, 8);
+		u8 target = rand % NUM_LOCATIONS;
+
+		int temp = location_random[i];
+		location_random[i] = location_random[target];
+		location_random[target] = temp;
+
+		C2D_Text tempText = _data->g_locations[i];
+		_data->g_locations[i] = _data->g_locations[target];
+		_data->g_locations[target] = tempText;
+	}
+
+	psExit();
+}
 
 void N(init)(Scene* sc) {
 	sc->d = malloc(sizeof(N(DataStruct)));
@@ -41,12 +74,14 @@ void N(init)(Scene* sc) {
 	_data->offset = 0;
 	TextLangParse(&_data->g_home, _data->g_staticBuf, str_home);
 	TextLangParse(&_data->g_choose, _data->g_staticBuf, str_choose_location);
-	TextLangParse(&_data->g_entries[0], _data->g_staticBuf, str_train_station);
-	TextLangParse(&_data->g_entries[1], _data->g_staticBuf, str_plaza);
-	TextLangParse(&_data->g_entries[2], _data->g_staticBuf, str_mall);
-	TextLangParse(&_data->g_entries[3], _data->g_staticBuf, str_beach);
-	TextLangParse(&_data->g_entries[4], _data->g_staticBuf, str_arcade);
-	TextLangParse(&_data->g_entries[5], _data->g_staticBuf, str_catcafe);
+	TextLangParse(&_data->g_locations[0], _data->g_staticBuf, str_train_station);
+	TextLangParse(&_data->g_locations[1], _data->g_staticBuf, str_plaza);
+	TextLangParse(&_data->g_locations[2], _data->g_staticBuf, str_mall);
+	TextLangParse(&_data->g_locations[3], _data->g_staticBuf, str_beach);
+	TextLangParse(&_data->g_locations[4], _data->g_staticBuf, str_arcade);
+	TextLangParse(&_data->g_locations[5], _data->g_staticBuf, str_catcafe);
+
+	N(randomize_locations)(sc);
 
 	sc->setting.fade_alpha = 0;
 	sc->setting.bg_top = bg_top_home;
@@ -73,7 +108,7 @@ void N(render_top)(Scene* sc) {
 void N(render_bottom)(Scene* sc) {
 	if (!_data) return;
 	
-	renderOptionButtons(_data->g_entries, NUM_LOCATIONS, _data->cursor, _data->offset, config.last_location);
+	renderOptionButtons(_data->g_locations, NUM_LOCATIONS, _data->cursor, _data->offset, location_real_to_random(config.last_location));
 }
 
 void N(exit)(Scene* sc) {
@@ -101,6 +136,8 @@ SceneResult N(process)(Scene* sc) {
 		if (_data->cursor > list_max) _data->cursor = list_max;
 	}
 
+	int real_cursor_location = (_data->cursor < 0) ? -1 : location_random[_data->cursor];
+
 	// Update offset
 	if (_data->cursor >= 0) {
 		// TODO: treat as pixel, not list index
@@ -109,7 +146,7 @@ SceneResult N(process)(Scene* sc) {
 	}
 	
 	// Change background depending on currently hovered location
-	sc->setting.bg_top = _data->cursor + 2;
+	sc->setting.bg_top = real_cursor_location + 2;
 	sc->setting.bg_bottom = bg_bottom_generic;
 
 	if (state.k_up & KEY_TOUCH) {
@@ -137,11 +174,11 @@ SceneResult N(process)(Scene* sc) {
 		}
 
 		// load location scene
-		if (_data->cursor == config.last_location) {
+		if (real_cursor_location == config.last_location) {
 			sc->next_scene = getInfoScene(str_no_location_twice);
 			return scene_push;
 		}
-		location = _data->cursor;
+		location = real_cursor_location;
 
 		sc->next_scene = getLoadingScene(getSwitchScene(lambda(Scene*, (void) {
 		// 	if (R_FAILED(N(location_res))) return getHomeScene();
