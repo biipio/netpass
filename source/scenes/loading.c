@@ -31,7 +31,6 @@ typedef struct {
 void N(threadFn)(Scene* sc) {
 	((void(*)(void))(sc->data))();
 	_data->thread_done = true;
-	sc->app_state = app_idle;
 }
 
 void N(init)(Scene* sc) {

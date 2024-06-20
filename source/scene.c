@@ -35,7 +35,8 @@ void updateInputState(Scene* scene) {
 
 Scene* processScene(Scene* scene) {
 	if (scene->app_state == app_exiting) {
-		if (scene->setting.fade_alpha >= FADE_ALPHA_LIMIT) {
+		updateInputState(scene);
+		if ((scene->setting.fade_alpha >= FADE_ALPHA_LIMIT) || (scene->input_state.k_down_repeat & KEY_START)) {
 			scene->exit(scene);
 			if (scene->need_free) {
 				free(scene);
@@ -49,6 +50,7 @@ Scene* processScene(Scene* scene) {
 	if (scene->app_state == app_idle) {
 		updateInputState(scene);
 		if (scene->input_state.k_down & KEY_START) {
+			hidSetRepeatParameters(18, 12);
 			scene->app_state = app_exiting;
 			return scene;
 		}
