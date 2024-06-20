@@ -65,7 +65,7 @@ void N(init)(Scene* sc) {
 void N(render_top)(Scene* sc) {
 	if (!_data) return;
 	
-	C2D_DrawText(&_data->g_location, C2D_WithColor, 12, SCREEN_TOP_HEIGHT - 40, 0, 1.2, 1.2, clr_white);
+	renderTextWithOutline(&_data->g_location, 0, 12, SCREEN_TOP_HEIGHT - 40, 0, 1.2f, 1.2f, 1.75f, clr_white, clr_netpass_green);
 }
 
 void N(render_bottom)(Scene* sc) {

@@ -132,14 +132,14 @@ void renderOptionButton(C2D_Text* text, float x, float y, float z, bool isFocus,
 	float text_x = x + button_width/2;
 	float text_y = y + (button_height - text_height)/2;
 
-	u32 flags = C2D_AlignCenter | C2D_WithColor;
-	u32 clr = clr_netpass_green;
+	u32 textClr = clr_white;
+	u32 outlineClr = clr_netpass_green;
 	if (isGrayedOut) {
-		clr = clr_gray;
+		outlineClr = clr_gray;
 	} else if (isFocus) {
-		clr = clr_focus_blue;
+		outlineClr = clr_focus_blue;
 	}
-	C2D_DrawText(text, flags, text_x, text_y, z, scale_x, scale_y, clr);
+	renderTextWithOutline(text, C2D_AlignCenter, text_x, text_y, z, scale_x, scale_y, 1.6f, textClr, outlineClr);
 }
 
 void renderOptionButtons(C2D_Text* entries, size_t n, int cursor, float offset, int grayedOut) {
@@ -179,6 +179,28 @@ void renderOptionButtons(C2D_Text* entries, size_t n, int cursor, float offset, 
 
 void renderLogo(float x, float y, float z) {
     renderImage(&spr_misc, ui_misc_logo, x, y, 0);
+}
+
+void renderTextWithOutline(C2D_Text* text, u32 flags, float x, float y, float z, float scaleX, float scaleY, float outlineWidth, u32 textClr, u32 outlineClr) {
+	// I hate this so much this is so stupid
+
+	float xPos = x + outlineWidth;
+	float xNeg = x - outlineWidth;
+	float yPos = y + outlineWidth;
+	float yNeg = y - outlineWidth;
+
+	// Outline
+	C2D_DrawText(text, C2D_WithColor | flags, xPos, y, z, scaleX, scaleY, outlineClr);
+	C2D_DrawText(text, C2D_WithColor | flags, xPos, yPos, z, scaleX, scaleY, outlineClr);
+	C2D_DrawText(text, C2D_WithColor | flags, x, yPos, z, scaleX, scaleY, outlineClr);
+	C2D_DrawText(text, C2D_WithColor | flags, xNeg, yPos, z, scaleX, scaleY, outlineClr);
+	C2D_DrawText(text, C2D_WithColor | flags, xNeg, y, z, scaleX, scaleY, outlineClr);
+	C2D_DrawText(text, C2D_WithColor | flags, xNeg, yNeg, z, scaleX, scaleY, outlineClr);
+	C2D_DrawText(text, C2D_WithColor | flags, x, yNeg, z, scaleX, scaleY, outlineClr);
+	C2D_DrawText(text, C2D_WithColor | flags, xPos, yNeg, z, scaleX, scaleY, outlineClr);
+
+	// Actual text
+    C2D_DrawText(text, C2D_WithColor | flags, x, y, z, scaleX, scaleY, textClr);
 }
 
 // void renderUser(ReportListEntry* user) {

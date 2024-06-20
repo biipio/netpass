@@ -98,10 +98,19 @@ void N(render_top)(Scene* sc) {
 	if (!_data) return;
 
 	if (_data->cursor < 0) {
-		C2D_DrawText(&_data->g_home, C2D_WithColor, 12, SCREEN_TOP_HEIGHT - 40, 0, 1.2f, 1.2f, clr_white);
+		renderTextWithOutline(
+			&_data->g_home, 0,
+			12, SCREEN_TOP_HEIGHT - 40, 0,
+			1.2f, 1.2f, 1.75f,
+			clr_white, clr_netpass_green
+		);
 	} else {
-		u32 flags = C2D_AlignCenter | C2D_WithColor;
-		C2D_DrawText(&_data->g_choose, flags, SCREEN_TOP_WIDTH/2, SCREEN_TOP_HEIGHT - 40, 0, 1.2f, 1.2f, clr_white);
+		renderTextWithOutline(
+			&_data->g_choose, C2D_AlignCenter,
+			SCREEN_TOP_WIDTH/2, SCREEN_TOP_HEIGHT - 40, 0,
+			1.2f, 1.2f, 1.75f,
+			clr_white, clr_netpass_green
+		);
 	}
 }
 

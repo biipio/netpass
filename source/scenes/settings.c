@@ -108,10 +108,8 @@ void N(init)(Scene* sc) {
 void N(render_top)(Scene* sc) {
 	if (!_data) return;
 	
-	C2D_DrawText(&_data->g_title, C2D_WithColor, 12, SCREEN_TOP_HEIGHT - 40, 0, 1.2, 1.2, clr_white);
+	renderTextWithOutline(&_data->g_title, 0, 12, SCREEN_TOP_HEIGHT - 40, 0, 1.2f, 1.2f, 1.75f, clr_white, clr_netpass_green);
 	
-	// C2D_DrawText(&_data->g_languages[_data->selected_language + 1], C2D_AlignLeft, 35 + _data->lang_width, 35 + 25, 0, 1, 1);
-
 	// Trans flag
 	{
 		float x = SCREEN_TOP_WIDTH - 90;
