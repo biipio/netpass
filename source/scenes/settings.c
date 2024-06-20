@@ -212,7 +212,7 @@ SceneResult N(process)(Scene* sc) {
 	}
 	
 	if (state.k_down & KEY_B) {
-		if (_data->cursor < 0) {
+		if (_data->cursor < 0 || (_data->current_menu == MENU_DEFAULT && _data->cursor == NUM_ENTRIES)) {
 			switch (_data->current_menu) {
 			case MENU_DEFAULT:
 				return scene_pop;
