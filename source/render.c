@@ -145,14 +145,14 @@ void renderOptionButton(C2D_Text* text, float x, float y, float z, bool isFocus,
 void renderOptionButtons(C2D_Text* entries, size_t n, int cursor, float offset, int grayedOut) {
     // TODO: properly account for offset being a pixel thing rather than list index
 
-	const int x = (SCREEN_BOTTOM_WIDTH - 258)/2;
+	const int x = CENTER_BOTTOM_X(258);
 	const int z = 0;
 	const int gap = 10;
 	const int btnHeight = 35;
 
 	// Calculate starting y
 	int totalHeight = (btnHeight * n) + (gap * (n - 1));
-	int y = (SCREEN_BOTTOM_HEIGHT - totalHeight)/2;
+	int y = CENTER_BOTTOM_Y(totalHeight);
 
 	for (size_t i = 0; i < n; i++) {
 		if (offset > i + 1) continue;

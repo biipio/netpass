@@ -28,6 +28,12 @@
 #define SCREEN_BOTTOM_WIDTH 320
 #define SCREEN_BOTTOM_HEIGHT 240
 
+#define CENTER_TOP_X(img_width) ((SCREEN_TOP_WIDTH - img_width) / 2)
+#define CENTER_TOP_Y(img_height) ((SCREEN_TOP_HEIGHT - img_height) / 2)
+
+#define CENTER_BOTTOM_X(img_width) ((SCREEN_BOTTOM_WIDTH - img_width) / 2)
+#define CENTER_BOTTOM_Y(img_height) ((SCREEN_BOTTOM_HEIGHT - img_height) / 2)
+
 typedef enum {
 	bg_top_generic,
 	bg_top_home,
