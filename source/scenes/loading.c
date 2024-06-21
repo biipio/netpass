@@ -22,10 +22,13 @@
 #define N(x) scenes_loading_namespace_##x
 #define _data ((N(DataStruct)*)sc->d)
 
+static bool first_done = false;
+
 typedef struct {
 	// C2D_TextBuf g_staticBuf;
 	Thread thread;
 	bool thread_done;
+	bool is_first;
 } N(DataStruct);
 
 void N(threadFn)(Scene* sc) {
@@ -47,13 +50,19 @@ void N(init)(Scene* sc) {
 	_data->thread_done = false;
 	_data->thread = threadCreate((void(*)(void*))N(threadFn), sc, 8*1024, main_thread_prio()-1, -2, false);
 
+	_data->is_first = !first_done;
+	if (!first_done) first_done = true;
+
 	sc->app_state = app_loading;
 }
 
 void N(render_top)(Scene* sc) {
 	if (!_data) return;
 
-    renderImage(&spr_misc, ui_misc_logo, CENTER_TOP_X(300), CENTER_TOP_Y(86), 0);
+	if (_data->is_first) {
+		// Render logo
+    	renderImage(&spr_misc, ui_misc_logo, CENTER_TOP_X(300), CENTER_TOP_Y(86), 0);
+	}
 	// C2D_DrawText(&_data->g_loading, C2D_AlignLeft, _data->text_x, _data->text_y, 0, 1, 1);
 	// C2D_DrawText(&_data->g_dots, C2D_AlignLeft, _data->text_x + _data->text_width - 35 + 10*(time(NULL)%2), _data->text_y, 0, 1, 1);
 }
