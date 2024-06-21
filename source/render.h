@@ -67,6 +67,8 @@ typedef enum {
 	ui_misc_speech_bubble
 } UI_Misc;
 
+extern C2D_SpriteSheet spr_misc;
+
 extern u32 clr_white;
 extern u32 clr_gray;
 extern u32 clr_black;
@@ -76,8 +78,8 @@ extern u32 clr_focus_blue;
 void renderInit(void);
 void renderExit(void);
 
+void renderImage(C2D_SpriteSheet* spr, size_t index, float x, float y, float z);
 void renderOptionButtons(C2D_Text* entries, size_t n, int cursor, float offset, int grayedOut);
-void renderLogo(float x, float y, float z);
 void renderTextWithOutline(C2D_Text* text, u32 flags, float x, float y, float z, float scaleX, float scaleY, float outlineWidth, u32 textClr, u32 outlineClr);
 
 void renderScene(Scene* scene);

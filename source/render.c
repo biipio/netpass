@@ -34,7 +34,7 @@ static C2D_SpriteSheet spr_bg_bottom;
 static C2D_SpriteSheet spr_btn;
 static C2D_SpriteSheet spr_wifi;
 static C2D_SpriteSheet spr_battery;
-static C2D_SpriteSheet spr_misc;
+C2D_SpriteSheet spr_misc;
 
 static C2D_Image img_btn_text;
 
@@ -175,10 +175,6 @@ void renderOptionButtons(C2D_Text* entries, size_t n, int cursor, float offset, 
 			renderImage(&spr_misc, ui_misc_lower_arrow, 0, SCREEN_BOTTOM_HEIGHT - 40, 0);
 		}
 	}
-}
-
-void renderLogo(float x, float y, float z) {
-    renderImage(&spr_misc, ui_misc_logo, x, y, 0);
 }
 
 void renderTextWithOutline(C2D_Text* text, u32 flags, float x, float y, float z, float scaleX, float scaleY, float outlineWidth, u32 textClr, u32 outlineClr) {

@@ -53,7 +53,7 @@ void N(init)(Scene* sc) {
 void N(render_top)(Scene* sc) {
 	if (!_data) return;
 
-	renderLogo((SCREEN_TOP_WIDTH - 300)/2, (SCREEN_TOP_HEIGHT - 86)/2, 0);
+    renderImage(&spr_misc, ui_misc_logo, CENTER_TOP_X(300), CENTER_TOP_Y(86), 0);
 	// C2D_DrawText(&_data->g_loading, C2D_AlignLeft, _data->text_x, _data->text_y, 0, 1, 1);
 	// C2D_DrawText(&_data->g_dots, C2D_AlignLeft, _data->text_x + _data->text_width - 35 + 10*(time(NULL)%2), _data->text_y, 0, 1, 1);
 }
