@@ -38,30 +38,6 @@ C2D_SpriteSheet spr_misc;
 
 static C2D_Image img_btn_text;
 
-static LanguageString* months[12] = {
-	&str_january,
-	&str_february,
-	&str_march,
-	&str_april,
-	&str_may,
-	&str_june,
-	&str_july,
-	&str_august,
-	&str_september,
-	&str_october,
-	&str_november,
-	&str_december
-};
-static LanguageString* weekdays[7] = {
-	&str_sunday,
-	&str_monday,
-	&str_tuesday,
-	&str_wednesday,
-	&str_thursday,
-	&str_friday,
-	&str_saturday
-};
-
 u32 clr_white;
 u32 clr_gray;
 u32 clr_black;
@@ -82,7 +58,7 @@ void renderInit(void) {
 	spr_battery = C2D_SpriteSheetLoad("romfs:/gfx/battery.t3x");
 	spr_misc = C2D_SpriteSheetLoad("romfs:/gfx/misc.t3x");
 
-    img_btn_text = C2D_SpriteSheetGetImage(spr_btn, ui_btn_text);
+	img_btn_text = C2D_SpriteSheetGetImage(spr_btn, ui_btn_text);
 
 	clr_white = C2D_Color32(0xFF, 0xFF, 0xFF, 0xFF);
 	clr_gray = C2D_Color32(0x90, 0x90, 0x90, 0xFF);
@@ -110,13 +86,13 @@ void renderImage(C2D_SpriteSheet* spr, size_t index, float x, float y, float z) 
 }
 
 void renderOptionButton(C2D_Text* text, float x, float y, float z, bool isFocus, bool isGrayedOut) {
-    if (isGrayedOut) {
-        C2D_ImageTint tint_gray;
-        C2D_PlainImageTint(&tint_gray, clr_gray, 0.25f);
-        C2D_DrawImageAt(img_btn_text, x, y, z, &tint_gray, 1, 1);
-    } else {
-    	C2D_DrawImageAt(img_btn_text, x, y, z, NULL, 1, 1);
-    }
+	if (isGrayedOut) {
+		C2D_ImageTint tint_gray;
+		C2D_PlainImageTint(&tint_gray, clr_gray, 0.25f);
+		C2D_DrawImageAt(img_btn_text, x, y, z, &tint_gray, 1, 1);
+	} else {
+		C2D_DrawImageAt(img_btn_text, x, y, z, NULL, 1, 1);
+	}
 	if (isFocus) {
 		renderImage(&spr_btn, ui_btn_text_selected, x - 5, y - 4, z);
 	}
@@ -143,7 +119,7 @@ void renderOptionButton(C2D_Text* text, float x, float y, float z, bool isFocus,
 }
 
 void renderOptionButtons(C2D_Text* entries, size_t n, int cursor, float offset, int grayedOut) {
-    // TODO: properly account for offset being a pixel thing rather than list index
+	// TODO: properly account for offset being a pixel thing rather than list index
 
 	const int x = CENTER_BOTTOM_X(258);
 	const int z = 0;
@@ -196,7 +172,7 @@ void renderTextWithOutline(C2D_Text* text, u32 flags, float x, float y, float z,
 	C2D_DrawText(text, C2D_WithColor | flags, xPos, yNeg, z, scaleX, scaleY, outlineClr);
 
 	// Actual text
-    C2D_DrawText(text, C2D_WithColor | flags, x, y, z, scaleX, scaleY, textClr);
+	C2D_DrawText(text, C2D_WithColor | flags, x, y, z, scaleX, scaleY, textClr);
 }
 
 // void renderUser(ReportListEntry* user) {
@@ -222,15 +198,39 @@ void renderTextWithOutline(C2D_Text* text, u32 flags, float x, float y, float z,
 // }
 
 void renderTopBar() {
+	static LanguageString* months[12] = {
+		&str_january,
+		&str_february,
+		&str_march,
+		&str_april,
+		&str_may,
+		&str_june,
+		&str_july,
+		&str_august,
+		&str_september,
+		&str_october,
+		&str_november,
+		&str_december
+	};
+	static LanguageString* weekdays[7] = {
+		&str_sunday,
+		&str_monday,
+		&str_tuesday,
+		&str_wednesday,
+		&str_thursday,
+		&str_friday,
+		&str_saturday
+	};
+
 	const float y = 2;
 	const float z = 0;
 
 	renderImage(&spr_misc, ui_misc_bar, 0, 0, 0);
 
 	DateTime dt;
-    getSystemTime(&dt);
+	getSystemTime(&dt);
 
-    // Date
+	// Date
 	const char* monthStr = _s(*months[dt.month - 1]);
 	const char* weekdayStr = _s(*weekdays[dt.weekday]);
 	char dateStr[25];
@@ -240,7 +240,7 @@ void renderTopBar() {
 	C2D_TextParse(&dateText, g_dynamicBuf, dateStr);
 	C2D_DrawText(&dateText, C2D_WithColor, 3, y, z, 0.5f, 0.5f, clr_white);
 
-    // Time
+	// Time
 	char timeStr[9];
 	switch (config.time_format) {
 	case 0: // 24 hour
@@ -256,10 +256,10 @@ void renderTopBar() {
 	C2D_TextParse(&timeText, g_dynamicBuf, timeStr);
 	C2D_DrawText(&timeText, C2D_AlignCenter | C2D_WithColor, SCREEN_TOP_WIDTH / 2, y, z, 0.5f, 0.5f, clr_white);
 
-    // Wifi
+	// Wifi
 	renderImage(&spr_wifi, osGetWifiStrength(), SCREEN_TOP_WIDTH - 57, y, z);
 
-    // Battery
+	// Battery
 	u8 index;
 	u8 batteryIsCharging;
 	PTMU_GetBatteryChargeState(&batteryIsCharging);
@@ -273,8 +273,8 @@ void renderTopBar() {
 }
 
 void renderTopScreen(Scene* scene) {
-    Setting setting = scene->setting;
-    
+	Setting setting = scene->setting;
+	
 	// Render background
 	if (C2D_SpriteSheetCount(spr_bg_top) <= setting.bg_top) {
 		setting.bg_top = bg_top_generic;
@@ -298,7 +298,7 @@ void renderTopScreen(Scene* scene) {
 	scene->render_top(scene);
 	
 	// Render top bar
-    renderTopBar();
+	renderTopBar();
 
 	// Render fade if necessary
 	if (scene->app_state == app_exiting) {
@@ -308,7 +308,7 @@ void renderTopScreen(Scene* scene) {
 }
 
 void renderBottomScreen(Scene* scene) {
-    Setting setting = scene->setting;
+	Setting setting = scene->setting;
 
 	// Render background
 	if (C2D_SpriteSheetCount(spr_bg_bottom) <= setting.bg_bottom) {
@@ -336,12 +336,12 @@ void renderBottomScreen(Scene* scene) {
 
 void renderScene(Scene* scene) {
 	C2D_TextBufClear(g_dynamicBuf);
-    
+	
 	C2D_TargetClear(top, clr_white);
 	C2D_SceneBegin(top);
-    renderTopScreen(scene);
-    
+	renderTopScreen(scene);
+	
 	C2D_TargetClear(bottom, clr_white);
 	C2D_SceneBegin(bottom);
-    renderBottomScreen(scene);
+	renderBottomScreen(scene);
 }
