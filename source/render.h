@@ -41,7 +41,8 @@ typedef enum {
 	bg_top_plaza,
 	bg_top_mall,
 	bg_top_beach,
-	bg_top_arcade
+	bg_top_arcade,
+	bg_top_cat_cafe
 } BackgroundTop;
 typedef enum {
 	bg_bottom_generic
