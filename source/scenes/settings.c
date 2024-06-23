@@ -253,7 +253,7 @@ SceneResult N(process)(Scene* sc) {
 			}
 			if (_data->cursor == 2) {
 				_data->cursor = _data->selected_language + 1;
-				_data->offset = 0;
+				_data->offset = _data->selected_language + 1;
 				_data->current_menu = MENU_LANGUAGE;
 			}
 			if (_data->cursor == 3) {
