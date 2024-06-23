@@ -1,7 +1,9 @@
 --atlas -f rgba -z auto
 button/btn_text.png
 button/btn_text_selected.png
+button/btn_left_help.png
 button/btn_left_home.png
 button/btn_left_back_alley.png
+button/btn_left_close.png
 button/btn_right_settings.png
 button/btn_right_close.png

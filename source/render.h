@@ -52,8 +52,10 @@ typedef enum {
 	ui_btn_empty = -1,
 	ui_btn_text,
 	ui_btn_text_selected,
+	ui_btn_left_help,
 	ui_btn_left_home,
 	ui_btn_left_back_alley,
+	ui_btn_left_close,
 	ui_btn_right_settings,
 	ui_btn_right_close
 } UI_Button;
