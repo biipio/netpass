@@ -18,6 +18,7 @@
 
 #include "info.h"
 #include "../render.h"
+#include "../special_chars.h"
 #include <stdlib.h>
 #define N(x) scenes_scene_namespace_##x
 #define _data ((N(DataStruct)*)sc->d)
@@ -29,6 +30,8 @@
 typedef struct {
 	C2D_TextBuf g_staticBuf;
 	C2D_Text g_info;
+	C2D_Text g_aButton;
+	C2D_Image g_infoBox;
 } N(DataStruct);
 
 void N(init)(Scene* sc) {
@@ -36,6 +39,8 @@ void N(init)(Scene* sc) {
 	if (!_data) return;
 	_data->g_staticBuf = C2D_TextBufNew(2000);
 	TextLangParse(&_data->g_info, _data->g_staticBuf, (void*)sc->data);
+	C2D_TextParse(&_data->g_aButton, _data->g_staticBuf, STR_BUTTON_A);
+	_data->g_infoBox = C2D_SpriteSheetGetImage(spr_misc, ui_misc_info_box);
 	
 	Setting popSetting = sc->pop_scene->setting;
 	sc->setting.fade_alpha = 0;
@@ -50,14 +55,26 @@ void N(init)(Scene* sc) {
 }
 
 void N(render_top)(Scene* sc) {
-	C2D_DrawRectSolid(MARGIN, MARGIN, 0, WIDTH, HEIGHT, C2D_Color32(0xCC, 0xCC, 0xCC, 0xFF));
-	C2D_DrawText(&_data->g_info, C2D_WithColor, MARGIN + 5, MARGIN + 5, 0, 0.5, 0.5, clr_black);
+	if (!_data) return;
+	
+	float x = CENTER_TOP_X(368);
+	float y = CENTER_TOP_Y(182*0.6);
+	float z = 0;
+	
+	// Render box
+	C2D_DrawImageAt(_data->g_infoBox, x, y, z, NULL, 1.0f, 0.6f);
+	u16 imgWidth = _data->g_infoBox.subtex->width;
+	u16 imgHeight = (_data->g_infoBox.subtex->height) * 0.6f;
+
+	// Render text
+	u32 flags = C2D_AlignCenter | C2D_WithColor | C2D_WordWrap;
+	C2D_DrawText(&_data->g_info, flags, x + imgWidth/2, y + 10, z, 0.75f, 0.75f, clr_white, imgWidth - (x + 10)*2);
+	
+	// Render A button
+	C2D_DrawText(&_data->g_aButton, C2D_WithColor, x + imgWidth - 25, y + imgHeight - 25, z, 0.75f, 0.75f, clr_white);
 }
 
-void N(render_bottom)(Scene* sc) {
-	// C2D_DrawRectSolid(MARGIN, MARGIN, 1, WIDTH, HEIGHT, clr_overlay);
-	// drawC2DText(&_data->g_info, clr_netpass_green, MARGIN + 5, MARGIN + 5, 1, 0.5, 0.5);
-}
+void N(render_bottom)(Scene* sc) { }
 
 void N(exit)(Scene* sc) {
 	if (_data) {
