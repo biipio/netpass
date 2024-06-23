@@ -32,9 +32,7 @@ typedef struct {
 	C2D_Text g_subtext;
 	C2D_Text g_paytext;
 	C2D_Text g_game_titles[24];
-	C2D_Text g_not_implemented;
 	u32 title_ids[24];
-	C2D_Text g_back;
 	PlayCoins* play_coins;
 	int cursor;
 	float offset;
@@ -178,8 +176,6 @@ void N(init)(Scene* sc) {
 	TextLangParse(&_data->g_header, _data->g_staticBuf, str_back_alley);
 	TextLangParse(&_data->g_subtext, _data->g_staticBuf, str_back_alley_message);
 	N(load_paytext)(&_data->g_paytext, _data->g_staticBuf, config.price > MAX_PRICE ? 0 : config.price);
-	TextLangParse(&_data->g_back, _data->g_staticBuf, str_back);
-	C2D_TextParse(&_data->g_not_implemented, _data->g_staticBuf, "This is not implemented yet.");
 
 	sc->setting.fade_alpha = 0;
 	sc->setting.bg_top = bg_top_generic;
