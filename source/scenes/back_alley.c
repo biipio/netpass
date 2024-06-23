@@ -28,8 +28,7 @@
 
 typedef struct {
 	C2D_TextBuf g_staticBuf;
-	C2D_Text g_header;
-	C2D_Text g_subtext;
+	C2D_Text g_backAlley;
 	C2D_Text g_paytext;
 	C2D_Text g_game_titles[24];
 	u32 title_ids[24];
@@ -173,8 +172,7 @@ void N(init)(Scene* sc) {
 
 	_data->cursor = -1;
 	_data->offset = 0;
-	TextLangParse(&_data->g_header, _data->g_staticBuf, str_back_alley);
-	TextLangParse(&_data->g_subtext, _data->g_staticBuf, str_back_alley_message);
+	TextLangParse(&_data->g_backAlley, _data->g_staticBuf, str_back_alley);
 	N(load_paytext)(&_data->g_paytext, _data->g_staticBuf, config.price > MAX_PRICE ? 0 : config.price);
 
 	sc->setting.fade_alpha = 0;
@@ -188,9 +186,25 @@ void N(init)(Scene* sc) {
 
 void N(render_top)(Scene* sc) {
 	if (!_data) return;
-	u32 clr = C2D_Color32(0, 0, 0, 0xff);
-	C2D_DrawText(&_data->g_header, C2D_AlignLeft | C2D_WithColor, 10, 10, 0, 1, 1, clr);
-	C2D_DrawText(&_data->g_subtext, C2D_AlignLeft | C2D_WithColor, 11, 35, 0, 0.5, 0.5, clr);
+
+	if (_data->cursor < 0) {
+		// Render "Back Alley" title
+		renderTextWithOutline(
+			&_data->g_backAlley, 0,
+			12, SCREEN_TOP_HEIGHT - 40, 0,
+			1.2f, 1.2f, 1.75f,
+			clr_white, clr_netpass_green
+		);
+	} else {
+		float x = CENTER_TOP_X(368);
+		float y = CENTER_TOP_Y(162); // Image height is 183, top bar height is 21, 162 = 183 - 21
+
+		// Render info box
+		renderImage(&spr_misc, ui_misc_info_box, x, y, 0);
+
+		// Render game title
+		C2D_DrawText(&_data->g_game_titles[_data->cursor], C2D_WithColor, x + 10, y + 10, 0, 0.75f, 0.75f, clr_white);
+	}
 
 	// int i = 0;
 	// for (; i < _data->number_games; i++) {
