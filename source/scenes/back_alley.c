@@ -186,7 +186,7 @@ void N(init)(Scene* sc) {
 	sc->setting.fade_alpha = 0;
 	sc->setting.bg_top = bg_top_generic;
 	sc->setting.bg_bottom = bg_bottom_generic;
-	sc->setting.btn_left = ui_btn_empty;
+	sc->setting.btn_left = ui_btn_left_help;
 	sc->setting.btn_right = ui_btn_right_close;
 
 	sc->app_state = app_idle;

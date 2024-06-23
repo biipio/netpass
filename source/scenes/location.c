@@ -50,12 +50,12 @@ void N(init)(Scene* sc) {
 	_data->cursor = -1;
 	TextLangParse(&_data->g_location, _data->g_staticBuf, *N(locations)[sc->data]);
 	TextLangParse(&_data->g_entries[0], _data->g_staticBuf, str_check_inboxes);
-	TextLangParse(&_data->g_entries[1], _data->g_staticBuf, str_exit);
+	TextLangParse(&_data->g_entries[1], _data->g_staticBuf, str_back_alley);
 
 	sc->setting.fade_alpha = 0;
 	sc->setting.bg_top = sc->data + 2;
 	sc->setting.bg_bottom = bg_bottom_generic;
-	sc->setting.btn_left = ui_btn_left_back_alley;
+	sc->setting.btn_left = ui_btn_left_help;
 	sc->setting.btn_right = ui_btn_right_settings;
 	sc->setting.has_gradient = true;
 
@@ -98,10 +98,9 @@ SceneResult N(process)(Scene* sc) {
 	}
 
 	if (state.k_up & KEY_TOUCH) {
-		// Back alley button
+		// Help button
 		if (isLeftButtonTouched(&state.pos_prev)) {
-			sc->next_scene = getBackAlleyScene();
-			return scene_push;
+			// TODO: implement this
 		}
 		
 		// Settings button
@@ -136,12 +135,8 @@ SceneResult N(process)(Scene* sc) {
 			return scene_push;
 		}
 		if (_data->cursor == 1) {
-			sc->next_scene = getLoadingScene(getSwitchScene(lambda(Scene*, (void) {
-				return getHomeScene();
-			})), lambda(void, (void) {}));
-			return scene_switch;
-			// sc->app_state = app_exiting;
-			// return scene_continue;
+			sc->next_scene = getBackAlleyScene();
+			return scene_push;
 		}
 	}
 	

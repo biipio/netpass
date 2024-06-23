@@ -86,7 +86,7 @@ void N(init)(Scene* sc) {
 	sc->setting.fade_alpha = 0;
 	sc->setting.bg_top = bg_top_home;
 	sc->setting.bg_bottom = bg_bottom_generic;
-	sc->setting.btn_left = ui_btn_left_home;
+	sc->setting.btn_left = ui_btn_left_help;
 	sc->setting.btn_right = ui_btn_right_settings;
 	sc->setting.has_gradient = true;
 	sc->setting.use_previews = true;
@@ -159,10 +159,9 @@ SceneResult N(process)(Scene* sc) {
 	sc->setting.bg_bottom = bg_bottom_generic;
 
 	if (state.k_up & KEY_TOUCH) {
-		// Home button
+		// Help button
 		if (isLeftButtonTouched(&state.pos_prev)) {
-			sc->app_state = app_exiting;
-			return scene_continue;
+			// TODO: implement this
 		}
 
 		// Settings button

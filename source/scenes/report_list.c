@@ -138,9 +138,8 @@ void N(init)(Scene* sc) {
 	sc->setting.fade_alpha = 0;
 	sc->setting.bg_top = bg_top_generic;
 	sc->setting.bg_bottom = bg_bottom_generic;
-	sc->setting.btn_left = ui_btn_empty;
+	sc->setting.btn_left = ui_btn_left_help;
 	sc->setting.btn_right = ui_btn_right_close;
-	sc->setting.has_gradient = true;
 
 	sc->app_state = app_idle;
 }
@@ -203,6 +202,11 @@ SceneResult N(process)(Scene* sc) {
 	}
 
 	if (state.k_up & KEY_TOUCH) {
+		// Help button
+		if (isLeftButtonTouched(&state.pos_prev)) {
+			// TODO: implement this
+		}
+		
 		// Back button
 		if (isRightButtonTouched(&state.pos_prev)) {
 			return scene_pop;
