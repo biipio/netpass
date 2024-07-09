@@ -25,7 +25,12 @@
 #include "config.h"
 
 typedef enum {scene_stop, scene_continue, scene_switch, scene_push, scene_pop} SceneResult;
-typedef enum {app_loading, app_idle, app_exiting} AppState;
+typedef enum {
+	app_loading = BIT(0),
+	app_idle = BIT(1),
+	app_netpal_speaking = BIT(2),
+	app_exiting = BIT(3)
+} AppState;
 
 typedef struct Scene Scene;
 
@@ -58,7 +63,6 @@ struct Scene {
 	Scene* pop_scene;
 	u32 data;
 	InputState input_state;
-	AppState app_state;
 	Setting setting;
 
 	void* d;
@@ -67,6 +71,8 @@ struct Scene {
 };
 
 Scene* processScene(Scene* scene);
+
+extern u32 app_state;
 
 #include "scenes/loading.h"
 #include "scenes/switch.h"

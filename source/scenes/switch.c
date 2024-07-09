@@ -26,6 +26,7 @@ void N(render_bottom)(Scene* sc) { }
 void N(exit)(Scene* sc) { }
 
 SceneResult N(process)(Scene* sc) {
+	app_state = app_loading;
 	sc->next_scene = ((Scene*(*)(void))sc->data)();
 	return scene_switch;
 }

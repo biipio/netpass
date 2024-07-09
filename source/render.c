@@ -301,7 +301,7 @@ void renderTopScreen(Scene* scene) {
 	renderTopBar();
 
 	// Render fade if necessary
-	if (scene->app_state == app_exiting) {
+	if (app_state & app_exiting) {
 		u32 clr = C2D_Color32(0, 0, 0, scene->setting.fade_alpha);
 		C2D_DrawRectSolid(0, 0, 0, SCREEN_TOP_WIDTH, SCREEN_TOP_HEIGHT, clr);
 	}
@@ -328,7 +328,7 @@ void renderBottomScreen(Scene* scene) {
 	renderImage(&spr_btn, setting.btn_right, SCREEN_BOTTOM_WIDTH - 49, 0, 0);
 
 	// Render fade if necessary
-	if (scene->app_state == app_exiting) {
+	if (app_state & app_exiting) {
 		u32 clr = C2D_Color32(0, 0, 0, scene->setting.fade_alpha);
 		C2D_DrawRectSolid(0, 0, 0, SCREEN_BOTTOM_WIDTH, SCREEN_BOTTOM_HEIGHT, clr);
 	}

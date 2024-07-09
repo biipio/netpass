@@ -23,6 +23,8 @@
 #define FADE_ALPHA_VAL 4
 #define FADE_ALPHA_LIMIT (255 - (255 % FADE_ALPHA_VAL))
 
+u32 app_state;
+
 void updateInputState(Scene* scene) {
 	hidScanInput();
 	scene->input_state.k_down = hidKeysDown();
@@ -34,7 +36,7 @@ void updateInputState(Scene* scene) {
 }
 
 Scene* processScene(Scene* scene) {
-	if (scene->app_state == app_exiting) {
+	if (app_state & app_exiting) {
 		updateInputState(scene);
 		if ((scene->setting.fade_alpha >= FADE_ALPHA_LIMIT) || (scene->input_state.k_down_repeat & KEY_START)) {
 			scene->exit(scene);
@@ -47,11 +49,11 @@ Scene* processScene(Scene* scene) {
 		return scene;
 	}
 
-	if (scene->app_state == app_idle) {
+	if (app_state & (app_idle | app_netpal_speaking)) {
 		updateInputState(scene);
 		if (scene->input_state.k_down & KEY_START) {
 			hidSetRepeatParameters(18, 12);
-			scene->app_state = app_exiting;
+			app_state = app_exiting | (app_state & app_netpal_speaking);
 			return scene;
 		}
 	}

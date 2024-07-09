@@ -49,11 +49,10 @@ void N(init)(Scene* sc) {
 
 	_data->thread_done = false;
 	_data->thread = threadCreate((void(*)(void*))N(threadFn), sc, 8*1024, main_thread_prio()-1, -2, false);
+	app_state = app_loading;
 
 	_data->is_first = !first_done;
 	if (!first_done) first_done = true;
-
-	sc->app_state = app_loading;
 }
 
 void N(render_top)(Scene* sc) {

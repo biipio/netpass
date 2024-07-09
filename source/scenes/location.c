@@ -58,8 +58,6 @@ void N(init)(Scene* sc) {
 	sc->setting.btn_left = ui_btn_left_help;
 	sc->setting.btn_right = ui_btn_right_settings;
 	sc->setting.has_gradient = true;
-
-	sc->app_state = app_idle;
 }
 
 void N(render_top)(Scene* sc) {
@@ -82,6 +80,7 @@ void N(exit)(Scene* sc) {
 }
 
 SceneResult N(process)(Scene* sc) {
+	app_state = app_idle;
 	InputState state = sc->input_state;
 	if (!_data) return scene_continue;
 

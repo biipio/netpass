@@ -50,8 +50,6 @@ void N(init)(Scene* sc) {
 	sc->setting.btn_right = popSetting.btn_right;
 	sc->setting.has_gradient = popSetting.has_gradient;
 	sc->setting.use_previews = popSetting.use_previews;
-
-	sc->app_state = sc->pop_scene->app_state;
 }
 
 void N(render_top)(Scene* sc) {
@@ -84,6 +82,7 @@ void N(exit)(Scene* sc) {
 }
 
 SceneResult N(process)(Scene* sc) {
+	app_state = app_idle;
 	if (sc->input_state.k_down & (KEY_A | KEY_B | KEY_TOUCH)) return scene_pop;
 	return scene_continue;
 }
