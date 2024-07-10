@@ -18,6 +18,8 @@
 
 #pragma once
 
+#include "3ds.h"
+
 typedef struct NetPal {
 	float x;
 	float y;
