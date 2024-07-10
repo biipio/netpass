@@ -86,3 +86,5 @@ void renderOptionButtons(C2D_Text* entries, size_t n, int cursor, float offset, 
 void renderTextWithOutline(C2D_Text* text, u32 flags, float x, float y, float z, float scaleX, float scaleY, float outlineWidth, u32 textClr, u32 outlineClr);
 
 void renderScene(Scene* scene);
+
+#include "netpal.h"
