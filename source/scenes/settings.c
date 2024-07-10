@@ -177,43 +177,39 @@ SceneResult N(process)(Scene* sc) {
 	if (state.k_up & KEY_TOUCH) {
 		// Back button
 		if (isRightButtonTouched(&state.pos_prev)) {
-			switch (_data->current_menu) {
-			case MENU_DEFAULT:
-				return scene_pop;
-			case MENU_LANGUAGE:
+			// If in default menu, exit settings
+			if (_data->current_menu == MENU_DEFAULT) return scene_pop;
+
+			// If in a non-default menu, return to default menu
+			if (_data->current_menu == MENU_LANGUAGE) {
 				N(save_language)(sc);
-				_data->cursor = -1;
-				_data->offset = 0;
-				_data->current_menu = MENU_DEFAULT;
-				break;
-			case MENU_TIME_FORMAT:
+			} else if (_data->current_menu == MENU_TIME_FORMAT) {
 				N(save_time_format)(sc);
-				_data->cursor = -1;
-				_data->offset = 0;
-				_data->current_menu = MENU_DEFAULT;
-				break;
 			}
+			
+			_data->cursor = -1;
+			_data->offset = 0;
+			_data->current_menu = MENU_DEFAULT;
+			return scene_continue;
 		}
 	}
 	
 	if (state.k_down & KEY_B) {
 		if (_data->cursor < 0 || (_data->current_menu == MENU_DEFAULT && _data->cursor == NUM_ENTRIES)) {
-			switch (_data->current_menu) {
-			case MENU_DEFAULT:
-				return scene_pop;
-			case MENU_LANGUAGE:
+			// If in default menu, exit settings
+			if (_data->current_menu == MENU_DEFAULT) return scene_pop;
+
+			// If in a non-default menu, return to default menu
+			if (_data->current_menu == MENU_LANGUAGE) {
 				N(save_language)(sc);
-				_data->cursor = -1;
-				_data->offset = 0;
-				_data->current_menu = MENU_DEFAULT;
-				break;
-			case MENU_TIME_FORMAT:
+			} else if (_data->current_menu == MENU_TIME_FORMAT) {
 				N(save_time_format)(sc);
-				_data->cursor = -1;
-				_data->offset = 0;
-				_data->current_menu = MENU_DEFAULT;
-				break;
 			}
+			
+			_data->cursor = -1;
+			_data->offset = 0;
+			_data->current_menu = MENU_DEFAULT;
+			return scene_continue;
 		} else {
 			_data->cursor = -1;
 		}
