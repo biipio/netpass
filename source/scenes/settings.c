@@ -167,26 +167,12 @@ SceneResult N(process)(Scene* sc) {
 	InputState state = sc->input_state;
 	if (!_data) return scene_continue;
 
-	// Update cursor
-	_data->cursor += (state.k_down_repeat & KEY_DOWN && 1) - (state.k_down_repeat & KEY_UP && 1);
-	_data->cursor += (state.k_down_repeat & KEY_RIGHT && 1)*4 - (state.k_down_repeat & KEY_LEFT && 1)*4;
+	// Update cursor and offset
 	int list_max = NUM_ENTRIES;
 	if (_data->current_menu == MENU_LANGUAGE) list_max = NUM_LANGUAGES;
 	if (_data->current_menu == MENU_TIME_FORMAT) list_max = 2;
-	if (state.k_down & (KEY_DOWN | KEY_UP)) {
-		if (_data->cursor < 0) _data->cursor = list_max;
-		if (_data->cursor > list_max) _data->cursor = 0;
-	} else if (state.k_down_repeat & (KEY_DOWN | KEY_UP | KEY_RIGHT | KEY_LEFT)) {
-		if (_data->cursor < 0) _data->cursor = 0;
-		if (_data->cursor > list_max) _data->cursor = list_max;
-	}
-
-	// Update offset
-	if (_data->cursor >= 0) {
-		// TODO: treat as pixel, not list index
-		if (_data->cursor > _data->offset + 3) _data->offset = _data->cursor - 3;
-		if (_data->cursor < _data->offset) _data->offset = _data->cursor;
-	}
+	updateListCursor(&_data->cursor, &state, list_max);
+	updateListOffset(&_data->offset, _data->cursor);
 
 	if (state.k_up & KEY_TOUCH) {
 		// Back button

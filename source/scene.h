@@ -70,6 +70,8 @@ struct Scene {
 	bool need_free;
 };
 
+void updateListCursor(int* cursor, InputState* state, int cursorMax);
+void updateListOffset(float* offset, int cursor);
 Scene* processScene(Scene* scene);
 
 extern u32 app_state;

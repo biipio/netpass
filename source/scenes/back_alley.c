@@ -246,24 +246,9 @@ SceneResult N(process)(Scene* sc) {
 	//       and return scene_pop after info box closed
 	// config.price <= MAX_PRICE && config.price <= _data->play_coins->total_coins
 
-	// Update cursor
-	_data->cursor += (state.k_down_repeat & KEY_DOWN && 1) - (state.k_down_repeat & KEY_UP && 1);
-	_data->cursor += (state.k_down_repeat & KEY_RIGHT && 1)*4 - (state.k_down_repeat & KEY_LEFT && 1)*4;
-	int list_max = (_data->number_games - 1);
-	if (state.k_down & (KEY_DOWN | KEY_UP)) {
-		if (_data->cursor < 0) _data->cursor = list_max;
-		if (_data->cursor > list_max) _data->cursor = 0;
-	} else if (state.k_down_repeat & (KEY_DOWN | KEY_UP | KEY_RIGHT | KEY_LEFT)) {
-		if (_data->cursor < 0) _data->cursor = 0;
-		if (_data->cursor > list_max) _data->cursor = list_max;
-	}
-
-	// Update offset
-	if (_data->cursor >= 0) {
-		// TODO: treat as pixel, not list index
-		if (_data->cursor > _data->offset + 3) _data->offset = _data->cursor - 3;
-		if (_data->cursor < _data->offset) _data->offset = _data->cursor;
-	}
+	// Update cursor and offset
+	updateListCursor(&_data->cursor, &state, _data->number_games - 1);
+	updateListOffset(&_data->offset, _data->cursor);
 
 	if (state.k_up & KEY_TOUCH) {
 		// Help button

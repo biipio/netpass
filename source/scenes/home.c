@@ -132,26 +132,12 @@ SceneResult N(process)(Scene* sc) {
 	InputState state = sc->input_state;
 	if (!_data) return scene_continue;
 
-	// Update cursor
-	_data->cursor += (state.k_down_repeat & KEY_DOWN && 1) - (state.k_down_repeat & KEY_UP && 1);
-	_data->cursor += (state.k_down_repeat & KEY_RIGHT && 1)*4 - (state.k_down_repeat & KEY_LEFT && 1)*4;
-	int list_max = (NUM_LOCATIONS - 1);
-	if (state.k_down & (KEY_DOWN | KEY_UP)) {
-		if (_data->cursor < 0) _data->cursor = list_max;
-		if (_data->cursor > list_max) _data->cursor = 0;
-	} else if (state.k_down_repeat & (KEY_DOWN | KEY_UP | KEY_RIGHT | KEY_LEFT)) {
-		if (_data->cursor < 0) _data->cursor = 0;
-		if (_data->cursor > list_max) _data->cursor = list_max;
-	}
+
+	// Update cursor and offset
+	updateListCursor(&_data->cursor, &state, NUM_LOCATIONS - 1);
+	updateListOffset(&_data->offset, _data->cursor);
 
 	int real_cursor_location = (_data->cursor < 0) ? -1 : location_random[_data->cursor];
-
-	// Update offset
-	if (_data->cursor >= 0) {
-		// TODO: treat as pixel, not list index
-		if (_data->cursor > _data->offset + 3) _data->offset = _data->cursor - 3;
-		if (_data->cursor < _data->offset) _data->offset = _data->cursor;
-	}
 	
 	// Change background depending on currently hovered location
 	sc->setting.bg_top = real_cursor_location + 2;

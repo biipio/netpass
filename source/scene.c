@@ -35,6 +35,26 @@ void updateInputState(Scene* scene) {
 	hidTouchRead(&scene->input_state.pos_current);
 }
 
+void updateListCursor(int* cursor, InputState* state, int cursorMax) {
+	*cursor += (state->k_down_repeat & KEY_DOWN && 1) - (state->k_down_repeat & KEY_UP && 1);
+	*cursor += (state->k_down_repeat & KEY_RIGHT && 1)*4 - (state->k_down_repeat & KEY_LEFT && 1)*4;
+	if (state->k_down & (KEY_DOWN | KEY_UP)) {
+		if (*cursor < 0) *cursor = cursorMax;
+		if (*cursor > cursorMax) *cursor = 0;
+	} else if (state->k_down_repeat & (KEY_DOWN | KEY_UP | KEY_RIGHT | KEY_LEFT)) {
+		if (*cursor < 0) *cursor = 0;
+		if (*cursor > cursorMax) *cursor = cursorMax;
+	}
+}
+
+void updateListOffset(float* offset, int cursor) {
+	if (cursor >= 0) {
+		// TODO: treat as pixel, not list index
+		if (cursor > *offset + 3) *offset = cursor - 3;
+		if (cursor < *offset) *offset = cursor;
+	}
+}
+
 Scene* processScene(Scene* scene) {
 	if (app_state & app_exiting) {
 		updateInputState(scene);
