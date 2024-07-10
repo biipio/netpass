@@ -32,3 +32,5 @@ void netpalExit();
 
 NetPal* buildNetPal(float x, float y, float z);
 void destroyNetPal(NetPal* pal);
+
+void updateFrame(NetPal* pal);

@@ -20,6 +20,9 @@
 #include "3ds.h"
 #include "stdlib.h"
 
+#define FRAMES_PER_SEC 16
+#define MS_PER_FRAME (1000 / FRAMES_PER_SEC)
+
 void netpalInit() {
 }
 
@@ -41,4 +44,15 @@ NetPal* buildNetPal(float x, float y, float z) {
 
 void destroyNetPal(NetPal* pal) {
 	free(pal);
+}
+
+void updateFrame(NetPal* pal) {
+	u64 elapsedMs = (svcGetSystemTick() / CPU_TICKS_PER_MSEC) - pal->start;
+
+	if (elapsedMs >= MS_PER_FRAME) {
+		pal->frame++;
+		if (pal->frame > 31) pal->frame = 0;
+	
+		pal->start = svcGetSystemTick() / CPU_TICKS_PER_MSEC;
+	}
 }
