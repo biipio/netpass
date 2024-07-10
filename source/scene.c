@@ -56,8 +56,9 @@ void updateListOffset(float* offset, int cursor) {
 }
 
 Scene* processScene(Scene* scene) {
+	updateInputState(scene);
+
 	if (app_state & app_exiting) {
-		updateInputState(scene);
 		if ((scene->setting.fade_alpha >= FADE_ALPHA_LIMIT) || (scene->input_state.k_down_repeat & KEY_START)) {
 			scene->exit(scene);
 			if (scene->need_free) {
@@ -70,7 +71,6 @@ Scene* processScene(Scene* scene) {
 	}
 
 	if (app_state & (app_idle | app_netpal_speaking)) {
-		updateInputState(scene);
 		if (scene->input_state.k_down & KEY_START) {
 			hidSetRepeatParameters(18, 12);
 			app_state = app_exiting | (app_state & app_netpal_speaking);
