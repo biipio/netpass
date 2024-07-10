@@ -18,5 +18,17 @@
 
 #pragma once
 
+typedef struct NetPal {
+	float x;
+	float y;
+	float z;
+
+	int frame;
+	u64 start;
+} NetPal;
+
 void netpalInit();
 void netpalExit();
+
+NetPal* buildNetPal(float x, float y, float z);
+void destroyNetPal(NetPal* pal);

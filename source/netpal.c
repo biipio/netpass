@@ -17,9 +17,28 @@
  */
 
 #include "netpal.h"
+#include "3ds.h"
+#include "stdlib.h"
 
 void netpalInit() {
 }
 
 void netpalExit() {
+}
+
+NetPal* buildNetPal(float x, float y, float z) {
+	NetPal* pal = malloc(sizeof(NetPal));
+	
+	pal->x = x;
+	pal->y = y;
+	pal->z = z;
+
+	pal->frame = 0;
+	pal->start = svcGetSystemTick() / CPU_TICKS_PER_MSEC;
+
+	return pal;
+}
+
+void destroyNetPal(NetPal* pal) {
+	free(pal);
 }
