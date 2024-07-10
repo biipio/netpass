@@ -198,7 +198,7 @@ void N(render_top)(Scene* sc) {
 		float y = CENTER_TOP_Y(162); // Image height is 183, top bar height is 21, 162 = 183 - 21
 
 		// Render info box
-		renderImage(&spr_misc, ui_misc_info_box, x, y, 0);
+		renderImage(spr_misc, ui_misc_info_box, x, y, 0);
 
 		// Render game title
 		C2D_DrawText(&_data->g_game_titles[_data->cursor], C2D_WithColor, x + 10, y + 10, 0, 0.75f, 0.75f, clr_white);

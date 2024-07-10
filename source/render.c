@@ -83,9 +83,9 @@ void renderExit(void) {
 	netpalExit();
 }
 
-void renderImage(C2D_SpriteSheet* spr, size_t index, float x, float y, float z) {
-	if (index < 0 || index > C2D_SpriteSheetCount(*spr)) return;
-	C2D_Image img = C2D_SpriteSheetGetImage(*spr, index);
+void renderImage(C2D_SpriteSheet spr, size_t index, float x, float y, float z) {
+	if (index < 0 || index > C2D_SpriteSheetCount(spr)) return;
+	C2D_Image img = C2D_SpriteSheetGetImage(spr, index);
 	C2D_DrawImageAt(img, x, y, z, NULL, 1, 1);
 }
 
@@ -98,7 +98,7 @@ void renderOptionButton(C2D_Text* text, float x, float y, float z, bool isFocus,
 		C2D_DrawImageAt(img_btn_text, x, y, z, NULL, 1, 1);
 	}
 	if (isFocus) {
-		renderImage(&spr_btn, ui_btn_text_selected, x - 5, y - 4, z);
+		renderImage(spr_btn, ui_btn_text_selected, x - 5, y - 4, z);
 	}
 
 	u16 button_width = img_btn_text.subtex->width;
@@ -149,10 +149,10 @@ void renderOptionButtons(C2D_Text* entries, size_t n, int cursor, float offset, 
 
 	if (n > 4) {
 		if (offset > 0) {
-			renderImage(&spr_misc, ui_misc_upper_arrow, 0, 0, 0);
+			renderImage(spr_misc, ui_misc_upper_arrow, 0, 0, 0);
 		}
 		if (offset < n - 4) {
-			renderImage(&spr_misc, ui_misc_lower_arrow, 0, SCREEN_BOTTOM_HEIGHT - 40, 0);
+			renderImage(spr_misc, ui_misc_lower_arrow, 0, SCREEN_BOTTOM_HEIGHT - 40, 0);
 		}
 	}
 }
@@ -183,7 +183,7 @@ void renderTextWithOutline(C2D_Text* text, u32 flags, float x, float y, float z,
 // 	const int x = (SCREEN_TOP_WIDTH - 368)/2;
 // 	const int y = (SCREEN_TOP_HEIGHT + 21 - 183)/2;
 
-// 	renderImage(&spr_misc, ui_misc_info_box, x, y, 0);
+// 	renderImage(spr_misc, ui_misc_info_box, x, y, 0);
 
 // 	char miiName[11] = {0};
 // 	utf16_to_utf8((u8*)miiName, user->mii.mii_name, 11);
@@ -229,7 +229,7 @@ void renderTopBar() {
 	const float y = 2;
 	const float z = 0;
 
-	renderImage(&spr_misc, ui_misc_bar, 0, 0, 0);
+	renderImage(spr_misc, ui_misc_bar, 0, 0, 0);
 
 	DateTime dt;
 	getSystemTime(&dt);
@@ -261,7 +261,7 @@ void renderTopBar() {
 	C2D_DrawText(&timeText, C2D_AlignCenter | C2D_WithColor, SCREEN_TOP_WIDTH / 2, y, z, 0.5f, 0.5f, clr_white);
 
 	// Wifi
-	renderImage(&spr_wifi, osGetWifiStrength(), SCREEN_TOP_WIDTH - 57, y, z);
+	renderImage(spr_wifi, osGetWifiStrength(), SCREEN_TOP_WIDTH - 57, y, z);
 
 	// Battery
 	u8 index;
@@ -273,7 +273,7 @@ void renderTopBar() {
 		PTMU_GetBatteryLevel(&index);
 		if (index > 0) index--;
 	}
-	renderImage(&spr_battery, index, SCREEN_TOP_WIDTH - 30, y, z);
+	renderImage(spr_battery, index, SCREEN_TOP_WIDTH - 30, y, z);
 }
 
 void renderTopScreen(Scene* scene) {
@@ -284,14 +284,14 @@ void renderTopScreen(Scene* scene) {
 		setting.bg_top = bg_top_generic;
 	}
 	if (setting.use_previews && setting.bg_top > bg_top_home) {
-		renderImage(&spr_bg_top_preview, setting.bg_top - 2, 0, 0, 0);
+		renderImage(spr_bg_top_preview, setting.bg_top - 2, 0, 0, 0);
 	} else {
-		renderImage(&spr_bg_top, setting.bg_top, 0, 0, 0);
+		renderImage(spr_bg_top, setting.bg_top, 0, 0, 0);
 	}
 
 	// Render gradient if necessary
 	if (setting.has_gradient) {
-		renderImage(&spr_misc, ui_misc_gradient, 0, SCREEN_TOP_HEIGHT - 45, 0);
+		renderImage(spr_misc, ui_misc_gradient, 0, SCREEN_TOP_HEIGHT - 45, 0);
 	}
 
 	// Let the scene render itself
@@ -318,7 +318,7 @@ void renderBottomScreen(Scene* scene) {
 	if (C2D_SpriteSheetCount(spr_bg_bottom) <= setting.bg_bottom) {
 		setting.bg_bottom = bg_bottom_generic;
 	}
-	renderImage(&spr_bg_bottom, setting.bg_bottom, 0, 0, 0);
+	renderImage(spr_bg_bottom, setting.bg_bottom, 0, 0, 0);
 
 	// Let the scene render itself
 	if (scene->is_popup) {
@@ -328,8 +328,8 @@ void renderBottomScreen(Scene* scene) {
 	scene->render_bottom(scene);
 
 	// Render left and right buttons
-	renderImage(&spr_btn, setting.btn_left, 0, 0, 0);
-	renderImage(&spr_btn, setting.btn_right, SCREEN_BOTTOM_WIDTH - 49, 0, 0);
+	renderImage(spr_btn, setting.btn_left, 0, 0, 0);
+	renderImage(spr_btn, setting.btn_right, SCREEN_BOTTOM_WIDTH - 49, 0, 0);
 
 	// Render fade if necessary
 	if (app_state & app_exiting) {
