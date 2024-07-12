@@ -20,7 +20,7 @@
 #include <malloc.h>
 #include <3ds.h>
 
-#define FADE_ALPHA_VAL 4
+#define FADE_ALPHA_VAL 6
 #define FADE_ALPHA_LIMIT (255 - (255 % FADE_ALPHA_VAL))
 
 u32 app_state;
