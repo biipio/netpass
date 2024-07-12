@@ -71,7 +71,7 @@ Scene* processScene(Scene* scene) {
 	}
 
 	if (app_state & (app_idle | app_netpal_speaking)) {
-		if (scene->input_state.k_down & KEY_START) {
+		if (scene->input_state.k_down_repeat & KEY_START) {
 			hidSetRepeatParameters(18, 12);
 			app_state = app_exiting | (app_state & app_netpal_speaking);
 			return scene;
