@@ -58,6 +58,17 @@ void updateListOffset(float* offset, int cursor) {
 Scene* processScene(Scene* scene) {
 	updateInputState(scene);
 
+	// Fade in
+	if (app_state & app_opening) {
+		if (scene->setting.fade_alpha <= FADE_ALPHA_VAL) {
+			app_state ^= app_opening; // toggle off app_opening
+			scene->setting.fade_alpha = 0;
+		} else {
+			scene->setting.fade_alpha -= FADE_ALPHA_VAL;
+		}
+	}
+
+	// Fade out
 	if (app_state & app_exiting) {
 		if ((scene->setting.fade_alpha >= FADE_ALPHA_LIMIT) || (scene->input_state.k_down_repeat & KEY_START)) {
 			scene->exit(scene);

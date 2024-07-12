@@ -29,7 +29,8 @@ typedef enum {
 	app_loading = BIT(0),
 	app_idle = BIT(1),
 	app_netpal_speaking = BIT(2),
-	app_exiting = BIT(3)
+	app_opening = BIT(3),
+	app_exiting = BIT(4)
 } AppState;
 
 typedef struct Scene Scene;
