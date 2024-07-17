@@ -17,13 +17,14 @@
  */
 
 #include "scene.h"
+#include "render.h"
 #include <malloc.h>
 #include <3ds.h>
 
 #define FADE_ALPHA_VAL 6
 #define FADE_ALPHA_LIMIT (255 - (255 % FADE_ALPHA_VAL))
 
-u32 app_state;
+u32 app_state = app_opening; // init to app_opening
 
 void updateInputState(Scene* scene) {
 	hidScanInput();
@@ -60,24 +61,24 @@ Scene* processScene(Scene* scene) {
 
 	// Fade in
 	if (app_state & app_opening) {
-		if (scene->setting.fade_alpha <= FADE_ALPHA_VAL) {
+		if (fade_alpha <= FADE_ALPHA_VAL) {
 			app_state ^= app_opening; // toggle off app_opening
-			scene->setting.fade_alpha = 0;
+			fade_alpha = 0;
 		} else {
-			scene->setting.fade_alpha -= FADE_ALPHA_VAL;
+			fade_alpha -= FADE_ALPHA_VAL;
 		}
 	}
 
 	// Fade out
 	if (app_state & app_exiting) {
-		if ((scene->setting.fade_alpha >= FADE_ALPHA_LIMIT) || (scene->input_state.k_down_repeat & KEY_START)) {
+		if ((fade_alpha >= FADE_ALPHA_LIMIT) || (scene->input_state.k_down_repeat & KEY_START)) {
 			scene->exit(scene);
 			if (scene->need_free) {
 				free(scene);
 			}
 			return 0;
 		}
-		scene->setting.fade_alpha += FADE_ALPHA_VAL;
+		fade_alpha += FADE_ALPHA_VAL;
 		return scene;
 	}
 

@@ -61,7 +61,6 @@ void N(init)(Scene* sc) {
 	C2D_TextFontParse(&_data->g_title, str_font, _data->g_staticBuf, str);
 	C2D_TextFontParse(&_data->g_subtext, subtext_font, _data->g_staticBuf, subtext);
 
-	sc->setting.fade_alpha = 0;
 	sc->setting.bg_top = bg_top_generic;
 	sc->setting.bg_bottom = bg_bottom_generic;
 	sc->setting.btn_left = ui_btn_left_home;

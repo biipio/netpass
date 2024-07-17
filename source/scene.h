@@ -51,7 +51,6 @@ typedef struct {
 	int btn_right;
 	bool has_gradient;
 	bool use_previews;
-	u8 fade_alpha;
 } Setting;
 
 struct Scene {

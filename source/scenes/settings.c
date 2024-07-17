@@ -96,7 +96,6 @@ void N(init)(Scene* sc) {
 		}
 	}
 	
-	sc->setting.fade_alpha = 0;
 	sc->setting.bg_top = bg_top_generic;
 	sc->setting.bg_bottom = bg_bottom_generic;
 	sc->setting.btn_left = ui_btn_empty;

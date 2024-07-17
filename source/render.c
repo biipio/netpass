@@ -23,6 +23,8 @@
 #include "config.h"
 #include "datetime.h"
 
+u8 fade_alpha = 255; // init to 255 for fade in upon opening
+
 static C2D_TextBuf g_dynamicBuf;
 
 static C3D_RenderTarget* top;
@@ -306,7 +308,7 @@ void renderTopScreen(Scene* scene) {
 
 	// Render fade if necessary
 	if (app_state & (app_opening | app_exiting)) {
-		u32 clr = C2D_Color32(0, 0, 0, scene->setting.fade_alpha);
+		u32 clr = C2D_Color32(0, 0, 0, fade_alpha);
 		C2D_DrawRectSolid(0, 0, 0, SCREEN_TOP_WIDTH, SCREEN_TOP_HEIGHT, clr);
 	}
 }
@@ -333,7 +335,7 @@ void renderBottomScreen(Scene* scene) {
 
 	// Render fade if necessary
 	if (app_state & (app_opening | app_exiting)) {
-		u32 clr = C2D_Color32(0, 0, 0, scene->setting.fade_alpha);
+		u32 clr = C2D_Color32(0, 0, 0, fade_alpha);
 		C2D_DrawRectSolid(0, 0, 0, SCREEN_BOTTOM_WIDTH, SCREEN_BOTTOM_HEIGHT, clr);
 	}
 }

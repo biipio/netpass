@@ -175,7 +175,6 @@ void N(init)(Scene* sc) {
 	TextLangParse(&_data->g_backAlley, _data->g_staticBuf, str_back_alley);
 	N(load_paytext)(&_data->g_paytext, _data->g_staticBuf, config.price > MAX_PRICE ? 0 : config.price);
 
-	sc->setting.fade_alpha = 0;
 	sc->setting.bg_top = bg_top_generic;
 	sc->setting.bg_bottom = bg_bottom_generic;
 	sc->setting.btn_left = ui_btn_left_help;

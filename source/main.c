@@ -110,8 +110,6 @@ int main() {
 	}));
 
 	scene->init(scene);
-	scene->setting.fade_alpha = 255;
-	app_state = app_opening;
 
 	while (aptMainLoop()) {
 		Scene* new_scene = processScene(scene);

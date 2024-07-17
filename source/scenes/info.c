@@ -43,7 +43,6 @@ void N(init)(Scene* sc) {
 	_data->g_infoBox = C2D_SpriteSheetGetImage(spr_misc, ui_misc_info_box);
 	
 	Setting popSetting = sc->pop_scene->setting;
-	sc->setting.fade_alpha = 0;
 	sc->setting.bg_top = popSetting.bg_top;
 	sc->setting.bg_bottom = popSetting.bg_bottom;
 	sc->setting.btn_left = popSetting.btn_left;

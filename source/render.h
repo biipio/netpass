@@ -78,6 +78,8 @@ extern u32 clr_black;
 extern u32 clr_netpass_green;
 extern u32 clr_focus_blue;
 
+extern u8 fade_alpha;
+
 void renderInit(void);
 void renderExit(void);
 

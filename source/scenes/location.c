@@ -52,7 +52,6 @@ void N(init)(Scene* sc) {
 	TextLangParse(&_data->g_entries[0], _data->g_staticBuf, str_check_inboxes);
 	TextLangParse(&_data->g_entries[1], _data->g_staticBuf, str_back_alley);
 
-	sc->setting.fade_alpha = 0;
 	sc->setting.bg_top = sc->data + 2;
 	sc->setting.bg_bottom = bg_bottom_generic;
 	sc->setting.btn_left = ui_btn_left_help;
