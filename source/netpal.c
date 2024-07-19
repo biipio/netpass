@@ -37,6 +37,7 @@ NetPal* buildNetPal(float x, float y, float z) {
 	pal->z = z;
 
 	pal->frame = 0;
+	pal->loops = 0;
 	pal->start = svcGetSystemTick() / CPU_TICKS_PER_MSEC;
 
 	return pal;
@@ -51,7 +52,10 @@ void updateFrame(NetPal* pal) {
 
 	if (elapsedMs >= MS_PER_FRAME) {
 		pal->frame++;
-		if (pal->frame > 31) pal->frame = 0;
+		if (pal->frame > 31) {
+			pal->frame = 0;
+			pal->loops++;
+		}
 	
 		pal->start = svcGetSystemTick() / CPU_TICKS_PER_MSEC;
 	}

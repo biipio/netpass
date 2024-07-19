@@ -25,7 +25,8 @@ typedef struct NetPal {
 	float y;
 	float z;
 
-	int frame;
+	unsigned int frame;
+	unsigned int loops;
 	u64 start;
 } NetPal;
 
