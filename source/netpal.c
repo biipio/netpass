@@ -40,6 +40,19 @@ NetPal* buildNetPal(float x, float y, float z) {
 	pal->loops = 0;
 	pal->start = svcGetSystemTick() / CPU_TICKS_PER_MSEC;
 
+	pal->state_leaf = NETPAL_LEAF_NEUTRAL;
+	pal->state_head = NETPAL_HEAD_NEUTRAL;
+
+	pal->state_eye_left = NETPAL_EYE_OPEN;
+	pal->state_eye_right = NETPAL_EYE_OPEN;
+	pal->state_mouth = NETPAL_MOUTH_NEUTRAL;
+
+	pal->state_hand_left = NETPAL_HAND_NEUTRAL;
+	pal->state_hand_right = NETPAL_HAND_NEUTRAL;
+
+	pal->state_foot_left = NETPAL_FOOT_NEUTRAL;
+	pal->state_foot_right = NETPAL_FOOT_NEUTRAL;
+
 	return pal;
 }
 

@@ -20,6 +20,47 @@
 
 #include "3ds.h"
 
+typedef enum {
+	NETPAL_LEAF_NEUTRAL,
+	NETPAL_LEAF_SHAKE
+} NetPalLeafState;
+
+typedef enum {
+	NETPAL_HEAD_NEUTRAL
+} NetPalHeadState;
+
+typedef enum {
+	NETPAL_EYE_OPEN,
+	NETPAL_EYE_CLOSED,
+	NETPAL_EYE_HAPPY,
+	NETPAL_EYE_SAD,
+	NETPAL_EYE_SURPRISED,
+	NETPAL_EYE_SQUINT,
+	NETPAL_EYE_DIZZY
+} NetPalEyeState;
+
+typedef enum {
+	NETPAL_MOUTH_NEUTRAL,
+	NETPAL_MOUTH_SMILE,
+	NETPAL_MOUTH_FROWN,
+	NETPAL_MOUTH_HAPPY,
+	NETPAL_MOUTH_HAPPY_TALK,
+	NETPAL_MOUTH_UNHAPPY_TALK,
+	NETPAL_MOUTH_SURPRISE,
+	NETPAL_MOUTH_NERVOUS,
+	NETPAL_MOUTH_DEVASTATED
+} NetPalMouthState;
+
+typedef enum {
+	NETPAL_HAND_NEUTRAL,
+	NETPAL_HAND_WAVE
+} NetPalHandState;
+
+typedef enum {
+	NETPAL_FOOT_NEUTRAL,
+	NETPAL_FOOT_STOMP
+} NetPalFootState;
+
 typedef struct NetPal {
 	float x;
 	float y;
@@ -28,6 +69,18 @@ typedef struct NetPal {
 	unsigned int frame;
 	unsigned int loops;
 	u64 start;
+
+	NetPalLeafState state_leaf;
+	NetPalHeadState state_head;
+
+	NetPalEyeState state_eye_left;
+	NetPalEyeState state_eye_right;
+	NetPalMouthState state_mouth;
+
+	NetPalHandState state_hand_left;
+	NetPalHandState state_hand_right;
+	NetPalFootState state_foot_left;
+	NetPalFootState state_foot_right;
 } NetPal;
 
 void netpalInit();
