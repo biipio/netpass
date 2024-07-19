@@ -23,6 +23,24 @@
 #include "config.h"
 #include "datetime.h"
 
+static const size_t path_bg_top_count = 14;
+static const char* path_bg_top[] = {
+	"romfs:/gfx/bg_top_generic.t3x",
+	"romfs:/gfx/bg_top_home.t3x",
+	"romfs:/gfx/bg_top_train_station.t3x",
+	"romfs:/gfx/bg_top_train_station_preview.t3x",
+	"romfs:/gfx/bg_top_plaza.t3x",
+	"romfs:/gfx/bg_top_plaza_preview.t3x",
+	"romfs:/gfx/bg_top_mall.t3x",
+	"romfs:/gfx/bg_top_mall_preview.t3x",
+	"romfs:/gfx/bg_top_beach.t3x",
+	"romfs:/gfx/bg_top_beach_preview.t3x",
+	"romfs:/gfx/bg_top_arcade.t3x",
+	"romfs:/gfx/bg_top_arcade_preview.t3x",
+	"romfs:/gfx/bg_top_cat_cafe.t3x",
+	"romfs:/gfx/bg_top_cat_cafe_preview.t3x"
+};
+
 u8 fade_alpha = 255; // init to 255 for fade in upon opening
 
 static C2D_TextBuf g_dynamicBuf;
@@ -30,8 +48,12 @@ static C2D_TextBuf g_dynamicBuf;
 static C3D_RenderTarget* top;
 static C3D_RenderTarget* bottom;
 
-static C2D_SpriteSheet spr_bg_top;
-static C2D_SpriteSheet spr_bg_top_preview;
+struct _SpriteSheet {
+	u8 index;
+	C2D_SpriteSheet sheet;
+} _SpriteSheet;
+
+static struct _SpriteSheet sheet_bg_top;
 static C2D_SpriteSheet spr_bg_bottom;
 static C2D_SpriteSheet spr_btn;
 static C2D_SpriteSheet spr_wifi;
@@ -52,8 +74,7 @@ void renderInit(void) {
 	top = C2D_CreateScreenTarget(GFX_TOP, GFX_LEFT);
 	bottom = C2D_CreateScreenTarget(GFX_BOTTOM, GFX_LEFT);
 
-	spr_bg_top = C2D_SpriteSheetLoad("romfs:/gfx/bg_top.t3x");
-	spr_bg_top_preview = C2D_SpriteSheetLoad("romfs:/gfx/bg_top_preview.t3x");
+	sheet_bg_top = (struct _SpriteSheet) {-1, NULL};
 	spr_bg_bottom = C2D_SpriteSheetLoad("romfs:/gfx/bg_bottom.t3x");
 	spr_btn = C2D_SpriteSheetLoad("romfs:/gfx/button.t3x");
 	spr_wifi = C2D_SpriteSheetLoad("romfs:/gfx/wifi.t3x");
@@ -74,8 +95,7 @@ void renderInit(void) {
 void renderExit(void) {
 	C2D_TextBufDelete(g_dynamicBuf);
 	
-	C2D_SpriteSheetFree(spr_bg_top);
-	C2D_SpriteSheetFree(spr_bg_top_preview);
+	if (sheet_bg_top.sheet != NULL) C2D_SpriteSheetFree(sheet_bg_top.sheet);
 	C2D_SpriteSheetFree(spr_bg_bottom);
 	C2D_SpriteSheetFree(spr_btn);
 	C2D_SpriteSheetFree(spr_wifi);
@@ -282,13 +302,28 @@ void renderTopScreen(Scene* scene) {
 	Setting setting = scene->setting;
 	
 	// Render background
-	if (C2D_SpriteSheetCount(spr_bg_top) <= setting.bg_top) {
-		setting.bg_top = bg_top_generic;
-	}
-	if (setting.use_previews && setting.bg_top > bg_top_home) {
-		renderImage(spr_bg_top_preview, setting.bg_top - 2, 0, 0, 0);
-	} else {
-		renderImage(spr_bg_top, setting.bg_top, 0, 0, 0);
+	{
+		// If setting.bg_top doesn't exist, default to bg_top_generic
+		if ((path_bg_top_count / 2) + 1 < setting.bg_top) {
+			setting.bg_top = bg_top_generic;
+		}
+
+		u8 index = setting.bg_top;
+		if (setting.bg_top > bg_top_home)
+			index += setting.use_previews ? setting.bg_top - 1 : setting.bg_top - 2;
+
+		if (sheet_bg_top.index != index) {
+			// Render new background before freeing old background
+			// ^ (necessary because freeing the currently displayed background has weird results)
+			sheet_bg_top.index = index;
+			C2D_SpriteSheet temp_spr = C2D_SpriteSheetLoad(path_bg_top[sheet_bg_top.index]);
+			renderImage(temp_spr, 0, 0, 0, 0);
+
+			if (sheet_bg_top.sheet != NULL) C2D_SpriteSheetFree(sheet_bg_top.sheet);
+			sheet_bg_top.sheet = temp_spr;
+		} else {
+			renderImage(sheet_bg_top.sheet, 0, 0, 0, 0);
+		}
 	}
 
 	// Render gradient if necessary

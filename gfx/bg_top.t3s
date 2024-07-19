@@ -1,9 +1,0 @@
---atlas -f rgb -z auto
-background/bg_top_generic.png
-background/bg_top_home.png
-background/bg_top_train_station.png
-background/bg_top_plaza.png
-background/bg_top_mall.png
-background/bg_top_beach.png
-background/bg_top_arcade.png
-background/bg_top_cat_cafe.png

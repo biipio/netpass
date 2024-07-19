@@ -57,6 +57,7 @@ void N(init)(Scene* sc) {
 	sc->setting.btn_left = ui_btn_left_help;
 	sc->setting.btn_right = ui_btn_right_settings;
 	sc->setting.has_gradient = true;
+	sc->setting.use_previews = false;
 }
 
 void N(render_top)(Scene* sc) {
