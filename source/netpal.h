@@ -83,9 +83,6 @@ typedef struct NetPal {
 	NetPalFootState state_foot_right;
 } NetPal;
 
-void netpalInit();
-void netpalExit();
-
 NetPal* buildNetPal(float x, float y, float z);
 void destroyNetPal(NetPal* pal);
 

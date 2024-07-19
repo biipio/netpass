@@ -88,8 +88,6 @@ void renderInit(void) {
 	clr_black = C2D_Color32(0x00, 0x00, 0x00, 0xFF);
 	clr_netpass_green = C2D_Color32(0x1F, 0xAF, 0x5F, 0xFF);
 	clr_focus_blue = C2D_Color32(0x08, 0xB4, 0xC4, 0xFF);
-	
-	netpalInit();
 }
 
 void renderExit(void) {
@@ -101,8 +99,6 @@ void renderExit(void) {
 	C2D_SpriteSheetFree(spr_wifi);
 	C2D_SpriteSheetFree(spr_battery);
 	C2D_SpriteSheetFree(spr_misc);
-
-	netpalExit();
 }
 
 void renderImage(C2D_SpriteSheet spr, size_t index, float x, float y, float z) {

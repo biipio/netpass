@@ -23,11 +23,6 @@
 #define FRAMES_PER_SEC 16
 #define MS_PER_FRAME (1000 / FRAMES_PER_SEC)
 
-void netpalInit() {
-}
-
-void netpalExit() {
-}
 
 NetPal* buildNetPal(float x, float y, float z) {
 	NetPal* pal = malloc(sizeof(NetPal));
