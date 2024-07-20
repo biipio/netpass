@@ -18,7 +18,8 @@
 
 #pragma once
 
-#include "3ds.h"
+#include <3ds.h>
+#include <citro2d.h>
 
 typedef enum {
 	NETPAL_LEAF_NEUTRAL,
@@ -61,6 +62,7 @@ typedef enum {
 	NETPAL_FOOT_STOMP
 } NetPalFootState;
 
+typedef struct _NetPalSheets* NetPalSheets;
 typedef struct NetPal {
 	float x;
 	float y;
@@ -81,9 +83,12 @@ typedef struct NetPal {
 	NetPalHandState state_hand_right;
 	NetPalFootState state_foot_left;
 	NetPalFootState state_foot_right;
+
+	NetPalSheets sheets;
 } NetPal;
 
 NetPal* buildNetPal(float x, float y, float z);
 void destroyNetPal(NetPal* pal);
 
 void updateFrame(NetPal* pal);
+void renderNetPal(NetPal* pal);
