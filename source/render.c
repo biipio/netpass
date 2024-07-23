@@ -18,6 +18,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdarg.h>
 #include "render.h"
 #include "strings.h"
 #include "config.h"
@@ -175,7 +176,7 @@ void renderOptionButtons(C2D_Text* entries, size_t n, int cursor, float offset, 
 	}
 }
 
-void renderTextWithOutline(C2D_Text* text, u32 flags, float x, float y, float z, float scaleX, float scaleY, float outlineWidth, u32 textClr, u32 outlineClr) {
+void renderTextWithOutline(C2D_Text* text, u32 flags, float x, float y, float z, float scaleX, float scaleY, float outlineWidth, u32 textClr, u32 outlineClr, ...) {
 	// I hate this so much this is so stupid
 
 	float xPos = x + outlineWidth;
@@ -183,18 +184,23 @@ void renderTextWithOutline(C2D_Text* text, u32 flags, float x, float y, float z,
 	float yPos = y + outlineWidth;
 	float yNeg = y - outlineWidth;
 
+	va_list args;
+	va_start(args, outlineClr);
+
 	// Outline
-	C2D_DrawText(text, C2D_WithColor | flags, xPos, y, z, scaleX, scaleY, outlineClr);
-	C2D_DrawText(text, C2D_WithColor | flags, xPos, yPos, z, scaleX, scaleY, outlineClr);
-	C2D_DrawText(text, C2D_WithColor | flags, x, yPos, z, scaleX, scaleY, outlineClr);
-	C2D_DrawText(text, C2D_WithColor | flags, xNeg, yPos, z, scaleX, scaleY, outlineClr);
-	C2D_DrawText(text, C2D_WithColor | flags, xNeg, y, z, scaleX, scaleY, outlineClr);
-	C2D_DrawText(text, C2D_WithColor | flags, xNeg, yNeg, z, scaleX, scaleY, outlineClr);
-	C2D_DrawText(text, C2D_WithColor | flags, x, yNeg, z, scaleX, scaleY, outlineClr);
-	C2D_DrawText(text, C2D_WithColor | flags, xPos, yNeg, z, scaleX, scaleY, outlineClr);
+	C2D_DrawText(text, C2D_WithColor | flags, xPos, y, z, scaleX, scaleY, outlineClr, args);
+	C2D_DrawText(text, C2D_WithColor | flags, xPos, yPos, z, scaleX, scaleY, outlineClr, args);
+	C2D_DrawText(text, C2D_WithColor | flags, x, yPos, z, scaleX, scaleY, outlineClr, args);
+	C2D_DrawText(text, C2D_WithColor | flags, xNeg, yPos, z, scaleX, scaleY, outlineClr, args);
+	C2D_DrawText(text, C2D_WithColor | flags, xNeg, y, z, scaleX, scaleY, outlineClr, args);
+	C2D_DrawText(text, C2D_WithColor | flags, xNeg, yNeg, z, scaleX, scaleY, outlineClr, args);
+	C2D_DrawText(text, C2D_WithColor | flags, x, yNeg, z, scaleX, scaleY, outlineClr, args);
+	C2D_DrawText(text, C2D_WithColor | flags, xPos, yNeg, z, scaleX, scaleY, outlineClr, args);
 
 	// Actual text
-	C2D_DrawText(text, C2D_WithColor | flags, x, y, z, scaleX, scaleY, textClr);
+	C2D_DrawText(text, C2D_WithColor | flags, x, y, z, scaleX, scaleY, textClr, args);
+
+	va_end(args);
 }
 
 // void renderUser(ReportListEntry* user) {
