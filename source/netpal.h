@@ -95,8 +95,8 @@ void renderNetPal(NetPal* pal);
 
 static inline void netpalIdleBlink(NetPal* pal) {
 	bool doAction = (pal->loops % 2) == 1 && (pal->frame > 29);
-	pal->state_eye_left = doAction ? NETPAL_EYE_CLOSED : NETPAL_EYE_CLOSED;
-	pal->state_eye_right = doAction ? NETPAL_EYE_CLOSED : NETPAL_EYE_CLOSED;
+	pal->state_eye_left = doAction ? NETPAL_EYE_CLOSED : NETPAL_EYE_OPEN;
+	pal->state_eye_right = doAction ? NETPAL_EYE_CLOSED : NETPAL_EYE_OPEN;
 }
 
 static inline void netpalIdleLeafShake(NetPal* pal) {
