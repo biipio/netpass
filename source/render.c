@@ -105,7 +105,7 @@ void renderExit(void) {
 void renderImage(C2D_SpriteSheet spr, size_t index, float x, float y, float z) {
 	if (index < 0 || index > C2D_SpriteSheetCount(spr)) return;
 	C2D_Image img = C2D_SpriteSheetGetImage(spr, index);
-	C2D_DrawImageAt(img, x, y, z, NULL, 1, 1);
+	C2D_DrawImageAt(img, x, y, z, NULL, 1.0f, 1.0f);
 }
 
 void renderOptionButton(C2D_Text* text, float x, float y, float z, bool isFocus, bool isGrayedOut) {
