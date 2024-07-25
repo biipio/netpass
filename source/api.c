@@ -28,6 +28,7 @@ int location = -1;
 FS_Archive sharedextdata_b = 0;
 
 Result uploadOutboxes(void) {
+	return -1;
 	Result res = 0;
 	Result messages = 0;
 	CecMboxListHeader mbox_list;
@@ -127,6 +128,7 @@ Result uploadOutboxes(void) {
 }
 
 Result downloadInboxes(void) {
+	return -1;
 	Result res = 0;
 	Result messages = 0;
 	CecMboxListHeader mbox_list;

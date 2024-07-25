@@ -98,6 +98,17 @@ void get_text_dimensions(C2D_Text* text, float scale_x, float scale_y, float* wi
 	}
 }
 
+void get_scale_for_fit(C2D_Text* text, float max_width, float max_height, float* scale_x, float* scale_y) {
+	float base_width;
+	float base_height;
+	get_text_dimensions(text, 1.0f, 1.0f, &base_width, &base_height);
+
+	float temp_scale_x = max_width / base_width;
+	float temp_scale_y = max_height / base_height;
+	if (*scale_x > temp_scale_x) *scale_x = temp_scale_x;
+	if (*scale_y > temp_scale_y) *scale_y = temp_scale_y;
+}
+
 C2D_Font _font(LanguageString s) {
 	for (int i = 0; i < NUM_LANGUAGES; i++) {
 		if (s[i].language == _language && s[i].text) {
@@ -125,4 +136,5 @@ void TextLangSpecificParse(C2D_Text* staticText, C2D_TextBuf staticBuf, Language
 		font = font_default;
 	}
 	C2D_TextFontParse(staticText, font, staticBuf, text);
+	C2D_TextOptimize(staticText);
 }

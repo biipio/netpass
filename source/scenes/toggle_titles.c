@@ -18,6 +18,8 @@
 
 #include "toggle_titles.h"
 #include "../config.h"
+#include "../render.h"
+#include "../utils.h"
 #include <stdlib.h>
 
 #define N(x) scenes_toggle_titles_namespace_##x
@@ -32,6 +34,7 @@ typedef struct {
 	u32 title_ids[24];
 	C2D_Text g_back;
 	int cursor;
+	float offset;
 	int number_games;
 } N(DataStruct);
 
@@ -79,9 +82,14 @@ void N(init)(Scene* sc) {
 	TextLangParse(&_data->g_back, _data->g_staticBuf, str_back);
 	TextLangParse(&_data->g_on_off[0], _data->g_staticBuf, str_toggle_titles_off);
 	TextLangParse(&_data->g_on_off[1], _data->g_staticBuf, str_toggle_titles_on);
+	
+	sc->setting.bg_top = bg_top_generic;
+	sc->setting.bg_bottom = bg_bottom_generic;
+	sc->setting.btn_left = ui_btn_left_help;
+	sc->setting.btn_right = ui_btn_right_close;
 }
 
-void N(render)(Scene* sc) {
+void N(render_top)(Scene* sc) {
 	if (!_data) return;
 	u32 clr = C2D_Color32(0, 0, 0, 0xff);
 	u32 onClr = C2D_Color32(10, 200, 10, 0xff);
@@ -102,7 +110,12 @@ void N(render)(Scene* sc) {
 	C2D_DrawTriangle(x, y, clr, x, y + 10, clr, x + 8, y + 5, clr, 1);
 }
 
+void N(render_bottom)(Scene* sc) {
+	if (!_data) return;
+}
+
 void N(exit)(Scene* sc) {
+	configWrite();
 	if (_data) {
 		C2D_TextBufDelete(_data->g_staticBuf);
 		free(_data);
@@ -110,37 +123,46 @@ void N(exit)(Scene* sc) {
 }
 
 SceneResult N(process)(Scene* sc) {
-	hidScanInput();
-	u32 kDown = hidKeysDown();
-	if (_data) {
-		_data->cursor += ((kDown & KEY_DOWN || kDown & KEY_CPAD_DOWN) && 1) - ((kDown & KEY_UP || kDown & KEY_CPAD_UP) && 1);
-		if (_data->cursor < 0) _data->cursor = _data->number_games;
-		if (_data->cursor > _data->number_games) _data->cursor = 0;
-		if (kDown & KEY_A) {
-			// "Back" is selected, exit this scene
-			if (_data->cursor == _data->number_games) {
-				configWrite();
-				return scene_pop;
-			}
+	app_state = app_idle;
+	InputState state = sc->input_state;
+	if (!_data) return scene_continue;
 
-			// Add title to ignore list / Remove title from ignore list
-			u32 title_id = _data->title_ids[_data->cursor];
-			if (isTitleIgnored(title_id)) {
-				removeIgnoredTitle(title_id);
-			} else {
-				addIgnoredTitle(title_id);
-			}
-			return scene_continue;
+	// Update cursor and offset
+	updateListCursor(&_data->cursor, &state, _data->number_games);
+	updateListOffset(&_data->offset, _data->cursor);
+
+	if (state.k_up & KEY_TOUCH) {
+		// Help button
+		if (isLeftButtonTouched(&state.pos_prev)) {
+			// TODO: implement this
 		}
-		if (kDown & KEY_B) {
-			configWrite();
+
+		// Back button
+		if (isRightButtonTouched(&state.pos_prev)) {
 			return scene_pop;
 		}
 	}
-	if (kDown & KEY_START) {
-		configWrite();
-		return scene_stop;
+
+	if (state.k_down & KEY_B) {
+		return scene_pop;
 	}
+
+	if (state.k_down & KEY_A) {
+		// "Back" is selected, exit this scene
+		if (_data->cursor == _data->number_games) {
+			return scene_pop;
+		}
+
+		// Add title to ignore list / Remove title from ignore list
+		u32 title_id = _data->title_ids[_data->cursor];
+		if (isTitleIgnored(title_id)) {
+			removeIgnoredTitle(title_id);
+		} else {
+			addIgnoredTitle(title_id);
+		}
+		return scene_continue;
+	}
+
 	return scene_continue;
 }
 
@@ -148,7 +170,8 @@ Scene* getToggleTitlesScene(void) {
 	Scene* scene = malloc(sizeof(Scene));
 	if (!scene) return NULL;
 	scene->init = N(init);
-	scene->render = N(render);
+	scene->render_top = N(render_top);
+	scene->render_bottom = N(render_bottom);
 	scene->exit = N(exit);
 	scene->process = N(process);
 	scene->is_popup = false;

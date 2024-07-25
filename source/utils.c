@@ -227,3 +227,15 @@ u8* memsearch(u8* buf, size_t buf_len, u8* cmp, size_t cmp_len) {
 	}
 	return NULL;
 }
+
+bool isLeftButtonTouched(touchPosition* pos) {
+	return ((pos->px < 49 - 1) && (pos->py < 28)) ||
+		((pos->px < 49 - 7) && (pos->py < 35)) ||
+		((pos->px < 49 - 14) && (pos->py < 39));
+}
+
+bool isRightButtonTouched(touchPosition* pos) {
+	return ((pos->px > 271 + 1) && (pos->py < 28)) ||
+		((pos->px > 271 + 7) && (pos->py < 35)) ||
+		((pos->px > 271 + 14) && (pos->py < 39));
+}

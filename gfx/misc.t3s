@@ -1,0 +1,8 @@
+--atlas -f rgba -z auto
+misc/logo.png
+misc/top_gradient.png
+misc/top_bar.png
+misc/arrow_upper.png
+misc/arrow_lower.png
+misc/info_box.png
+misc/speech_bubble.png

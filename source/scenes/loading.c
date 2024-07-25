@@ -17,20 +17,18 @@
  */
 
 #include "loading.h"
+#include "../render.h"
 #include <stdlib.h>
 #define N(x) scenes_loading_namespace_##x
 #define _data ((N(DataStruct)*)sc->d)
 
+static bool first_done = false;
+
 typedef struct {
-	C2D_TextBuf g_staticBuf;
-	C2D_Text g_loading;
-	C2D_Text g_dots;
-	C2D_SpriteSheet spr;
-	float text_x;
-	float text_y;
-	float text_width;
+	// C2D_TextBuf g_staticBuf;
 	Thread thread;
 	bool thread_done;
+	bool is_first;
 } N(DataStruct);
 
 void N(threadFn)(Scene* sc) {
@@ -41,33 +39,43 @@ void N(threadFn)(Scene* sc) {
 void N(init)(Scene* sc) {
 	sc->d = malloc(sizeof(N(DataStruct)));
 	if (!_data) return;
-	_data->g_staticBuf = C2D_TextBufNew(100);
-	TextLangParse(&_data->g_loading, _data->g_staticBuf, str_loading);
-	C2D_TextParse(&_data->g_dots, _data->g_staticBuf, "...");
-	float height;
-	get_text_dimensions(&_data->g_loading, 1, 1, &_data->text_width, &height);
-	_data->text_x = (SCREEN_TOP_WIDTH - _data->text_width) / 2;
-	_data->text_y = (SCREEN_TOP_HEIGHT - height) / 2;
+	// _data->g_staticBuf = C2D_TextBufNew(100);
 
-	_data->spr = C2D_SpriteSheetLoad("romfs:/gfx/loading.t3x");
+	sc->setting.bg_top = bg_top_generic;
+	sc->setting.bg_bottom = bg_bottom_generic;
+	sc->setting.btn_left = ui_btn_empty;
+	sc->setting.btn_right = ui_btn_empty;
 
 	_data->thread_done = false;
 	_data->thread = threadCreate((void(*)(void*))N(threadFn), sc, 8*1024, main_thread_prio()-1, -2, false);
+	app_state |= app_loading;
+
+	_data->is_first = !first_done;
+	if (!first_done) first_done = true;
 }
 
-void N(render)(Scene* sc) {
+void N(render_top)(Scene* sc) {
 	if (!_data) return;
-	C2D_Image img = C2D_SpriteSheetGetImage(_data->spr, 0);
-	C2D_DrawImageAt(img, 0, 0, 0, NULL, 1, 1);
-	C2D_DrawText(&_data->g_loading, C2D_AlignLeft, _data->text_x, _data->text_y, 0, 1, 1);
-	C2D_DrawText(&_data->g_dots, C2D_AlignLeft, _data->text_x + _data->text_width - 35 + 10*(time(NULL)%2), _data->text_y, 0, 1, 1);
+
+	if (_data->is_first) {
+		// Render logo
+    	renderImage(spr_misc, ui_misc_logo, CENTER_TOP_X(300), CENTER_TOP_Y(86), 0);
+	}
+	// C2D_DrawText(&_data->g_loading, C2D_AlignLeft, _data->text_x, _data->text_y, 0, 1, 1);
+	// C2D_DrawText(&_data->g_dots, C2D_AlignLeft, _data->text_x + _data->text_width - 35 + 10*(time(NULL)%2), _data->text_y, 0, 1, 1);
 }
 
+void N(render_bottom)(Scene* sc) {
+	if (!_data) return;
+	// C2D_Image img = C2D_SpriteSheetGetImage(_data->spr, 0);
+	// C2D_DrawImageAt(img, 0, 0, 0, NULL, 1, 1);
+	// C2D_DrawText(&_data->g_loading, C2D_AlignLeft, _data->text_x, _data->text_y, 0, 1, 1);
+	// C2D_DrawText(&_data->g_dots, C2D_AlignLeft, _data->text_x + _data->text_width - 35 + 10*(time(NULL)%2), _data->text_y, 0, 1, 1);
+}
 
 void N(exit)(Scene* sc) {
 	if (_data) {
-		C2D_TextBufDelete(_data->g_staticBuf);
-		C2D_SpriteSheetFree(_data->spr);
+		// C2D_TextBufDelete(_data->g_staticBuf);
 		threadJoin(_data->thread, U64_MAX);
 		threadFree(_data->thread);
 		free(_data);
@@ -86,7 +94,8 @@ Scene* getLoadingScene(Scene* next_scene, void(*func)(void)) {
 	Scene* scene = malloc(sizeof(Scene));
 	if (!scene) return NULL;
 	scene->init = N(init);
-	scene->render = N(render);
+	scene->render_top = N(render_top);
+	scene->render_bottom = N(render_bottom);
 	scene->exit = N(exit);
 	scene->process = N(process);
 	scene->next_scene = next_scene;
