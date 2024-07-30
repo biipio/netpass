@@ -85,8 +85,8 @@ SceneResult N(process)(Scene* sc) {
 	u32 kDown = hidKeysDown();
 	if (_data) {
 		_data->cursor += ((kDown & KEY_DOWN || kDown & KEY_CPAD_DOWN) && 1) - ((kDown & KEY_UP || kDown & KEY_CPAD_UP) && 1);
-		if (_data->cursor < 0) _data->cursor = 2;
-		if (_data->cursor > 2) _data->cursor = 0;
+		if (_data->cursor < 0) _data->cursor = 3;
+		if (_data->cursor > 3) _data->cursor = 0;
 		if (kDown & KEY_A) {
 			if (_data->cursor == 0) {
 				sc->next_scene = getLoadingScene(0, lambda(void, (void) {
