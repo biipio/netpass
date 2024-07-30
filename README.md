@@ -64,6 +64,30 @@ To build `.cia` files, run
 ./build_release.sh
 ```
 
+## Containerized environment of building the `.CIA`
+### Prerequisites
+- Running Linux OS 
+- Installed docker engine from [docker.io](https://docs.docker.com/desktop/install/linux-install/)
+### Building environment
+To build the environment image - run command:
+```bash
+docker build -t netpass_builder -f ./compiler/Dockerfile ./compiler/
+```
+Build environment image need to be created once and recreated with the same command every time `Dockerfile` changed.
+### Compilation with Docker 
+To compile cia -  run command:
+```bash
+docker run --rm -v ./:/build/source -u $(id -u):$(id -g) -ti netpass_builder
+```
+
+By default builder will execute command `make clean codegen;make cia`, to override arguments to `make` add at the end of previous command arguments of your choose. 
+
+Example:
+```bash
+docker run --rm -v ./:/build/source -u $(id -u):$(id -g) -ti netpass_builder clean
+```
+This will run command `make clean` overriding default arguments
+
 ## Credits
 ### Research
  - [This gist](https://gist.github.com/wwylele/29a8caa6f5e5a7d88a00bedae90472ed) by wwylele, describing some cecd functionality
