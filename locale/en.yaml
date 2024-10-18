@@ -1,7 +1,10 @@
+str_error_occurred: Oops! An error has occurred.
 str_libcurl_error: "libCURL error (%d): %s"
 str_libcurl_date_and_time: Make sure that your system's date and time are set correctly!
 str_httpstatus_error: HTTP status code %d
 str_3ds_error: 3DS error code %08lx
+str_if_error_persists: If the error persists, contact the NetPass Discord using the link or QR code below.
+str_press_to_exit: Press START or HOME to exit.
 str_home: Home
 str_train_station: Train Station
 str_plaza: Plaza
