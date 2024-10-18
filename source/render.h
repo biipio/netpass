@@ -67,7 +67,9 @@ typedef enum {
 	ui_misc_upper_arrow,
 	ui_misc_lower_arrow,
 	ui_misc_info_box,
-	ui_misc_speech_bubble
+	ui_misc_speech_bubble,
+	ui_misc_discord_qr,
+	ui_misc_netpal_ded
 } UI_Misc;
 
 extern C2D_SpriteSheet spr_misc;
