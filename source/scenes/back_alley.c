@@ -18,24 +18,24 @@
 
 #include "back_alley.h"
 #include "../utils.h"
+#include "../api.h"
+#include "../render.h"
+#include "../datetime.h"
 #include <stdlib.h>
-#include <time.h>
 #define N(x) scenes_back_alley_namespace_##x
 #define _data ((N(DataStruct)*)sc->d)
 #define MAX_PRICE 10
 
 typedef struct {
 	C2D_TextBuf g_staticBuf;
-	C2D_Text g_header;
-	C2D_Text g_subtext;
+	C2D_Text g_backAlley;
 	C2D_Text g_paytext;
-	C2D_Text g_game_titles[12];
-	u32 title_ids[12];
-	C2D_Text g_back;
+	C2D_Text g_game_titles[24];
+	u32 title_ids[24];
 	PlayCoins* play_coins;
 	int cursor;
+	float offset;
 	int number_games;
-	bool show_games;
 } N(DataStruct);
 
 PlayCoins* N(play_coins);
@@ -116,14 +116,14 @@ bool N(init_playcoins)(Scene* sc) {
 	}
 	fclose(f);
 
-	time_t t = time(NULL);
-	struct tm tm = *localtime(&t);
-	if (tm.tm_year + 1900 != config.year || tm.tm_mon + 1 != config.month || tm.tm_mday != config.day) {
+	DateTime dt;
+	getRtcTime(&dt);
+	if (dt.year != config.year || dt.month != config.month || dt.day != config.day) {
 		// our config is from the past day, time to set things up for the new day!
 		config.price = 0;
-		config.year = tm.tm_year + 1900;
-		config.month = tm.tm_mon + 1;
-		config.day = tm.tm_mday;
+		config.year = dt.year;
+		config.month = dt.month;
+		config.day = dt.day;
 		configWrite();
 	}
 	return true;
@@ -134,6 +134,7 @@ bool N(init_gamelist)(Scene* sc) {
 	CecMboxListHeader mbox_list;
 	res = cecdOpenAndRead(0, CEC_PATH_MBOX_LIST, sizeof(CecMboxListHeader), (u8*)&mbox_list);
 	if (R_FAILED(res)) return false;
+	clearIgnoredTitles(&mbox_list);
 	_data->number_games = mbox_list.num_boxes;
 	u16 title_name_utf16[50];
 	char title_name[50];
@@ -169,38 +170,63 @@ void N(init)(Scene* sc) {
 		return;
 	}
 
-	_data->cursor = 0;
-	_data->show_games = false;
-	TextLangParse(&_data->g_header, _data->g_staticBuf, str_back_alley);
-	TextLangParse(&_data->g_subtext, _data->g_staticBuf, str_back_alley_message);
+	_data->cursor = -1;
+	_data->offset = 0;
+	TextLangParse(&_data->g_backAlley, _data->g_staticBuf, str_back_alley);
 	N(load_paytext)(&_data->g_paytext, _data->g_staticBuf, config.price > MAX_PRICE ? 0 : config.price);
-	TextLangParse(&_data->g_back, _data->g_staticBuf, str_back);
+
+	sc->setting.bg_top = bg_top_generic;
+	sc->setting.bg_bottom = bg_bottom_generic;
+	sc->setting.btn_left = ui_btn_left_help;
+	sc->setting.btn_right = ui_btn_right_close;
 }
 
-void N(render)(Scene* sc) {
+void N(render_top)(Scene* sc) {
 	if (!_data) return;
-	u32 clr = C2D_Color32(0, 0, 0, 0xff);
-	C2D_DrawText(&_data->g_header, C2D_AlignLeft | C2D_WithColor, 10, 10, 0, 1, 1, clr);
-	C2D_DrawText(&_data->g_subtext, C2D_AlignLeft | C2D_WithColor, 11, 35, 0, 0.5, 0.5, clr);
-	if (_data->show_games) {
-		int i = 0;
-		for (; i < _data->number_games; i++) {
-			C2D_DrawText(&_data->g_game_titles[i], C2D_AlignLeft | C2D_WithColor, 30, 55 + (i*14), 0, 0.5, 0.5, clr);
-		}
-		C2D_DrawText(&_data->g_back, C2D_AlignLeft | C2D_WithColor, 30, 55 + (i*14), 0, 0.5, 0.5, clr);
 
-		int x = 22;
-		int y = _data->cursor*14 + 55 + 3;
-		C2D_DrawTriangle(x, y, clr, x, y +10, clr, x + 8, y + 5, clr, 1);
+	if (_data->cursor < 0) {
+		// Render "Back Alley" title
+		renderTextWithOutline(
+			&_data->g_backAlley, 0,
+			12, SCREEN_TOP_HEIGHT - 40, 0,
+			1.2f, 1.2f, 1.75f,
+			clr_white, clr_netpass_green
+		);
 	} else {
-		bool grayed_out = config.price > MAX_PRICE || config.price > _data->play_coins->total_coins;
-		C2D_DrawText(&_data->g_paytext, C2D_AlignLeft | C2D_WithColor, 30, 55, 0, 1, 1, grayed_out ? C2D_Color32(0, 0, 0, 0x80) : clr);
-		C2D_DrawText(&_data->g_back, C2D_AlignLeft | C2D_WithColor, 30, 80, 0, 1, 1, clr);
+		float x = CENTER_TOP_X(368);
+		float y = CENTER_TOP_Y(162); // Image height is 183, top bar height is 21, 162 = 183 - 21
 
-		int x = 10;
-		int y = _data->cursor*25 + 55 + 5;
-		C2D_DrawTriangle(x, y, clr, x, y + 18, clr, x + 15, y + 9, clr, 1);
+		// Render info box
+		renderImage(spr_misc, ui_misc_info_box, x, y, 0);
+
+		// Render game title
+		C2D_DrawText(&_data->g_game_titles[_data->cursor], C2D_WithColor, x + 10, y + 10, 0, 0.75f, 0.75f, clr_white);
 	}
+
+	// int i = 0;
+	// for (; i < _data->number_games; i++) {
+	// 	C2D_DrawText(&_data->g_game_titles[i], C2D_AlignLeft | C2D_WithColor, 30, 55 + (i*14), 0, 0.5, 0.5, clr);
+	// }
+	// C2D_DrawText(&_data->g_back, C2D_AlignLeft | C2D_WithColor, 30, 55 + (i*14), 0, 0.5, 0.5, clr);
+
+	// int x = 22;
+	// int y = _data->cursor*14 + 55 + 3;
+	// C2D_DrawTriangle(x, y, clr, x, y +10, clr, x + 8, y + 5, clr, 1);
+
+
+	// bool grayed_out = config.price > MAX_PRICE || config.price > _data->play_coins->total_coins;
+	// C2D_DrawText(&_data->g_paytext, C2D_AlignLeft | C2D_WithColor, 30, 55, 0, 1, 1, grayed_out ? C2D_Color32(0, 0, 0, 0x80) : clr);
+	// C2D_DrawText(&_data->g_back, C2D_AlignLeft | C2D_WithColor, 30, 80, 0, 1, 1, clr);
+
+	// int x = 10;
+	// int y = _data->cursor*25 + 55 + 5;
+	// C2D_DrawTriangle(x, y, clr, x, y + 18, clr, x + 15, y + 9, clr, 1);
+}
+
+void N(render_bottom)(Scene* sc) {
+	if (!_data) return;
+
+	renderOptionButtons(_data->g_game_titles, _data->number_games, _data->cursor, _data->offset, -1);
 }
 
 void N(exit)(Scene* sc) {
@@ -211,41 +237,49 @@ void N(exit)(Scene* sc) {
 }
 
 SceneResult N(process)(Scene* sc) {
-	hidScanInput();
-	u32 kDown = hidKeysDown();
-	if (_data) {
-		_data->cursor += ((kDown & KEY_DOWN || kDown & KEY_CPAD_DOWN) && 1) - ((kDown & KEY_UP || kDown & KEY_CPAD_UP) && 1);
-		if (_data->show_games) {
-			if (_data->cursor < 0) _data->cursor = _data->number_games;
-			if (_data->cursor > _data->number_games) _data->cursor = 0;
-			if (kDown & KEY_A) {
-				if (_data->cursor == _data->number_games) {
-					// go back
-					_data->cursor = 0;
-					_data->show_games = false;
-				} else {
-					// picked a game
-					return N(buy_pass)(sc, _data->cursor);
-				}
-			}
-			if (kDown & KEY_B) {
-				_data->cursor = 0;
-				_data->show_games = false;
-			}
-		} else {
-			if (_data->cursor < 0) _data->cursor = 1;
-			if (_data->cursor > 1) _data->cursor = 0;
-			if (kDown & KEY_A) {
-				if (_data->cursor == 0 && config.price <= MAX_PRICE && config.price <= _data->play_coins->total_coins) {
-					_data->cursor = 0;
-					_data->show_games = true;
-				}
-				if (_data->cursor == 1) return scene_pop;
-			}
-			if (kDown & KEY_B) return scene_pop;
+	app_state = app_idle;
+	InputState state = sc->input_state;
+	if (!_data) return scene_continue;
+
+	// TODO: Display info box about why back alley can't be used rn,
+	//       and return scene_pop after info box closed
+	// config.price <= MAX_PRICE && config.price <= _data->play_coins->total_coins
+
+	// Update cursor and offset
+	updateListCursor(&_data->cursor, &state, _data->number_games - 1);
+	updateListOffset(&_data->offset, _data->cursor);
+
+	if (state.k_up & KEY_TOUCH) {
+		// Help button
+		if (isLeftButtonTouched(&state.pos_prev)) {
+			// TODO: implement this
+		}
+
+		// Close button
+		if (isRightButtonTouched(&state.pos_prev)) {
+			return scene_pop;
 		}
 	}
-	if (kDown & KEY_START) return scene_stop;
+
+	if (state.k_down & KEY_B) {
+		if (_data->cursor < 0) {
+			return scene_pop;
+		} else {
+			_data->cursor = -1;
+		}
+	}
+
+	if (state.k_down & KEY_A) {
+		if (_data->cursor < 0) {
+			_data->cursor = 0;
+			return scene_continue;
+		}
+
+		// picked a game
+		return scene_continue;
+		// return N(buy_pass)(sc, _data->cursor);
+	}
+	
 	return scene_continue;
 }
 
@@ -253,7 +287,8 @@ Scene* getBackAlleyScene() {
 	Scene* scene = malloc(sizeof(Scene));
 	if (!scene) return NULL;
 	scene->init = N(init);
-	scene->render = N(render);
+	scene->render_top = N(render_top);
+	scene->render_bottom = N(render_bottom);
 	scene->exit = N(exit);
 	scene->process = N(process);
 	scene->is_popup = false;

@@ -16,6 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "datetime.h"
 #include <3ds/types.h>
 #include <3ds/result.h>
 #include <3ds/srv.h>
@@ -26,22 +27,21 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
 
 static Handle cecdHandle;
 static int cecdRefCount;
 
 void getCurrentTime(CecTimestamp* cts) {
-	time_t unix_time = time(NULL);
-	struct tm* ts = gmtime((const time_t*)&unix_time);
-	cts->hour = ts->tm_hour;
-	cts->minute = ts->tm_min;
-	cts->second = ts->tm_sec;
+	DateTime dt;
+	getRtcTime(&dt);
+	cts->hour = dt.hour;
+	cts->minute = dt.minute;
+	cts->second = dt.second;
 	cts->millisecond = 0;
-	cts->year = ts->tm_year + 1900;
-	cts->month = ts->tm_mon + 1;
-	cts->day = ts->tm_mday;
-	cts->weekday = ts->tm_wday;
+	cts->year = dt.year;
+	cts->month = dt.month;
+	cts->day = dt.day;
+	cts->weekday = dt.weekday;
 }
 
 Result cecdInit(void) {

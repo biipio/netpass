@@ -21,10 +21,12 @@
 #define N(x) scenes_switch_namespace_##x
 
 void N(init)(Scene* sc) { }
-void N(render)(Scene* sc) { }
+void N(render_top)(Scene* sc) { }
+void N(render_bottom)(Scene* sc) { }
 void N(exit)(Scene* sc) { }
 
 SceneResult N(process)(Scene* sc) {
+	app_state = app_loading;
 	sc->next_scene = ((Scene*(*)(void))sc->data)();
 	return scene_switch;
 }
@@ -33,7 +35,8 @@ Scene* getSwitchScene(Scene*(*next_scene)(void)) {
 	Scene* scene = malloc(sizeof(Scene));
 	if (!scene) return NULL;
 	scene->init = N(init);
-	scene->render = N(render);
+	scene->render_top = N(render_top);
+	scene->render_bottom = N(render_bottom);
 	scene->exit = N(exit);
 	scene->process = N(process);
 	scene->data = (u32)next_scene;

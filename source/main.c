@@ -20,31 +20,37 @@
 #include <citro2d.h>
 #include <stdlib.h>
 #include "scene.h"
+#include "render.h"
 #include "api.h"
 #include "cecd.h"
 #include "curl-handler.h"
 #include "config.h"
 
 int main() {
+	osSetSpeedupEnable(true); // enable speedup on N3DS
+
 	gfxInitDefault();
 	cfguInit();
 	amInit();
 	nsInit();
 	aptInit();
-	consoleInit(GFX_BOTTOM, NULL);
+	mcuHwcInit();
+	ptmuInit();
+	// consoleInit(GFX_BOTTOM, NULL);
 	printf("Starting NetPass v%d.%d.%d\n", _VERSION_MAJOR_, _VERSION_MINOR_, _VERSION_MICRO_);
-	stringsInit();
 	C3D_Init(C3D_DEFAULT_CMDBUF_SIZE);
 	C2D_Init(C2D_DEFAULT_MAX_OBJECTS);
 	C2D_Prepare();
 	romfsInit();
 	init_main_thread_prio();
+	hidSetRepeatParameters(28, 12);
 
 	cecdInit();
 	curlInit();
 	srand(time(NULL));
 
 	configInit(); // must be after cecdInit()
+	stringsInit(); // must be after configInit()
 	
 	// mount sharedextdata_b so that we can read it later, for e.g. playcoins
 	{
@@ -61,7 +67,7 @@ int main() {
 		FSUSER_OpenArchive(&sharedextdata_b, ARCHIVE_SHARED_EXTDATA, extdata_path);
 	}
 
-	C3D_RenderTarget* top = C2D_CreateScreenTarget(GFX_TOP, GFX_LEFT);
+	renderInit();
 
 	Scene* scene = getLoadingScene(getSwitchScene(lambda(Scene*, (void) {
 		if (R_FAILED(location) && location != -1) {
@@ -113,22 +119,19 @@ int main() {
 			continue;
 		}
 		C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
-		C2D_TargetClear(top, C2D_Color32(0xFF, 0xFF, 0xFF, 0xFF));
-		C2D_SceneBegin(top);
-		if (scene->is_popup) {
-			scene->pop_scene->render(scene->pop_scene);
-			C2D_Flush();
-		}
-		scene->render(scene);
+		renderScene(scene);
 		C3D_FrameEnd(0);
 		svcSleepThread(1);
 	}
 	printf("Exiting...\n");
 	bgLoopExit();
+	renderExit();
 	C2D_Fini();
 	C3D_Fini();
 	//curlExit();
 	romfsExit();
+	ptmuExit();
+	mcuHwcExit();
 	aptExit();
 	nsExit();
 	amExit();
