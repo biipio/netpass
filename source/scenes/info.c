@@ -47,7 +47,6 @@ void N(init)(Scene* sc) {
 	sc->setting.bg_bottom = popSetting.bg_bottom;
 	sc->setting.btn_left = popSetting.btn_left;
 	sc->setting.btn_right = popSetting.btn_right;
-	sc->setting.has_gradient = popSetting.has_gradient;
 	sc->setting.use_previews = popSetting.use_previews;
 }
 

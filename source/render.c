@@ -329,7 +329,7 @@ void renderTopScreen(Scene* scene) {
 	}
 
 	// Render gradient if necessary
-	if (setting.has_gradient) {
+	if (setting.bg_top > bg_top_generic) {
 		renderImage(spr_misc, ui_misc_gradient, 0, SCREEN_TOP_HEIGHT - 45, 0);
 	}
 

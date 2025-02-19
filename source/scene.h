@@ -52,7 +52,6 @@ typedef struct {
 	int bg_bottom;
 	int btn_left;
 	int btn_right;
-	bool has_gradient;
 	bool use_previews;
 } Setting;
 
