@@ -228,14 +228,22 @@ u8* memsearch(u8* buf, size_t buf_len, u8* cmp, size_t cmp_len) {
 	return NULL;
 }
 
-bool isLeftButtonTouched(touchPosition* pos) {
-	return ((pos->px < 49 - 1) && (pos->py < 28)) ||
-		((pos->px < 49 - 7) && (pos->py < 35)) ||
-		((pos->px < 49 - 14) && (pos->py < 39));
+bool isLeftButtonTapped(touchPosition* pos_start, touchPosition* pos_end) {
+	bool startTouched = ((pos_start->px < 49 - 1) && (pos_start->py < 28)) ||
+		((pos_start->px < 49 - 7) && (pos_start->py < 35)) ||
+		((pos_start->px < 49 - 14) && (pos_start->py < 39));
+	bool endTouched = ((pos_end->px < 49 - 1) && (pos_end->py < 28)) ||
+		((pos_end->px < 49 - 7) && (pos_end->py < 35)) ||
+		((pos_end->px < 49 - 14) && (pos_end->py < 39));
+	return startTouched && endTouched;
 }
 
-bool isRightButtonTouched(touchPosition* pos) {
-	return ((pos->px > 271 + 1) && (pos->py < 28)) ||
-		((pos->px > 271 + 7) && (pos->py < 35)) ||
-		((pos->px > 271 + 14) && (pos->py < 39));
+bool isRightButtonTapped(touchPosition* pos_start, touchPosition* pos_end) {
+	bool startTouched = ((pos_start->px > 271 + 1) && (pos_start->py < 28)) ||
+		((pos_start->px > 271 + 7) && (pos_start->py < 35)) ||
+		((pos_start->px > 271 + 14) && (pos_start->py < 39));
+	bool endTouched = ((pos_end->px > 271 + 1) && (pos_end->py < 28)) ||
+		((pos_end->px > 271 + 7) && (pos_end->py < 35)) ||
+		((pos_end->px > 271 + 14) && (pos_end->py < 39));
+	return startTouched && endTouched;
 }

@@ -26,14 +26,24 @@
 
 u32 app_state = app_opening; // init to app_opening
 
-void updateInputState(Scene* scene) {
+void updateInputState(InputState* state) {
 	hidScanInput();
-	scene->input_state.k_down = hidKeysDown();
-	scene->input_state.k_down_repeat = hidKeysDownRepeat();
-	scene->input_state.k_held = hidKeysHeld();
-	scene->input_state.k_up = hidKeysUp();
-	scene->input_state.pos_prev = scene->input_state.pos_current;
-	hidTouchRead(&scene->input_state.pos_current);
+
+	state->k_down = hidKeysDown();
+	state->k_down_repeat = hidKeysDownRepeat();
+	state->k_held = hidKeysHeld();
+	state->k_up = hidKeysUp();
+
+	state->pos_prev = state->pos_current;
+	hidTouchRead(&state->pos_current);
+	if (state->k_down & KEY_TOUCH) {
+		state->isTouched = true;
+		state->pos_start = state->pos_current;
+		state->pos_prev = state->pos_current;
+	}
+	if (state->k_up & KEY_TOUCH) {
+		state->isTouched = false;
+	}
 }
 
 void updateListCursor(int* cursor, InputState* state, int cursorMax) {
@@ -57,7 +67,7 @@ void updateListOffset(float* offset, int cursor) {
 }
 
 Scene* processScene(Scene* scene) {
-	updateInputState(scene);
+	updateInputState(&scene->input_state);
 
 	// Fade in
 	if (app_state & app_opening) {

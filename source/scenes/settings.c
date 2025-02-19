@@ -175,7 +175,7 @@ SceneResult N(process)(Scene* sc) {
 
 	if (state.k_up & KEY_TOUCH) {
 		// Back button
-		if (isRightButtonTouched(&state.pos_prev)) {
+		if (isRightButtonTapped(&state.pos_start, &state.pos_prev)) {
 			// If in default menu, exit settings
 			if (_data->current_menu == MENU_DEFAULT) return scene_pop;
 

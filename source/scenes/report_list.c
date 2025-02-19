@@ -187,12 +187,12 @@ SceneResult N(process)(Scene* sc) {
 
 	if (state.k_up & KEY_TOUCH) {
 		// Help button
-		if (isLeftButtonTouched(&state.pos_prev)) {
+		if (isLeftButtonTapped(&state.pos_start, &state.pos_prev)) {
 			// TODO: implement this
 		}
 		
 		// Back button
-		if (isRightButtonTouched(&state.pos_prev)) {
+		if (isRightButtonTapped(&state.pos_start, &state.pos_prev)) {
 			return scene_pop;
 		}
 	}

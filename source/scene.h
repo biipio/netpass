@@ -36,12 +36,15 @@ typedef enum {
 typedef struct Scene Scene;
 
 typedef struct {
-	u32 k_down;
-	u32 k_down_repeat;
-	u32 k_held;
-	u32 k_up;
-	touchPosition pos_prev;
-	touchPosition pos_current;
+	u32 k_down;                // Buttons that are newly pressed this frame
+	u32 k_down_repeat;         // Buttons that are either newly pressed or held this frame
+	u32 k_held;                // Buttons that are held this frame
+	u32 k_up;                  // Buttons that are newly release this frame
+	
+	bool isTouched;            // Whether the touch screen is currently being touched 
+	touchPosition pos_start;   // Position being touched in the frame the screen was first touched
+	touchPosition pos_prev;    // Position being touched in the previous frame
+	touchPosition pos_current; // Position being touched in the current frame
 } InputState;
 
 typedef struct {

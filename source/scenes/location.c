@@ -89,12 +89,12 @@ SceneResult N(process)(Scene* sc) {
 
 	if (state.k_up & KEY_TOUCH) {
 		// Help button
-		if (isLeftButtonTouched(&state.pos_prev)) {
+		if (isLeftButtonTapped(&state.pos_start, &state.pos_prev)) {
 			// TODO: implement this
 		}
 		
 		// Settings button
-		if (isRightButtonTouched(&state.pos_prev)) {
+		if (isRightButtonTapped(&state.pos_start, &state.pos_prev)) {
 			sc->next_scene = getSettingsScene();
 			return scene_push;
 		}
