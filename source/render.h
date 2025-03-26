@@ -79,6 +79,7 @@ extern u32 clr_gray;
 extern u32 clr_black;
 extern u32 clr_netpass_green;
 extern u32 clr_focus_blue;
+extern u32 clr_off_red;
 
 extern u8 fade_alpha;
 
@@ -88,6 +89,8 @@ void renderExit(void);
 void renderImage(C2D_SpriteSheet spr, size_t index, float x, float y, float z);
 void renderOptionButtons(C2D_Text* entries, size_t n, int cursor, float offset, int grayedOut);
 void renderTextWithOutline(C2D_Text* text, u32 flags, float x, float y, float z, float scaleX, float scaleY, float outlineWidth, u32 textClr, u32 outlineClr, ...);
+
+void resetBtnColors(u32** btn_colors, size_t n, u32 clr);
 
 void renderScene(Scene* scene);
 

@@ -58,6 +58,8 @@ typedef struct {
 	int btn_cursor;
 	float scroll_offset;
 	float scroll_velocity;
+
+	u32* btn_colors;
 } Setting;
 
 struct Scene {

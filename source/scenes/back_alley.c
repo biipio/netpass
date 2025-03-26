@@ -173,6 +173,10 @@ void N(init)(Scene* sc) {
 	sc->setting.scroll_offset = 0;
 	sc->setting.scroll_velocity = 0;
 	sc->input_state.isTouched = false;
+
+	sc->setting.btn_colors = NULL;
+	resetBtnColors(&sc->setting.btn_colors, sc->setting.btn_count, clr_netpass_green);
+
 	TextLangParse(&_data->g_backAlley, _data->g_staticBuf, str_back_alley);
 	N(load_paytext)(&_data->g_paytext, _data->g_staticBuf, config.price > MAX_PRICE ? 0 : config.price);
 
@@ -234,6 +238,7 @@ void N(exit)(Scene* sc) {
 	if (_data) {
 		C2D_TextBufDelete(_data->g_staticBuf);
 		free(_data);
+		free(sc->setting.btn_colors);
 	}
 }
 

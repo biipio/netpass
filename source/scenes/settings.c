@@ -102,6 +102,9 @@ void N(init)(Scene* sc) {
 	sc->setting.bg_bottom = bg_bottom_generic;
 	sc->setting.btn_left = ui_btn_empty;
 	sc->setting.btn_right = ui_btn_right_close;
+
+	sc->setting.btn_colors = NULL;
+	resetBtnColors(&sc->setting.btn_colors, sc->setting.btn_count, clr_netpass_green);
 }
 
 void N(render_top)(Scene* sc) {
@@ -160,6 +163,7 @@ void N(exit)(Scene* sc) {
 		N(save_time_format)(sc);
 		C2D_TextBufDelete(_data->g_staticBuf);
 		free(_data);
+		free(sc->setting.btn_colors);
 	}
 }
 
@@ -191,6 +195,7 @@ SceneResult N(process)(Scene* sc) {
 			setting->btn_cursor = -1;
 			setting->scroll_offset = 0;
 			setting->btn_count = NUM_ENTRIES;
+			resetBtnColors(&setting->btn_colors, setting->btn_count, clr_netpass_green);
 			_data->current_menu = MENU_DEFAULT;
 			return scene_continue;
 		}
@@ -211,6 +216,7 @@ SceneResult N(process)(Scene* sc) {
 			setting->btn_cursor = -1;
 			setting->scroll_offset = 0;
 			setting->btn_count = NUM_ENTRIES;
+			resetBtnColors(&setting->btn_colors, setting->btn_count, clr_netpass_green);
 			_data->current_menu = MENU_DEFAULT;
 			return scene_continue;
 		} else {
@@ -240,12 +246,14 @@ SceneResult N(process)(Scene* sc) {
 				// TODO: calculate proper scroll_offset for cursor
 				setting->scroll_offset = _data->selected_language + 1;
 				setting->btn_count = NUM_LANGUAGES + 1;
+				resetBtnColors(&setting->btn_colors, setting->btn_count, clr_netpass_green);
 				_data->current_menu = MENU_LANGUAGE;
 			}
 			if (setting->btn_cursor == 3) {
 				setting->btn_cursor = config.time_format;
 				setting->scroll_offset = 0;
 				setting->btn_count = 2;
+				resetBtnColors(&setting->btn_colors, setting->btn_count, clr_netpass_green);
 				_data->current_menu = MENU_TIME_FORMAT;
 			}
 			if (setting->btn_cursor == 4) {

@@ -84,6 +84,10 @@ void N(init)(Scene* sc) {
 	sc->input_state.isTouched = false;
 
 	N(randomize_locations)(sc);
+	
+	sc->setting.btn_colors = NULL;
+	resetBtnColors(&sc->setting.btn_colors, sc->setting.btn_count, clr_netpass_green);
+	sc->setting.btn_colors[location_real_to_random(config.last_location)] = clr_gray;
 
 	sc->setting.bg_top = bg_top_home;
 	sc->setting.bg_bottom = bg_bottom_generic;
@@ -122,6 +126,7 @@ void N(exit)(Scene* sc) {
 	if (_data) {
 		C2D_TextBufDelete(_data->g_staticBuf);
 		free(_data);
+		free(sc->setting.btn_colors);
 	}
 }
 

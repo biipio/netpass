@@ -57,6 +57,9 @@ void N(init)(Scene* sc) {
 	sc->setting.btn_left = ui_btn_left_help;
 	sc->setting.btn_right = ui_btn_right_settings;
 	sc->setting.use_previews = false;
+
+	sc->setting.btn_colors = NULL;
+	resetBtnColors(&sc->setting.btn_colors, sc->setting.btn_count, clr_netpass_green);
 }
 
 void N(render_top)(Scene* sc) {
@@ -75,6 +78,7 @@ void N(exit)(Scene* sc) {
 	if (_data) {
 		C2D_TextBufDelete(_data->g_staticBuf);
 		free(_data);
+		free(sc->setting.btn_colors);
 	}
 }
 

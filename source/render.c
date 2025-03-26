@@ -68,6 +68,7 @@ u32 clr_gray;
 u32 clr_black;
 u32 clr_netpass_green;
 u32 clr_focus_blue;
+u32 clr_off_red;
 
 void renderInit(void) {
 	g_dynamicBuf = C2D_TextBufNew(2000);
@@ -89,6 +90,7 @@ void renderInit(void) {
 	clr_black = C2D_Color32(0x00, 0x00, 0x00, 0xFF);
 	clr_netpass_green = C2D_Color32(0x1F, 0xAF, 0x5F, 0xFF);
 	clr_focus_blue = C2D_Color32(0x08, 0xB4, 0xC4, 0xFF);
+	clr_off_red = C2D_Color32(0xC8, 0x0A, 0x0A, 0xFF);
 }
 
 void renderExit(void) {
@@ -200,6 +202,15 @@ void renderTextWithOutline(C2D_Text* text, u32 flags, float x, float y, float z,
 	C2D_DrawText(text, C2D_WithColor | flags, x, y, z, scaleX, scaleY, textClr, args);
 
 	va_end(args);
+}
+
+void resetBtnColors(u32** btn_colors, size_t n, u32 clr) {
+	if (*btn_colors != NULL) free(*btn_colors);
+
+	*btn_colors = malloc(n * sizeof(u32));
+	for (size_t i = 0; i < n; i++) {
+		(*btn_colors)[i] = clr;
+	}
 }
 
 // void renderUser(ReportListEntry* user) {

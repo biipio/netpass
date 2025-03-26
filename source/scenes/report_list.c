@@ -139,6 +139,9 @@ void N(init)(Scene* sc) {
 	sc->setting.bg_bottom = bg_bottom_generic;
 	sc->setting.btn_left = ui_btn_left_help;
 	sc->setting.btn_right = ui_btn_right_close;
+	
+	sc->setting.btn_colors = NULL;
+	resetBtnColors(&sc->setting.btn_colors, sc->setting.btn_count, clr_netpass_green);
 }
 
 void N(render_top)(Scene* sc) {
@@ -171,6 +174,7 @@ void N(exit)(Scene* sc) {
 		free(_data->g_entries);
 		free(_data->list);
 		free(_data);
+		free(sc->setting.btn_colors);
 	}
 }
 
