@@ -176,7 +176,7 @@ SceneResult N(process)(Scene* sc) {
 	// Update cursor and offset
 	int list_max = setting->btn_count;
 	if (_data->current_menu == MENU_DEFAULT) list_max += 1;
-	updateListCursor(&setting->btn_cursor, &state, setting->btn_count);
+	updateListCursor(&setting->btn_cursor, &state, list_max - 1);
 	updateListOffset(&setting->scroll_offset, &setting->scroll_velocity, &setting->btn_cursor, list_max, &state);
 
 	if (state.k_up & KEY_TOUCH) {
