@@ -231,7 +231,7 @@ void N(render_top)(Scene* sc) {
 void N(render_bottom)(Scene* sc) {
 	if (!_data) return;
 
-	renderOptionButtons(_data->g_game_titles, sc->setting.btn_count, sc->setting.btn_cursor, sc->setting.scroll_offset, -1);
+	renderOptionButtons(_data->g_game_titles, &(sc->setting));
 }
 
 void N(exit)(Scene* sc) {

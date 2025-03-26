@@ -110,63 +110,81 @@ void renderImage(C2D_SpriteSheet spr, size_t index, float x, float y, float z) {
 	C2D_DrawImageAt(img, x, y, z, NULL, 1.0f, 1.0f);
 }
 
-void renderOptionButton(C2D_Text* text, float x, float y, float z, bool isFocus, bool isGrayedOut) {
-	if (isGrayedOut) {
-		C2D_ImageTint tint_gray;
-		C2D_PlainImageTint(&tint_gray, clr_gray, 0.25f);
-		C2D_DrawImageAt(img_btn_text, x, y, z, &tint_gray, 1, 1);
+void renderOptionButton(C2D_Text* text, float x, float y, float z, u32 clr, bool isFocus) {
+	// Define constants
+	u32 clr_default = clr_netpass_green;
+
+	// Render option button with proper tint if button color is not default
+	if (clr != clr_default) {
+		C2D_ImageTint tint;
+		C2D_PlainImageTint(&tint, clr, 0.25f);
+		C2D_DrawImageAt(img_btn_text, x, y, z, &tint, 1, 1);
 	} else {
 		C2D_DrawImageAt(img_btn_text, x, y, z, NULL, 1, 1);
 	}
+
+	// Render glowing blue outline if the current button is focused
 	if (isFocus) {
 		renderImage(spr_btn, ui_btn_text_selected, x - 5, y - 4, z);
 	}
 
+	// Scale input text based on option button image dimensions
 	u16 button_width = img_btn_text.subtex->width;
 	u16 button_height = img_btn_text.subtex->height;
 	float scale_x = 0.8f;
 	float scale_y = 0.8f;
 	get_scale_for_fit(text, button_width - 10, button_height - 4, &scale_x, &scale_y);
 	
+	// Calculate correct x and y for text to be centered within the button
 	float text_height;
 	get_text_dimensions(text, scale_x, scale_y, NULL, &text_height);
 	float text_x = x + button_width/2;
 	float text_y = y + (button_height - text_height)/2;
 
-	u32 textClr = clr_white;
-	u32 outlineClr = clr_netpass_green;
-	if (isGrayedOut) {
-		outlineClr = clr_gray;
-	} else if (isFocus) {
-		outlineClr = clr_focus_blue;
+	// Determine text and text outline colors
+	u32 clr_text = clr_white;
+	u32 clr_outline = clr;
+	if (isFocus && clr == clr_default) {
+		clr_outline = clr_focus_blue;
 	}
-	renderTextWithOutline(text, C2D_AlignCenter, text_x, text_y, z, scale_x, scale_y, 1.6f, textClr, outlineClr);
+
+	// Render the text
+	renderTextWithOutline(text, C2D_AlignCenter, text_x, text_y, z, scale_x, scale_y, 1.6f, clr_text, clr_outline);
 }
 
-void renderOptionButtons(C2D_Text* entries, size_t n, int cursor, float offset, int grayedOut) {
+void renderOptionButtons(C2D_Text* entries, Setting* setting) {
+	// Define constants
 	const int x = CENTER_BOTTOM_X(258);
 	const int z = 0;
 	const int gap = 10;
 	const int btnHeight = 35;
 
+	// Get values from setting
+	const float offset = setting->scroll_offset;
+	const float cursor = setting->btn_cursor;
+	const int n = setting->btn_count;
+
 	// Calculate starting y
 	int totalHeight = (btnHeight * n) + (gap * (n - 1));
 	int y = CENTER_BOTTOM_Y(totalHeight);
 
+	// Render any visible buttons
 	for (size_t i = 0; i < n; i++) {
 		int btnY = 45 + (i * (btnHeight + gap));
 		if (offset + SCREEN_BOTTOM_HEIGHT < btnY) continue;
 		if (offset > btnY + btnHeight) continue;
 
 		bool isFocus = (i == cursor);
-		bool isGrayedOut = (i == grayedOut);
 		if (n < 4) {
-			renderOptionButton(&entries[i], x, y + (i*(btnHeight+gap)), z, isFocus, isGrayedOut);
+			// If there are less than 4 buttons total, center them on the screen
+			renderOptionButton(&entries[i], x, y + (i*(btnHeight+gap)), z, setting->btn_colors[i], isFocus);
 		} else {
-			renderOptionButton(&entries[i], x, btnY - offset, z, isFocus, isGrayedOut);
+			// If there are at least 4 buttons total, adjust their height with offset
+			renderOptionButton(&entries[i], x, btnY - offset, z, setting->btn_colors[i], isFocus);
 		}
 	}
 
+	// Display top/bottom arrows if any buttons are even slightly off-screen
 	if (n > 4) {
 		if (offset > 45) {
 			renderImage(spr_misc, ui_misc_upper_arrow, 0, 0, 0);

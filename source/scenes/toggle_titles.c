@@ -127,6 +127,8 @@ void N(render_bottom)(Scene* sc) {
 			sc->setting.btn_colors[i] = clr_netpass_green;
 		}
 	}
+	
+	renderOptionButtons(_data->g_game_titles, &(sc->setting));
 }
 
 void N(exit)(Scene* sc) {

@@ -119,7 +119,7 @@ void N(render_top)(Scene* sc) {
 void N(render_bottom)(Scene* sc) {
 	if (!_data) return;
 	
-	renderOptionButtons(_data->g_locations, sc->setting.btn_count, sc->setting.btn_cursor, sc->setting.scroll_offset, location_real_to_random(config.last_location));
+	renderOptionButtons(_data->g_locations, &(sc->setting));
 }
 
 void N(exit)(Scene* sc) {

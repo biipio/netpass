@@ -144,15 +144,15 @@ void N(render_bottom)(Scene* sc) {
 	
 	switch (_data->current_menu) {
 	case MENU_DEFAULT:
-		renderOptionButtons(_data->g_entries, sc->setting.btn_count, sc->setting.btn_cursor, sc->setting.scroll_offset, -1);
+		renderOptionButtons(_data->g_entries, &(sc->setting));
 		// TODO: render version and mini flags if they should be visible
 		break;
 	case MENU_LANGUAGE:
 		if (!_data->language_text_loaded) N(load_language_text)(sc);
-		renderOptionButtons(_data->g_languages, sc->setting.btn_count, sc->setting.btn_cursor, sc->setting.scroll_offset, -1);
+		renderOptionButtons(_data->g_languages, &(sc->setting));
 		break;
 	case MENU_TIME_FORMAT:
-		renderOptionButtons(_data->g_timeFormats, sc->setting.btn_count, sc->setting.btn_cursor, sc->setting.scroll_offset, -1);
+		renderOptionButtons(_data->g_timeFormats, &(sc->setting));
 		break;
 	}
 }

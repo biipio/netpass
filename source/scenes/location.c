@@ -51,7 +51,8 @@ void N(init)(Scene* sc) {
 
 	sc->setting.btn_count = NUM_ENTRIES;
 	sc->setting.btn_cursor = -1;
-	
+	sc->setting.scroll_offset = 0;
+
 	sc->setting.bg_top = sc->data + 2;
 	sc->setting.bg_bottom = bg_bottom_generic;
 	sc->setting.btn_left = ui_btn_left_help;
@@ -71,7 +72,7 @@ void N(render_top)(Scene* sc) {
 void N(render_bottom)(Scene* sc) {
 	if (!_data) return;
 	
-	renderOptionButtons(_data->g_entries, sc->setting.btn_count, sc->setting.btn_cursor, 0, -1);
+	renderOptionButtons(_data->g_entries, &(sc->setting));
 }
 
 void N(exit)(Scene* sc) {

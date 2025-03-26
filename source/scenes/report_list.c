@@ -165,7 +165,7 @@ void N(render_bottom)(Scene* sc) {
 		return;
 	}
 	
-	renderOptionButtons(_data->g_entries, sc->setting.btn_count, sc->setting.btn_cursor, sc->setting.scroll_offset, -1);
+	renderOptionButtons(_data->g_entries, &(sc->setting));
 }
 
 void N(exit)(Scene* sc) {
