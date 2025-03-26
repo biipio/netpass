@@ -57,6 +57,7 @@ typedef struct {
 	int btn_count;
 	int btn_cursor;
 	float scroll_offset;
+	float scroll_velocity;
 } Setting;
 
 struct Scene {
@@ -77,7 +78,7 @@ struct Scene {
 };
 
 void updateListCursor(int* cursor, InputState* state, int cursorMax);
-void updateListOffset(float* offset, int cursor);
+void updateListOffset(float* offset, float* velocity, int* cursor, int btnCount, InputState* state);
 Scene* processScene(Scene* scene);
 
 extern u32 app_state;

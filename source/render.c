@@ -142,8 +142,6 @@ void renderOptionButton(C2D_Text* text, float x, float y, float z, bool isFocus,
 }
 
 void renderOptionButtons(C2D_Text* entries, size_t n, int cursor, float offset, int grayedOut) {
-	// TODO: properly account for offset being a pixel thing rather than list index
-
 	const int x = CENTER_BOTTOM_X(258);
 	const int z = 0;
 	const int gap = 10;
@@ -154,23 +152,24 @@ void renderOptionButtons(C2D_Text* entries, size_t n, int cursor, float offset, 
 	int y = CENTER_BOTTOM_Y(totalHeight);
 
 	for (size_t i = 0; i < n; i++) {
-		if (offset > i + 1) continue;
-		if (offset + 3 < i) continue;
+		int btnY = 45 + (i * (btnHeight + gap));
+		if (offset + SCREEN_BOTTOM_HEIGHT < btnY) continue;
+		if (offset > btnY + btnHeight) continue;
 
 		bool isFocus = (i == cursor);
 		bool isGrayedOut = (i == grayedOut);
 		if (n < 4) {
 			renderOptionButton(&entries[i], x, y + (i*(btnHeight+gap)), z, isFocus, isGrayedOut);
 		} else {
-			renderOptionButton(&entries[i], x, 45 + ((i - offset)*(btnHeight+gap)), z, isFocus, isGrayedOut);
+			renderOptionButton(&entries[i], x, btnY - offset, z, isFocus, isGrayedOut);
 		}
 	}
 
 	if (n > 4) {
-		if (offset > 0) {
+		if (offset > 45) {
 			renderImage(spr_misc, ui_misc_upper_arrow, 0, 0, 0);
 		}
-		if (offset < n - 4) {
+		if (offset + SCREEN_BOTTOM_HEIGHT < 45 + totalHeight) {
 			renderImage(spr_misc, ui_misc_lower_arrow, 0, SCREEN_BOTTOM_HEIGHT - 40, 0);
 		}
 	}

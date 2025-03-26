@@ -58,11 +58,70 @@ void updateListCursor(int* cursor, InputState* state, int cursorMax) {
 	}
 }
 
-void updateListOffset(float* offset, int cursor) {
-	if (cursor >= 0) {
-		// TODO: treat as pixel, not list index
-		if (cursor > *offset + 3) *offset = cursor - 3;
-		if (cursor < *offset) *offset = cursor;
+void updateListOffset(float* offset, float* velocity, int* cursor, int btnCount, InputState* state) {
+	// Define constants
+	const float SCROLL_SLOW_RATE = 0.85f;
+	const float RUBBERBAND_SLOW_RATE = 0.5f;
+	const float MIN_OFFSET = 0;
+	const float MAX_OFFSET = 45 + (35 * btnCount) + (10 * (btnCount - 1)) + 30 - SCREEN_BOTTOM_HEIGHT;
+
+	// Calculate distance scrolled this frame
+	int scroll_distance = state->pos_prev.py - state->pos_current.py;
+	
+	// Calculate how far above the max offset or below the min offset the current offset is
+	float unsafe_offset_distance = 0;
+	if (*offset < MIN_OFFSET) unsafe_offset_distance = (MIN_OFFSET - *offset); // positive number
+	if (*offset > MAX_OFFSET) unsafe_offset_distance = (MAX_OFFSET - *offset); // negative number
+
+	if (state->k_down & KEY_TOUCH) {
+		// Screen was just tapped; reset velocity and cursor
+		*velocity = 0;
+		*cursor = -1;
+	} else if (state->isTouched) {
+		// Currently scrolling
+		if (unsafe_offset_distance != 0) {
+			// Scrolling unsafely, so scroll slowly
+			if (unsafe_offset_distance > 5) {
+				*offset += scroll_distance * (5 / unsafe_offset_distance);
+			} else if (unsafe_offset_distance < -5) {
+				*offset += scroll_distance * (-5 / unsafe_offset_distance);
+			} else {
+				*offset += scroll_distance;
+			}
+			*velocity = RUBBERBAND_SLOW_RATE * unsafe_offset_distance;
+		} else {
+			// Scroll normally
+			*velocity = scroll_distance;
+			*offset += *velocity;
+		}
+	} else {
+		// Currently not scrolling
+		if (unsafe_offset_distance != 0) {
+			*velocity = RUBBERBAND_SLOW_RATE * unsafe_offset_distance;
+		} else {
+			*velocity *= SCROLL_SLOW_RATE;
+		}
+
+		// Cursor scrolling takes priority
+		if (*cursor > -1) {
+			float btn_offset = *cursor * 45; // cursor * (height of one button + height of gap between buttons)
+			if (btn_offset < *offset) {
+				// Hovered button is off-screen up
+				*velocity = RUBBERBAND_SLOW_RATE * (btn_offset - *offset);
+			}
+			if (btn_offset + 35 > *offset + SCREEN_BOTTOM_HEIGHT - 75) {
+				// Hovered button is off-screen down
+				*velocity = RUBBERBAND_SLOW_RATE * ((btn_offset + 35) - (*offset + SCREEN_BOTTOM_HEIGHT - 75));
+			}
+		}
+
+		// Apply velocity to offset
+		*offset += *velocity;
+
+		// Set velocity to 0 if it's insanely close to 0
+		if ((*velocity > 0 && *velocity < 1) || (*velocity < 0 && *velocity > -1)) {
+			*velocity = 0;
+		}
 	}
 }
 

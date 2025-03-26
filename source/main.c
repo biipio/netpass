@@ -43,7 +43,7 @@ int main() {
 	C2D_Prepare();
 	romfsInit();
 	init_main_thread_prio();
-	hidSetRepeatParameters(28, 12);
+	hidSetRepeatParameters(32, 6);
 
 	cecdInit();
 	curlInit();

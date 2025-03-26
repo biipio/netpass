@@ -125,6 +125,8 @@ void N(init)(Scene* sc) {
 	sc->setting.btn_count = _data->list->header.cur_size;
 	sc->setting.btn_cursor = -1;
 	sc->setting.scroll_offset = 0;
+	sc->setting.scroll_velocity = 0;
+	sc->input_state.isTouched = false;
 	_data->g_staticBuf = C2D_TextBufNew(40 * _data->list->header.cur_size);
 
 	for (int i = 0; i < _data->list->header.cur_size; i++) {
@@ -181,7 +183,7 @@ SceneResult N(process)(Scene* sc) {
 
 	// Update cursor and offset
 	updateListCursor(&setting->btn_cursor, &state, sc->setting.btn_count - 1);
-	updateListOffset(&setting->scroll_offset, &setting->btn_cursor);
+	updateListOffset(&setting->scroll_offset, &setting->scroll_velocity, &setting->btn_cursor, setting->btn_count, &state);
 
 	if (state.k_up & KEY_TOUCH) {
 		// Help button
