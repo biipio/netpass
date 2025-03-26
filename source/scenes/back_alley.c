@@ -172,6 +172,7 @@ void N(init)(Scene* sc) {
 	sc->setting.btn_cursor = -1;
 	sc->setting.scroll_offset = 0;
 	sc->setting.scroll_velocity = 0;
+	sc->input_state.isTouched = false;
 	TextLangParse(&_data->g_backAlley, _data->g_staticBuf, str_back_alley);
 	N(load_paytext)(&_data->g_paytext, _data->g_staticBuf, config.price > MAX_PRICE ? 0 : config.price);
 

@@ -81,6 +81,7 @@ void N(init)(Scene* sc) {
 	sc->setting.btn_cursor = -1;
 	sc->setting.scroll_offset = 0;
 	sc->setting.scroll_velocity = 0;
+	sc->input_state.isTouched = false;
 
 	N(randomize_locations)(sc);
 
