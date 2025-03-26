@@ -32,9 +32,6 @@ typedef struct {
 	C2D_Text g_on_off[2];
 	C2D_Text g_game_titles[24];
 	u32 title_ids[24];
-	C2D_Text g_back;
-	int cursor;
-	float offset;
 	int number_games;
 } N(DataStruct);
 
@@ -76,13 +73,15 @@ void N(init)(Scene* sc) {
 		return;
 	}
 	
-	_data->cursor = 0;
 	TextLangParse(&_data->g_header, _data->g_staticBuf, str_toggle_titles);
 	TextLangParse(&_data->g_subtext, _data->g_staticBuf, str_toggle_titles_message);
-	TextLangParse(&_data->g_back, _data->g_staticBuf, str_back);
 	TextLangParse(&_data->g_on_off[0], _data->g_staticBuf, str_toggle_titles_off);
 	TextLangParse(&_data->g_on_off[1], _data->g_staticBuf, str_toggle_titles_on);
 	
+	sc->setting.btn_count = _data->number_games;
+	sc->setting.btn_cursor = -1;
+	sc->setting.scroll_offset = 0;
+
 	sc->setting.bg_top = bg_top_generic;
 	sc->setting.bg_bottom = bg_bottom_generic;
 	sc->setting.btn_left = ui_btn_left_help;
@@ -103,7 +102,6 @@ void N(render_top)(Scene* sc) {
 		C2D_DrawText(&_data->g_on_off[!isIgnored], C2D_AlignLeft | C2D_WithColor, 30, 60 + (i * 14), 0, 0.5, 0.5, correctClr);
 		C2D_DrawText(&_data->g_game_titles[i], C2D_AlignLeft | C2D_WithColor, 70, 60 + (i * 14), 0, 0.5, 0.5, correctClr);
 	}
-	C2D_DrawText(&_data->g_back, C2D_AlignLeft | C2D_WithColor, 30, 60 + (i*14), 0, 0.5, 0.5, clr);
 	
 	int x = 22;
 	int y = _data->cursor*14 + 60 + 3;
@@ -125,11 +123,12 @@ void N(exit)(Scene* sc) {
 SceneResult N(process)(Scene* sc) {
 	app_state = app_idle;
 	InputState state = sc->input_state;
+	Setting* setting = &sc->setting;
 	if (!_data) return scene_continue;
 
 	// Update cursor and offset
-	updateListCursor(&_data->cursor, &state, _data->number_games);
-	updateListOffset(&_data->offset, _data->cursor);
+	updateListCursor(&setting->btn_cursor, &state, _data->number_games - 1);
+	updateListOffset(&setting->scroll_offset, setting->btn_cursor);
 
 	if (state.k_up & KEY_TOUCH) {
 		// Help button
@@ -144,17 +143,21 @@ SceneResult N(process)(Scene* sc) {
 	}
 
 	if (state.k_down & KEY_B) {
-		return scene_pop;
+		if (setting->btn_cursor < 0) {
+			return scene_pop;
+		} else {
+			setting->btn_cursor = -1;
+		}
 	}
 
 	if (state.k_down & KEY_A) {
-		// "Back" is selected, exit this scene
-		if (_data->cursor == _data->number_games) {
-			return scene_pop;
+		if (setting->btn_cursor < 0) {
+			setting->btn_cursor = 0;
+			return scene_continue;
 		}
 
 		// Add title to ignore list / Remove title from ignore list
-		u32 title_id = _data->title_ids[_data->cursor];
+		u32 title_id = _data->title_ids[setting->btn_cursor];
 		if (isTitleIgnored(title_id)) {
 			removeIgnoredTitle(title_id);
 		} else {
