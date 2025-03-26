@@ -54,6 +54,7 @@ typedef struct {
 	int btn_right;
 	bool use_previews;
 
+	int btn_count;
 	int btn_cursor;
 	float scroll_offset;
 } Setting;

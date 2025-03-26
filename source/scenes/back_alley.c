@@ -168,6 +168,7 @@ void N(init)(Scene* sc) {
 		return;
 	}
 
+	sc->setting.btn_count = _data->number_games;
 	sc->setting.btn_cursor = -1;
 	sc->setting.scroll_offset = 0;
 	TextLangParse(&_data->g_backAlley, _data->g_staticBuf, str_back_alley);
@@ -224,7 +225,7 @@ void N(render_top)(Scene* sc) {
 void N(render_bottom)(Scene* sc) {
 	if (!_data) return;
 
-	renderOptionButtons(_data->g_game_titles, _data->number_games, sc->setting.btn_cursor, sc->setting.scroll_offset, -1);
+	renderOptionButtons(_data->g_game_titles, sc->setting.btn_count, sc->setting.btn_cursor, sc->setting.scroll_offset, -1);
 }
 
 void N(exit)(Scene* sc) {
@@ -245,7 +246,7 @@ SceneResult N(process)(Scene* sc) {
 	// config.price <= MAX_PRICE && config.price <= _data->play_coins->total_coins
 
 	// Update cursor and offset
-	updateListCursor(&setting->btn_cursor, &state, _data->number_games - 1);
+	updateListCursor(&setting->btn_cursor, &state, sc->setting.btn_count - 1);
 	updateListOffset(&setting->scroll_offset, &setting->btn_cursor);
 
 	if (state.k_up & KEY_TOUCH) {

@@ -77,6 +77,7 @@ void N(init)(Scene* sc) {
 	TextLangParse(&_data->g_locations[4], _data->g_staticBuf, str_arcade);
 	TextLangParse(&_data->g_locations[5], _data->g_staticBuf, str_catcafe);
 
+	sc->setting.btn_count = NUM_LOCATIONS;
 	sc->setting.btn_cursor = -1;
 	sc->setting.scroll_offset = 0;
 
@@ -112,7 +113,7 @@ void N(render_top)(Scene* sc) {
 void N(render_bottom)(Scene* sc) {
 	if (!_data) return;
 	
-	renderOptionButtons(_data->g_locations, NUM_LOCATIONS, sc->setting.btn_cursor, sc->setting.scroll_offset, location_real_to_random(config.last_location));
+	renderOptionButtons(_data->g_locations, sc->setting.btn_count, sc->setting.btn_cursor, sc->setting.scroll_offset, location_real_to_random(config.last_location));
 }
 
 void N(exit)(Scene* sc) {
@@ -132,7 +133,7 @@ SceneResult N(process)(Scene* sc) {
 
 
 	// Update cursor and offset
-	updateListCursor(&setting->btn_cursor, &state, NUM_LOCATIONS - 1);
+	updateListCursor(&setting->btn_cursor, &state, setting->btn_count - 1);
 	updateListOffset(&setting->scroll_offset, &setting->btn_cursor);
 
 	int real_cursor_location = (setting->btn_cursor < 0) ? -1 : location_random[setting->btn_cursor];

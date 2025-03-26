@@ -50,6 +50,7 @@ void N(init)(Scene* sc) {
 	TextLangParse(&_data->g_entries[0], _data->g_staticBuf, str_check_inboxes);
 	TextLangParse(&_data->g_entries[1], _data->g_staticBuf, str_back_alley);
 
+	sc->setting.btn_count = NUM_ENTRIES;
 	sc->setting.btn_cursor = -1;
 	
 	sc->setting.bg_top = sc->data + 2;
@@ -68,7 +69,7 @@ void N(render_top)(Scene* sc) {
 void N(render_bottom)(Scene* sc) {
 	if (!_data) return;
 	
-	renderOptionButtons(_data->g_entries, NUM_ENTRIES, sc->setting.btn_cursor, 0, -1);
+	renderOptionButtons(_data->g_entries, sc->setting.btn_count, sc->setting.btn_cursor, 0, -1);
 }
 
 void N(exit)(Scene* sc) {
@@ -85,7 +86,7 @@ SceneResult N(process)(Scene* sc) {
 	if (!_data) return scene_continue;
 
 	// Update cursor
-	updateListCursor(&setting->btn_cursor, &state, NUM_ENTRIES - 1);
+	updateListCursor(&setting->btn_cursor, &state, sc->setting.btn_count - 1);
 
 	if (state.k_up & KEY_TOUCH) {
 		// Help button

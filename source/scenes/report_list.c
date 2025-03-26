@@ -122,6 +122,7 @@ void N(init)(Scene* sc) {
 		sc->d = NULL;
 		return;
 	}
+	sc->setting.btn_count = _data->list->header.cur_size;
 	sc->setting.btn_cursor = -1;
 	sc->setting.scroll_offset = 0;
 	_data->g_staticBuf = C2D_TextBufNew(40 * _data->list->header.cur_size);
@@ -160,7 +161,7 @@ void N(render_bottom)(Scene* sc) {
 		return;
 	}
 	
-	renderOptionButtons(_data->g_entries, _data->list->header.cur_size, sc->setting.btn_cursor, sc->setting.scroll_offset, -1);
+	renderOptionButtons(_data->g_entries, sc->setting.btn_count, sc->setting.btn_cursor, sc->setting.scroll_offset, -1);
 }
 
 void N(exit)(Scene* sc) {
@@ -179,7 +180,7 @@ SceneResult N(process)(Scene* sc) {
 	if (!_data) return scene_pop;
 
 	// Update cursor and offset
-	updateListCursor(&setting->btn_cursor, &state, _data->list->header.cur_size - 1);
+	updateListCursor(&setting->btn_cursor, &state, sc->setting.btn_count - 1);
 	updateListOffset(&setting->scroll_offset, &setting->btn_cursor);
 
 	if (state.k_up & KEY_TOUCH) {
