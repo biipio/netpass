@@ -30,7 +30,6 @@ typedef struct {
 	C2D_TextBuf g_staticBuf;
 	C2D_Text g_location;
 	C2D_Text g_entries[NUM_ENTRIES];
-	touchPosition currentPos;
 } N(DataStruct);
 
 LanguageString* N(locations)[NUM_LOCATIONS] = {

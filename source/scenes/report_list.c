@@ -30,7 +30,6 @@ typedef struct {
 	C2D_TextBuf g_staticBuf;
 	ReportList* list;
 	C2D_Text* g_entries;
-	touchPosition currentPos;
 } N(DataStruct);
 
 // yutzo, diamonds, eddie
