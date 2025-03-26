@@ -29,8 +29,6 @@ typedef struct {
 	C2D_Text g_home;
 	C2D_Text g_choose;
 	C2D_Text g_locations[NUM_LOCATIONS];
-	int cursor;
-	float offset;
 } N(DataStruct);
 
 static int location_random[NUM_LOCATIONS];
@@ -70,8 +68,6 @@ void N(init)(Scene* sc) {
 	sc->d = malloc(sizeof(N(DataStruct)));
 	if (!_data) return;
 	_data->g_staticBuf = C2D_TextBufNew(2000);
-	_data->cursor = -1;
-	_data->offset = 0;
 	TextLangParse(&_data->g_home, _data->g_staticBuf, str_home);
 	TextLangParse(&_data->g_choose, _data->g_staticBuf, str_choose_location);
 	TextLangParse(&_data->g_locations[0], _data->g_staticBuf, str_train_station);
@@ -80,6 +76,9 @@ void N(init)(Scene* sc) {
 	TextLangParse(&_data->g_locations[3], _data->g_staticBuf, str_beach);
 	TextLangParse(&_data->g_locations[4], _data->g_staticBuf, str_arcade);
 	TextLangParse(&_data->g_locations[5], _data->g_staticBuf, str_catcafe);
+
+	sc->setting.btn_cursor = -1;
+	sc->setting.scroll_offset = 0;
 
 	N(randomize_locations)(sc);
 
@@ -93,7 +92,7 @@ void N(init)(Scene* sc) {
 void N(render_top)(Scene* sc) {
 	if (!_data) return;
 
-	if (_data->cursor < 0) {
+	if (sc->setting.btn_cursor < 0) {
 		renderTextWithOutline(
 			&_data->g_home, 0,
 			12, SCREEN_TOP_HEIGHT - 40, 0,
@@ -113,7 +112,7 @@ void N(render_top)(Scene* sc) {
 void N(render_bottom)(Scene* sc) {
 	if (!_data) return;
 	
-	renderOptionButtons(_data->g_locations, NUM_LOCATIONS, _data->cursor, _data->offset, location_real_to_random(config.last_location));
+	renderOptionButtons(_data->g_locations, NUM_LOCATIONS, sc->setting.btn_cursor, sc->setting.scroll_offset, location_real_to_random(config.last_location));
 }
 
 void N(exit)(Scene* sc) {
@@ -128,18 +127,19 @@ Result N(location_res);
 SceneResult N(process)(Scene* sc) {
 	app_state = app_idle;
 	InputState state = sc->input_state;
+	Setting* setting = &sc->setting;
 	if (!_data) return scene_continue;
 
 
 	// Update cursor and offset
-	updateListCursor(&_data->cursor, &state, NUM_LOCATIONS - 1);
-	updateListOffset(&_data->offset, _data->cursor);
+	updateListCursor(&setting->btn_cursor, &state, NUM_LOCATIONS - 1);
+	updateListOffset(&setting->scroll_offset, &setting->btn_cursor);
 
-	int real_cursor_location = (_data->cursor < 0) ? -1 : location_random[_data->cursor];
+	int real_cursor_location = (setting->btn_cursor < 0) ? -1 : location_random[setting->btn_cursor];
 	
 	// Change background depending on currently hovered location
-	sc->setting.bg_top = real_cursor_location + 2;
-	sc->setting.bg_bottom = bg_bottom_generic;
+	setting->bg_top = real_cursor_location + 2;
+	setting->bg_bottom = bg_bottom_generic;
 
 	if (state.k_up & KEY_TOUCH) {
 		// Help button
@@ -155,12 +155,12 @@ SceneResult N(process)(Scene* sc) {
 	}
 	
 	if (state.k_down & KEY_B) {
-		_data->cursor = -1;
+		setting->btn_cursor = -1;
 	}
 
 	if (state.k_down & KEY_A) {
-		if (_data->cursor < 0) {
-			_data->cursor = 0;
+		if (setting->btn_cursor < 0) {
+			setting->btn_cursor = 0;
 			return scene_continue;
 		}
 

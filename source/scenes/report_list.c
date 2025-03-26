@@ -30,8 +30,6 @@ typedef struct {
 	C2D_TextBuf g_staticBuf;
 	ReportList* list;
 	C2D_Text* g_entries;
-	int cursor;
-	float offset;
 	touchPosition currentPos;
 } N(DataStruct);
 
@@ -124,8 +122,8 @@ void N(init)(Scene* sc) {
 		sc->d = NULL;
 		return;
 	}
-	_data->cursor = -1;
-	_data->offset = 0;
+	sc->setting.btn_cursor = -1;
+	sc->setting.scroll_offset = 0;
 	_data->g_staticBuf = C2D_TextBufNew(40 * _data->list->header.cur_size);
 
 	for (int i = 0; i < _data->list->header.cur_size; i++) {
@@ -162,7 +160,7 @@ void N(render_bottom)(Scene* sc) {
 		return;
 	}
 	
-	renderOptionButtons(_data->g_entries, _data->list->header.cur_size, _data->cursor, _data->offset, -1);
+	renderOptionButtons(_data->g_entries, _data->list->header.cur_size, sc->setting.btn_cursor, sc->setting.scroll_offset, -1);
 }
 
 void N(exit)(Scene* sc) {
@@ -177,13 +175,12 @@ void N(exit)(Scene* sc) {
 SceneResult N(process)(Scene* sc) {
 	app_state = app_idle;
 	InputState state = sc->input_state;
+	Setting* setting = &sc->setting;
 	if (!_data) return scene_pop;
 
 	// Update cursor and offset
-	updateListCursor(&_data->cursor, &state, _data->list->header.cur_size - 1);
-	updateListOffset(&_data->offset, _data->cursor);
-	// while(_data->cursor*14 - _data->offset < 2) _data->offset--;
-	// while(_data->cursor*14 - _data->offset > 180) _data->offset++;
+	updateListCursor(&setting->btn_cursor, &state, _data->list->header.cur_size - 1);
+	updateListOffset(&setting->scroll_offset, &setting->btn_cursor);
 
 	if (state.k_up & KEY_TOUCH) {
 		// Help button
@@ -198,20 +195,20 @@ SceneResult N(process)(Scene* sc) {
 	}
 
 	if (state.k_down & KEY_B) {
-		if (_data->cursor < 0){
+		if (setting->btn_cursor < 0){
 			return scene_pop;
 		} else {
-			_data->cursor = -1;
+			setting->btn_cursor = -1;
 		}
 	}
 	
 	if (state.k_down & KEY_A) {
-		if (_data->cursor < 0) {
-			_data->cursor = 0;
+		if (setting->btn_cursor < 0) {
+			setting->btn_cursor = 0;
 			return scene_continue;
 		}
 
-		int selected_i = _data->cursor;
+		int selected_i = setting->btn_cursor;
 		return N(report)(sc, selected_i);
 	}
 	

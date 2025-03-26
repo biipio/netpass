@@ -30,7 +30,6 @@ typedef struct {
 	C2D_TextBuf g_staticBuf;
 	C2D_Text g_location;
 	C2D_Text g_entries[NUM_ENTRIES];
-	int cursor;
 	touchPosition currentPos;
 } N(DataStruct);
 
@@ -47,11 +46,12 @@ void N(init)(Scene* sc) {
 	sc->d = malloc(sizeof(N(DataStruct)));
 	if (!_data) return;
 	_data->g_staticBuf = C2D_TextBufNew(2000);
-	_data->cursor = -1;
 	TextLangParse(&_data->g_location, _data->g_staticBuf, *N(locations)[sc->data]);
 	TextLangParse(&_data->g_entries[0], _data->g_staticBuf, str_check_inboxes);
 	TextLangParse(&_data->g_entries[1], _data->g_staticBuf, str_back_alley);
 
+	sc->setting.btn_cursor = -1;
+	
 	sc->setting.bg_top = sc->data + 2;
 	sc->setting.bg_bottom = bg_bottom_generic;
 	sc->setting.btn_left = ui_btn_left_help;
@@ -68,7 +68,7 @@ void N(render_top)(Scene* sc) {
 void N(render_bottom)(Scene* sc) {
 	if (!_data) return;
 	
-	renderOptionButtons(_data->g_entries, NUM_ENTRIES, _data->cursor, 0, -1);
+	renderOptionButtons(_data->g_entries, NUM_ENTRIES, sc->setting.btn_cursor, 0, -1);
 }
 
 void N(exit)(Scene* sc) {
@@ -81,10 +81,11 @@ void N(exit)(Scene* sc) {
 SceneResult N(process)(Scene* sc) {
 	app_state = app_idle;
 	InputState state = sc->input_state;
+	Setting* setting = &sc->setting;
 	if (!_data) return scene_continue;
 
 	// Update cursor
-	updateListCursor(&_data->cursor, &state, NUM_ENTRIES - 1);
+	updateListCursor(&setting->btn_cursor, &state, NUM_ENTRIES - 1);
 
 	if (state.k_up & KEY_TOUCH) {
 		// Help button
@@ -100,30 +101,30 @@ SceneResult N(process)(Scene* sc) {
 	}
 
 	if (state.k_down & KEY_B) {
-		if (_data->cursor < 0) {
+		if (setting->btn_cursor < 0) {
 			sc->next_scene = getLoadingScene(getSwitchScene(lambda(Scene*, (void) {
 				return getHomeScene();
 			})), lambda(void, (void) {}));
 			return scene_switch;
 		} else {
-			_data->cursor = -1;
+			setting->btn_cursor = -1;
 		}
-		// _data->cursor = -1;
+		// setting->btn_cursor = -1;
 	}
 
 	if (state.k_down & KEY_A) {
-		if (_data->cursor < 0) {
-			_data->cursor = 0;
+		if (setting->btn_cursor < 0) {
+			setting->btn_cursor = 0;
 			return scene_continue;
 		}
 
-		if (_data->cursor == 0) {
+		if (setting->btn_cursor == 0) {
 			sc->next_scene = getLoadingScene(0, lambda(void, (void) {
 				// downloadInboxes();
 			}));
 			return scene_push;
 		}
-		if (_data->cursor == 1) {
+		if (setting->btn_cursor == 1) {
 			sc->next_scene = getBackAlleyScene();
 			return scene_push;
 		}

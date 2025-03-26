@@ -53,6 +53,9 @@ typedef struct {
 	int btn_left;
 	int btn_right;
 	bool use_previews;
+
+	int btn_cursor;
+	float scroll_offset;
 } Setting;
 
 struct Scene {

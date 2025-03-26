@@ -35,8 +35,6 @@ typedef struct {
 	C2D_Text g_languages[NUM_LANGUAGES + 1];
 	C2D_Text g_timeFormats[2];
 	C2D_Text g_versionText;
-	int cursor;
-	float offset;
 	int selected_language;
 	bool time_format_modified;
 	bool language_text_loaded;
@@ -70,8 +68,6 @@ void N(init)(Scene* sc) {
 	sc->d = malloc(sizeof(N(DataStruct)));
 	if (!_data) return;
 	_data->g_staticBuf = C2D_TextBufNew(500 + 15*NUM_LANGUAGES);
-	_data->cursor = -1;
-	_data->offset = 0;
 	_data->current_menu = MENU_DEFAULT;
 	_data->time_format_modified = false;
 	_data->language_text_loaded = false;
@@ -86,6 +82,9 @@ void N(init)(Scene* sc) {
 
 	TextLangParse(&_data->g_timeFormats[0], _data->g_staticBuf, str_24_hour);
 	TextLangParse(&_data->g_timeFormats[1], _data->g_staticBuf, str_12_hour);
+
+	sc->setting.btn_cursor = -1;
+	sc->setting.scroll_offset = 0;
 	
 	_data->selected_language = -1;
 	if (config.language != -1) {
@@ -139,15 +138,15 @@ void N(render_bottom)(Scene* sc) {
 	
 	switch (_data->current_menu) {
 	case MENU_DEFAULT:
-		renderOptionButtons(_data->g_entries, NUM_ENTRIES, _data->cursor, _data->offset, -1);
+		renderOptionButtons(_data->g_entries, NUM_ENTRIES, sc->setting.btn_cursor, sc->setting.scroll_offset, -1);
 		// TODO: render version and mini flags if they should be visible
 		break;
 	case MENU_LANGUAGE:
 		if (!_data->language_text_loaded) N(load_language_text)(sc);
-		renderOptionButtons(_data->g_languages, NUM_LANGUAGES + 1, _data->cursor, _data->offset, -1);
+		renderOptionButtons(_data->g_languages, NUM_LANGUAGES + 1, sc->setting.btn_cursor, sc->setting.scroll_offset, -1);
 		break;
 	case MENU_TIME_FORMAT:
-		renderOptionButtons(_data->g_timeFormats, 2, _data->cursor, _data->offset, -1);
+		renderOptionButtons(_data->g_timeFormats, 2, sc->setting.btn_cursor, sc->setting.scroll_offset, -1);
 		break;
 	}
 }
@@ -164,14 +163,15 @@ void N(exit)(Scene* sc) {
 SceneResult N(process)(Scene* sc) {
 	app_state = app_idle;
 	InputState state = sc->input_state;
+	Setting* setting = &sc->setting;
 	if (!_data) return scene_continue;
 
 	// Update cursor and offset
 	int list_max = NUM_ENTRIES;
 	if (_data->current_menu == MENU_LANGUAGE) list_max = NUM_LANGUAGES;
 	if (_data->current_menu == MENU_TIME_FORMAT) list_max = 2;
-	updateListCursor(&_data->cursor, &state, list_max);
-	updateListOffset(&_data->offset, _data->cursor);
+	updateListCursor(&setting->btn_cursor, &state, list_max);
+	updateListOffset(&setting->scroll_offset, setting->btn_cursor);
 
 	if (state.k_up & KEY_TOUCH) {
 		// Back button
@@ -186,15 +186,15 @@ SceneResult N(process)(Scene* sc) {
 				N(save_time_format)(sc);
 			}
 			
-			_data->cursor = -1;
-			_data->offset = 0;
+			setting->btn_cursor = -1;
+			setting->scroll_offset = 0;
 			_data->current_menu = MENU_DEFAULT;
 			return scene_continue;
 		}
 	}
 	
 	if (state.k_down & KEY_B) {
-		if (_data->cursor < 0 || (_data->current_menu == MENU_DEFAULT && _data->cursor == NUM_ENTRIES)) {
+		if (setting->btn_cursor < 0 || (_data->current_menu == MENU_DEFAULT && setting->btn_cursor == NUM_ENTRIES)) {
 			// If in default menu, exit settings
 			if (_data->current_menu == MENU_DEFAULT) return scene_pop;
 
@@ -205,43 +205,44 @@ SceneResult N(process)(Scene* sc) {
 				N(save_time_format)(sc);
 			}
 			
-			_data->cursor = -1;
-			_data->offset = 0;
+			setting->btn_cursor = -1;
+			setting->scroll_offset = 0;
 			_data->current_menu = MENU_DEFAULT;
 			return scene_continue;
 		} else {
-			_data->cursor = -1;
+			setting->btn_cursor = -1;
 		}
 	}
 
 	if (state.k_down & KEY_A) {
-		if (_data->cursor < 0) {
-			_data->cursor = 0;
+		if (setting->btn_cursor < 0) {
+			setting->btn_cursor = 0;
 			return scene_continue;
 		}
 
 		switch (_data->current_menu) {
 		case MENU_DEFAULT:
 		{
-			if (_data->cursor == 0) {
+			if (setting->btn_cursor == 0) {
 				sc->next_scene = getToggleTitlesScene();
 				return scene_push;
 			}
-			if (_data->cursor == 1) {
+			if (setting->btn_cursor == 1) {
 				sc->next_scene = getReportListScene();
 				return scene_push;
 			}
-			if (_data->cursor == 2) {
-				_data->cursor = _data->selected_language + 1;
-				_data->offset = _data->selected_language + 1;
+			if (setting->btn_cursor == 2) {
+				setting->btn_cursor = _data->selected_language + 1;
+				// TODO: calculate proper scroll_offset for cursor
+				setting->scroll_offset = _data->selected_language + 1;
 				_data->current_menu = MENU_LANGUAGE;
 			}
-			if (_data->cursor == 3) {
-				_data->cursor = config.time_format;
-				_data->offset = 0;
+			if (setting->btn_cursor == 3) {
+				setting->btn_cursor = config.time_format;
+				setting->scroll_offset = 0;
 				_data->current_menu = MENU_TIME_FORMAT;
 			}
-			if (_data->cursor == 4) {
+			if (setting->btn_cursor == 4) {
 				sc->next_scene = getLoadingScene(0, lambda(void, (void) {
 					char url[50];
 					snprintf(url, 50, "%s/data", BASE_URL);
@@ -255,7 +256,7 @@ SceneResult N(process)(Scene* sc) {
 				}));
 				return scene_push;
 			}
-			if (_data->cursor == 5) {
+			if (setting->btn_cursor == 5) {
 				sc->next_scene = getLoadingScene(0, lambda(void, (void) {
 					char url[50];
 					snprintf(url, 50, "%s/data", BASE_URL);
@@ -274,13 +275,13 @@ SceneResult N(process)(Scene* sc) {
 		
 		case MENU_LANGUAGE:
 		{
-			_data->selected_language = _data->cursor - 1;
+			_data->selected_language = setting->btn_cursor - 1;
 			break;
 		}
 
 		case MENU_TIME_FORMAT:
 		{
-			config.time_format = _data->cursor;
+			config.time_format = setting->btn_cursor;
 			_data->time_format_modified = true;
 			break;
 		}
