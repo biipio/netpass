@@ -183,6 +183,7 @@ void updateFrame(NetPal* pal) {
 		pal->start = svcGetSystemTick() / CPU_TICKS_PER_MSEC;
 	}
 }
+
 static inline void loadSpriteSheet(C2D_SpriteSheet* spr, const char* path) {
 	// NOTE: This frees a spritesheet containing a currently-displayed sprite. Unfortunately there's not enough
 	//       memory(?) to load the new spritesheet, render the new sprite, then free the old spritesheet

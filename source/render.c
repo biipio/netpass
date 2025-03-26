@@ -188,13 +188,13 @@ void renderTextWithOutline(C2D_Text* text, u32 flags, float x, float y, float z,
 	va_start(args, outlineClr);
 
 	// Outline
-	C2D_DrawText(text, C2D_WithColor | flags, xPos, y, z, scaleX, scaleY, outlineClr, args);
+	C2D_DrawText(text, C2D_WithColor | flags, xPos, y,    z, scaleX, scaleY, outlineClr, args);
 	C2D_DrawText(text, C2D_WithColor | flags, xPos, yPos, z, scaleX, scaleY, outlineClr, args);
-	C2D_DrawText(text, C2D_WithColor | flags, x, yPos, z, scaleX, scaleY, outlineClr, args);
+	C2D_DrawText(text, C2D_WithColor | flags, x,    yPos, z, scaleX, scaleY, outlineClr, args);
 	C2D_DrawText(text, C2D_WithColor | flags, xNeg, yPos, z, scaleX, scaleY, outlineClr, args);
-	C2D_DrawText(text, C2D_WithColor | flags, xNeg, y, z, scaleX, scaleY, outlineClr, args);
+	C2D_DrawText(text, C2D_WithColor | flags, xNeg, y,    z, scaleX, scaleY, outlineClr, args);
 	C2D_DrawText(text, C2D_WithColor | flags, xNeg, yNeg, z, scaleX, scaleY, outlineClr, args);
-	C2D_DrawText(text, C2D_WithColor | flags, x, yNeg, z, scaleX, scaleY, outlineClr, args);
+	C2D_DrawText(text, C2D_WithColor | flags, x,    yNeg, z, scaleX, scaleY, outlineClr, args);
 	C2D_DrawText(text, C2D_WithColor | flags, xPos, yNeg, z, scaleX, scaleY, outlineClr, args);
 
 	// Actual text
