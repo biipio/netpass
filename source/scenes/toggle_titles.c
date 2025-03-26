@@ -95,22 +95,26 @@ void N(init)(Scene* sc) {
 
 void N(render_top)(Scene* sc) {
 	if (!_data) return;
-	u32 clr = C2D_Color32(0, 0, 0, 0xff);
-	u32 onClr = C2D_Color32(10, 200, 10, 0xff);
-	u32 offClr = C2D_Color32(200, 10, 10, 0xff);
-	C2D_DrawText(&_data->g_header, C2D_AlignLeft | C2D_WithColor, 10, 10, 0, 1, 1, clr);
-	C2D_DrawText(&_data->g_subtext, C2D_AlignLeft | C2D_WithColor, 11, 40, 0, 0.5, 0.5, clr);
-	int i = 0;
-	for (; i < _data->number_games; i++) {
-		bool isIgnored = isTitleIgnored(_data->title_ids[i]);
-		u32 correctClr = isIgnored ? offClr : onClr;
-		C2D_DrawText(&_data->g_on_off[!isIgnored], C2D_AlignLeft | C2D_WithColor, 30, 60 + (i * 14), 0, 0.5, 0.5, correctClr);
-		C2D_DrawText(&_data->g_game_titles[i], C2D_AlignLeft | C2D_WithColor, 70, 60 + (i * 14), 0, 0.5, 0.5, correctClr);
+
+	if (sc->setting.btn_cursor < 0) {
+		// Render "Toggle Games" title
+		renderTextWithOutline(
+			&_data->g_header, C2D_WithColor,
+			12, SCREEN_TOP_HEIGHT - 40, 0,
+			1.2f, 1.2f, 1.75f,
+			clr_white, clr_netpass_green
+		);
+		// TODO: render subtext
+	} else {
+		float x = CENTER_TOP_X(368);
+		float y = CENTER_TOP_Y(162); // Image height is 183, top bar height is 21, 162 = 183 - 21
+
+		// Render info box
+		renderImage(spr_misc, ui_misc_info_box, x, y, 0);
+
+		// Render game title
+		C2D_DrawText(&_data->g_game_titles[sc->setting.btn_cursor], C2D_WithColor, x + 10, y + 10, 0, 0.75f, 0.75f, clr_white);
 	}
-	
-	int x = 22;
-	int y = _data->cursor*14 + 60 + 3;
-	C2D_DrawTriangle(x, y, clr, x, y + 10, clr, x + 8, y + 5, clr, 1);
 }
 
 void N(render_bottom)(Scene* sc) {
