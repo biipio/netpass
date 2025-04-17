@@ -1,6 +1,8 @@
 # NetPass: a new way to experience StreetPass!
 
 [![Translation status](https://weblate.sorunome.de/widget/netpass/app/svg-badge.svg)](https://weblate.sorunome.de/engage/netpass/)
+[![GitLab Release](https://img.shields.io/gitlab/v/release/3ds-netpass/netpass)](https://gitlab.com/3ds-netpass/netpass/-/releases/permalink/latest/)
+
 
 ![QR Code](https://gitlab.com/Sorunome/3ds-streetpass/-/raw/release_builds/qr.png){width=400px}  
 Scan QR code to download!
