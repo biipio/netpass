@@ -284,9 +284,11 @@ void curl_multi_loop_request_setup(int i) {
 	curl_easy_setopt(h->handle, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_2TLS);
 	curl_easy_setopt(h->handle, CURLOPT_HTTPHEADER, headers);
 	curl_easy_setopt(h->handle, CURLOPT_CUSTOMREQUEST, h->method);
-	curl_easy_setopt(h->handle, CURLOPT_TIMEOUT, 120);
+	curl_easy_setopt(h->handle, CURLOPT_TIMEOUT, 300); // upper the limit to 5 minutes
 	curl_easy_setopt(h->handle, CURLOPT_SERVER_RESPONSE_TIMEOUT, 10);
 	curl_easy_setopt(h->handle, CURLOPT_CONNECTTIMEOUT, 20);
+	curl_easy_setopt(h->handle, CURLOPT_LOW_SPEED_LIMIT, 10); // min. 10 Bytes/s or slower
+	curl_easy_setopt(h->handle, CURLOPT_LOW_SPEED_TIME, 30);  // ...for 30 seconds .. then abort
 	curl_easy_setopt(h->handle, CURLOPT_NOSIGNAL, 0);
 	curl_easy_setopt(h->handle, CURLOPT_SSL_VERIFYPEER, 1);
 	curl_easy_setopt(h->handle, CURLOPT_CAINFO, "romfs:/certs.pem");
