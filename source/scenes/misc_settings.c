@@ -31,6 +31,8 @@ typedef struct {
 	int cursor;
 } N(DataStruct);
 
+static void downloadDataThread(void);
+
 void N(init)(Scene* sc) {
 	sc->d = malloc(sizeof(N(DataStruct)));
 	if (!_data) return;
@@ -95,17 +97,7 @@ SceneResult N(process)(Scene* sc) {
 			}
 			if (_data->cursor == 1) {
 				// download personal data
-				sc->next_scene = getLoadingScene(0, lambda(void, (void) {
-					char url[50];
-					snprintf(url, 50, "%s/data", BASE_URL);
-					Result res = httpRequest("GET", url, 0, 0, (void*)1, "/netpass_data.txt", 0);
-					if (R_FAILED(res)) {
-						printf("ERROR downloading all data: %ld\n", res);
-						return;
-					}
-					printf("Successfully downloaded all data!\n");
-					printf("File stored at sdmc:/netpass_data.txt\n");
-				}));
+				sc->next_scene = getLoadingScene(0, downloadDataThread);
 				return scene_push;
 			}
 			if (_data->cursor == 2) {
@@ -151,4 +143,71 @@ Scene* getMiscSettingsScene(void) {
 	scene->is_popup = false;
 	scene->need_free = true;
 	return scene;
+}
+
+static void downloadDataThread(void) {
+	time_t now = time(NULL);
+
+	printf("Requesting data export: ");
+	// 42 characters: https://devapi.netpass.cafe/data/download
+#define URL_SIZE 52
+	char url[URL_SIZE];
+	snprintf(url, URL_SIZE, "%s/data/request", BASE_URL);
+	Result res = httpRequest("GET", url, 0, NULL, 0, 0, 0);
+	if (R_FAILED(res)) {
+		printf("FAIL: %ld\n", res);
+		return;
+	}
+	if (res != 202) {
+		printf("FAIL\nExport: bad status code %ld != 202\n", res);
+		return;
+	}
+	printf("ok.\n");
+	snprintf(url, URL_SIZE, "%s/data/check", BASE_URL);
+	printf("Waiting..");
+#define MAX_WAIT_NANOS 15ULL*1000000000ULL // 15s
+	u64 backoff = 500000000ULL; // 0.5s
+	while (true) {
+		res = httpRequest("GET", url, 0, NULL, 0, 0, 0);
+		if (res == 200) {
+			printf(" Ready.\n");
+			break;
+		} else if (res == 204) {
+			printf(".");
+			svcSleepThread(backoff);
+			backoff += backoff >> 2;
+			if (backoff > MAX_WAIT_NANOS) {
+				backoff = MAX_WAIT_NANOS;
+			}
+			continue;
+		}
+		if (R_FAILED(res)) {
+			printf("FAIL: %ld\n", res);
+			return;
+		} else {
+			printf("FAIL\nCheck: bad status code %ld\n", res);
+			return;
+		}
+	}
+
+	snprintf(url, URL_SIZE, "%s/data/download", BASE_URL);
+	char filename[200];
+	struct tm now_tm;
+	if (!gmtime_r(&now, &now_tm)) {
+		printf("\nPANIC: gmtime failed\n");
+		return;
+	}
+	strftime(filename, 200, "sdmc:/netpass_export_%Y%m%dT%H%M%S.zip", &now_tm);
+	printf("Downloading...");
+	res = httpRequest("GET", url, 0, 0, (void*)1, filename, 0);
+	printf("\n");
+	if (res != 200) {
+		printf("FAIL\nDownload: bad status code %ld\n", res);
+		remove(filename);
+		return;
+	}
+
+	printf("Successfully downloaded data export!\n");
+	printf("File stored at %s\n", filename);
+#undef URL_SIZE
 }
