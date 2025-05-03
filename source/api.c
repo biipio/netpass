@@ -289,7 +289,7 @@ Result doSlotExchange(void) {
 	res = cecdSprFinaliseSend();
 	error_origin = "finalise send";
 	if (R_FAILED(res)) goto fail;
-	printf("Done\nDownloading inboxes (%ld)", slots_total);
+	printf(" Done\nDownloading inboxes (%ld)", slots_total);
 
 	// time to start download!
 	res = cecdSprStartRecv();
@@ -356,7 +356,7 @@ Result doSlotExchange(void) {
 	error_origin = "cecd spr done";
 	if (R_FAILED(res)) goto fail;
 
-	printf("Done (%d)\n", slot_new_data_num);
+	printf(" Done (%d)\n", slot_new_data_num);
 
 	goto cleanup;
 fail:

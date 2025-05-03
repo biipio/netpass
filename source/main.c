@@ -163,7 +163,7 @@ int main() {
 		C3D_FrameEnd(0);
 		svcSleepThread(1);
 	}
-	printf("Exiting...\n");
+	printf("\nExiting...\n");
 	bgLoopExit();
 	musicExit();
 	C2D_Fini();
