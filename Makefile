@@ -178,14 +178,14 @@ ifneq ($(ROMFS),)
 	export _3DSXFLAGS += --romfs=$(CURDIR)/$(ROMFS)
 endif
 
-.PHONY: all clean translations patches
+.PHONY: all clean translations patches submodulecheck
 
 MAKEROM		?=	makerom
 
 MAKEROM_ARGS	:= -elf $(OUTPUT).elf -rsf meta/netpass.rsf -major ${NETPASS_VERSION_MAJOR} -minor ${NETPASS_VERSION_MINOR} -micro ${NETPASS_VERSION_MICRO} -icon $(OUTPUT).smdh -banner "$(BUILD)/banner.bnr"
 
 #---------------------------------------------------------------------------------
-3dsx: codegen $(BUILD) $(GFXBUILD) $(MUSICBUILD) $(DEPSDIR) $(ROMFS_T3XFILES) $(T3XHFILES) $(OUTDIR) smdh
+3dsx: codegen submodulecheck $(BUILD) $(GFXBUILD) $(MUSICBUILD) $(DEPSDIR) $(ROMFS_T3XFILES) $(T3XHFILES) $(OUTDIR) smdh
 	@$(MAKE) --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile
 
 all: build cia
@@ -196,7 +196,7 @@ patches:
 codegen:
 	@$(PYTHON) $(TOPDIR)/codegen.py
 
-smdh:
+smdh: $(APP_ICON)
 	@$(BANNERTOOL) makesmdh -s "$(APP_TITLE)" $(APP_TITLE_INT) -l "$(APP_DESCRIPTION)" $(APP_DESC_INT) -p "$(APP_AUTHOR)" -i "$(APP_ICON)" -f visible,allow3d -o $(OUTPUT).smdh
 
 cia: 3dsx
@@ -205,9 +205,9 @@ cia: 3dsx
 	@$(BANNERTOOL) makesmdh -s "$(APP_TITLE)" $(APP_TITLE_INT) -l "$(APP_DESCRIPTION)" $(APP_DESC_INT) -p "$(APP_AUTHOR)" -i "$(APP_ICON)" -f "$(ICON_FLAGS)" -o "$(BUILD)/icon.icn"
 	@$(MAKEROM) -f cia -o "$(OUTPUT).cia" -target t -exefslogo $(MAKEROM_ARGS)
 
-$(BUILD):
-	@mkdir -p $@
-	@$(FFMPEG) -y -i $(TOPDIR)/$(ICON) -vf scale=48:48 $(TOPDIR)/$(BUILD)/icon.png
+$(APP_ICON): $(TOPDIR)/$(ICON)
+	@mkdir -p $(BUILD)
+	@$(FFMPEG) -y -i $(TOPDIR)/$(ICON) -vf scale=48:48 $(APP_ICON)
 
 ifneq ($(GFXBUILD),$(BUILD))
 $(GFXBUILD):
@@ -235,6 +235,9 @@ clean:
 	@echo clean ...
 	@$(MAKE) -C patches clean
 	@rm -fr $(BUILD) $(GFXBUILD) $(MUSICBUILD) $(DEPSDIR) $(OUTDIR) $(TOPDIR)/codegen
+
+submodulecheck:
+	@test -f source/hmac_sha256/hmac_sha256.h || (echo "ERROR: Submodules not pulled!"; exit 1)
 
 #---------------------------------------------------------------------------------
 $(GFXBUILD)/%.t3x	$(BUILD)/%.h	:	%.t3s
