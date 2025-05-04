@@ -170,6 +170,8 @@ BANNERTOOL	?=	bannertool
 FFMPEG		?=	ffmpeg
 PYTHON		?=	python
 
+CODEGEN_OUTPUTS	=	codegen/lang_strings.h codegen/lang_strings.c
+
 ifeq ($(strip $(NO_SMDH)),)
 	export _3DSXFLAGS += --smdh=$(OUTPUT).smdh
 endif
@@ -185,7 +187,7 @@ MAKEROM		?=	makerom
 MAKEROM_ARGS	:= -elf $(OUTPUT).elf -rsf meta/netpass.rsf -major ${NETPASS_VERSION_MAJOR} -minor ${NETPASS_VERSION_MINOR} -micro ${NETPASS_VERSION_MICRO} -icon $(OUTPUT).smdh -banner "$(BUILD)/banner.bnr"
 
 #---------------------------------------------------------------------------------
-3dsx: codegen submodulecheck $(BUILD) $(GFXBUILD) $(MUSICBUILD) $(DEPSDIR) $(ROMFS_T3XFILES) $(T3XHFILES) $(OUTDIR) smdh
+3dsx: submodulecheck $(CODEGEN_OUTPUTS) $(BUILD) $(GFXBUILD) $(MUSICBUILD) $(DEPSDIR) $(ROMFS_T3XFILES) $(T3XHFILES) $(OUTDIR) smdh
 	@$(MAKE) --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile
 
 all: build cia
@@ -193,7 +195,7 @@ all: build cia
 patches:
 	@$(MAKE) -C patches
 
-codegen:
+$(CODEGEN_OUTPUTS): codegen.py $(shell find locale)
 	@$(PYTHON) $(TOPDIR)/codegen.py
 
 smdh: $(APP_ICON)
