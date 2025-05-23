@@ -38,7 +38,7 @@ In other words, you'll need to run the following command in a Terminal/command p
 dkp-pacman -S 3ds-dev 3ds-curl
 ```
 
-Furthermore you need to have `ffmpeg` and `python` and `python-pyyaml` installed.
+Furthermore, you need to have `ffmpeg` and `python` and `python-pyyaml` installed.
 
 Be sure to run `make codegen` first.
 ```bash
@@ -56,7 +56,7 @@ make patch
  - Makerom: You need the `makerom` executable in your `$PATH`
    You can get it precompiled on https://github.com/3DSGuy/Project_CTR/releases and then copy it to `$DEVKITPRO/tools/bin`
  - Bannertool: You need the `bannertool` executable in your `$PATH`
-   You can get it precomiled on https://github.com/diasurgical/bannertool/releases
+   You can get it precompiled on https://github.com/diasurgical/bannertool/releases
 
 ## Compilation
 
@@ -90,5 +90,5 @@ To build `.cia` files, run
  - Italian: [LNLenost](https://github.com/LNLenost)
  - Chinese (Traditional): ManLok Ho
  - Ukrainian: Geo
- - Portugese: Lia, arth
+ - Portuguese: Lia, arth
  - Dutch: Robbin12391, aiydn
