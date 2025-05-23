@@ -59,10 +59,10 @@ void N(init)(Scene* sc) {
 
 	for (int i = 0; i < _data->list->header.cur_size; i++) {
 		ReportListEntry* entry = &_data->list->entries[i];
-		char mii_name[11] = {0};
-		utf16_to_utf8((u8*)mii_name, entry->mii.mii_name, 11);
-		char render_entry[50];
-		snprintf(render_entry, 50, "%s  %04lu-%02d-%02d %02d:%02d:%02d", mii_name,
+		u8 mii_name[MII_UTF8_NAME_LEN];
+		get_mii_name(mii_name, &entry->mii);
+		char render_entry[30 + MII_UTF8_NAME_LEN];
+		snprintf(render_entry, 30 + MII_UTF8_NAME_LEN, "%s  %04lu-%02d-%02d %02d:%02d:%02d", mii_name,
 			entry->received.year, entry->received.month, entry->received.day,
 			entry->received.hour, entry->received.minute, entry->received.second);
 		C2D_TextFontParse(&_data->g_entries[i], getFontIndex(entry->mii.mii_options.char_set), _data->g_staticBuf, render_entry);

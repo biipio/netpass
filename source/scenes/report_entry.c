@@ -74,11 +74,10 @@ SceneResult N(report)(Scene* sc) {
 	N(send_msg) = malloc(msgmaxlen + 1);
 	SwkbdResult button;
 	{
-		char hint_text[50];
-		char* mii_name[11];
-		memset(mii_name, 0, sizeof(mii_name));
-		utf16_to_utf8((u8*)mii_name, _data->entry->mii.mii_name, 10);
-		snprintf(hint_text, 50, _s(str_report_user_hint), mii_name);
+		char hint_text[STR_REPORT_USER_HINT_LEN + MII_UTF8_NAME_LEN];
+		u8 mii_name[MII_UTF8_NAME_LEN];
+		get_mii_name(mii_name, &_data->entry->mii);
+		snprintf(hint_text, STR_REPORT_USER_HINT_LEN + MII_UTF8_NAME_LEN, _s(str_report_user_hint), mii_name);
 		SwkbdState swkbd;
 		memset(N(send_msg), 0, msgmaxlen + 1);
 		swkbdInit(&swkbd, SWKBD_TYPE_NORMAL, 2, msgmaxlen);
@@ -176,11 +175,10 @@ void N(init)(Scene* sc) {
 
 	// first create the heading
 	{
-		char render_text[50];
-		char* mii_name[11];
-		memset(mii_name, 0, sizeof(mii_name));
-		utf16_to_utf8((u8*)mii_name, _data->entry->mii.mii_name, 10);
-		snprintf(render_text, 50, _s(str_report_user_hint), mii_name);
+		char render_text[STR_REPORT_USER_HINT_LEN + MII_UTF8_NAME_LEN];
+		u8 mii_name[MII_UTF8_NAME_LEN];
+		get_mii_name(mii_name, &_data->entry->mii);
+		snprintf(render_text, STR_REPORT_USER_HINT_LEN + MII_UTF8_NAME_LEN, _s(str_report_user_hint), mii_name);
 		C2D_TextFontParse(&_data->g_title, _font(str_report_user_hint), _data->g_staticBuf, render_text);
 	}
 	_data->y_offset = 0;
@@ -197,17 +195,16 @@ void N(init)(Scene* sc) {
 		ReportMessagesEntry* entry = &_data->msgs->entries[i];
 		_data->extra_data[i] = 0;
 		if (entry->mii) {
-			char mii_name[11];
-			memset(mii_name, 0, sizeof(mii_name));
-			utf16_to_utf8((u8*)mii_name, entry->mii->mii_name, 10);
-			char render_text[50];
-			snprintf(render_text, 50, _s(str_report_mii_name), mii_name);
+			char render_text[STR_REPORT_MII_NAME_LEN + MII_UTF8_NAME_LEN];
+			u8 mii_name[MII_UTF8_NAME_LEN];
+			get_mii_name(mii_name, entry->mii);
+			snprintf(render_text, STR_REPORT_MII_NAME_LEN + MII_UTF8_NAME_LEN, _s(str_report_mii_name), mii_name);
 			C2D_TextFontParse(&_data->g_mii_names[i], _font(str_report_mii_name), _data->g_staticBuf, render_text);
 		}
 		if (entry->name) {
 			C2D_TextParse(&_data->g_game_names[i], _data->g_staticBuf, entry->name);
 		} else {
-			char game_name[10];
+			char game_name[50];
 			snprintf(game_name, 50, "%08lx", entry->title_id);
 			C2D_TextParse(&_data->g_game_names[i], _data->g_staticBuf, game_name);
 		}
@@ -376,6 +373,6 @@ Scene* getReportEntryScene(ReportListEntry* entry) {
 	scene->process = N(process);
 	scene->is_popup = false;
 	scene->need_free = true;
-	scene->data = (int)entry;
+	scene->data = (u32)(void*)entry;
 	return scene;
 }
