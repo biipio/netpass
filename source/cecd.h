@@ -74,7 +74,7 @@ typedef enum {
 	CEC_STATE_ABBREV_OTHER = 5,
 } CecStateAbbrev;
 
-// seems to be the max number of bytes for transfering stuffs
+// seems to be the max number of bytes for transferring stuffs
 #define MAX_MESSAGE_SIZE 0x19000
 #define MAX_SLOT_SIZE (MAX_MESSAGE_SIZE + 0x14)
 

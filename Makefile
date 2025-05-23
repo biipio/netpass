@@ -91,6 +91,8 @@ LIBS	:= -lcitro2d -lcitro3d -lctru -lopusfile -lopus -logg `curl-config --libs` 
 #---------------------------------------------------------------------------------
 LIBDIRS	:= $(CTRULIB) $(PORTLIBS)
 
+SPELLCHECK_FLAGS = --skip=".git,build,out,codegen,source/quirc/*" --check-filenames --check-hidden
+SPELLCHECK_FLAGS += --ignore-words=.codespell.ignore
 
 #---------------------------------------------------------------------------------
 # no real need to edit anything past this point unless you need to add additional
@@ -180,7 +182,7 @@ ifneq ($(ROMFS),)
 	export _3DSXFLAGS += --romfs=$(CURDIR)/$(ROMFS)
 endif
 
-.PHONY: all clean translations patches submodulecheck
+.PHONY: all clean translations patches submodulecheck spellcheck
 
 MAKEROM		?=	makerom
 
@@ -243,6 +245,9 @@ clean:
 
 submodulecheck:
 	@test -f source/hmac_sha256/hmac_sha256.h || (echo "ERROR: Submodules not pulled!"; exit 1)
+
+spellcheck:
+	codespell $(SPELLCHECK_FLAGS) $(SOURCES)
 
 #---------------------------------------------------------------------------------
 $(GFXBUILD)/%.t3x	$(BUILD)/%.h	:	%.t3s
