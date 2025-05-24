@@ -42,7 +42,7 @@ def _s(s):
 translations = {}
 
 # we need en first so that we know how many total strings there are to be able
-# to create the threashold of when languages get included
+# to create the threshold of when languages get included
 total_lang_strings = 0
 with open(SRCDIR + "/en.yaml", "r", encoding="utf-8") as f:
 	total_lang_strings = len(yaml.safe_load(f))

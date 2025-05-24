@@ -15,3 +15,4 @@ out/
 patches/*/code.bin
 patches/*/build
 patches/*/out
+.idea/
