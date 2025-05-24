@@ -210,6 +210,9 @@ cia: 3dsx
 	@$(BANNERTOOL) makesmdh -s "$(APP_TITLE)" $(APP_TITLE_INT) -l "$(APP_DESCRIPTION)" $(APP_DESC_INT) -p "$(APP_AUTHOR)" -i "$(APP_ICON)" -f "$(ICON_FLAGS)" -o "$(BUILD)/icon.icn"
 	@$(MAKEROM) -f cia -o "$(OUTPUT).cia" -target t -exefslogo $(MAKEROM_ARGS)
 
+$(BUILD):
+	@mkdir -p $(BUILD)
+
 $(APP_ICON): $(TOPDIR)/$(ICON)
 	@mkdir -p $(BUILD)
 	@$(FFMPEG) -y -i $(TOPDIR)/$(ICON) -vf scale=48:48 $(APP_ICON)
