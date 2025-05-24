@@ -55,6 +55,7 @@ size_t fwrite_blk(void* buffer, size_t size, size_t nmemb, FILE* stream);
 char* fgets_blk(char* str, int num, FILE* stream);
 int fputs_blk(const char* str, FILE* stream);
 void open_url(char* url);
+Result get_os_version(OS_VersionBin* ver);
 
 typedef struct {
 	u32 magic; // 0x4F00

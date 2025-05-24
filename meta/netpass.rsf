@@ -23,9 +23,9 @@ AccessControlInfo:
   # Exheader Format Version
   DescVersion                   : 2
   
-  # Minimum Required Kernel Version (below is for 4.5.0)
+  # Minimum Required Kernel Version (below is for 11.14.0)
   ReleaseKernelMajor            : "02"
-  ReleaseKernelMinor            : "33" 
+  ReleaseKernelMinor            : "57" 
 
   # ExtData
   UseExtSaveData                : false # enables ExtData       

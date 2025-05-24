@@ -36,11 +36,15 @@ Result initTitleData(void) {
 	u16 title_name_utf16[65];
 	for (int i = 0; i < mbox_list.num_boxes; i++) {
 		u32 title_id = strtol((const char*)mbox_list.box_names[i], NULL, 16);
+
 		memset(title_name_utf16, 0, sizeof(title_name_utf16));
-		memset(title_data.titles[i].name, 0, 65);
-		res = cecdOpenAndRead(title_id, CECMESSAGE_BOX_TITLE, 64*2, (u8*)title_name_utf16);
+		res = cecdOpenAndRead(title_id, CECMESSAGE_BOX_TITLE, sizeof(title_name_utf16)-2, (u8*)title_name_utf16);
 		if (R_FAILED(res)) return res;
-		utf16_to_utf8((u8*)title_data.titles[i].name, title_name_utf16, 64);
+
+		memset(title_data.titles[i].name, 0, sizeof(title_data.titles[i].name));
+		// SAFETY: utf16_to_utf8 does not write a null terminator, so we memset above
+		utf16_to_utf8((u8*)title_data.titles[i].name, title_name_utf16, sizeof(title_data.titles[i].name)-1);
+
 		char* ptr = title_data.titles[i].name;
 		while (*ptr) {
 			if (*ptr == '\n') *ptr = ' ';

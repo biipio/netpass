@@ -75,12 +75,19 @@ int main() {
 
 	Scene* scene;
 	{
-		OS_VersionBin nver, cver;
-		osGetSystemVersionData(&nver, &cver);
-		printf("Detected system version (cver): %d.%d.%d%c\n", cver.mainver, cver.minor, cver.build, cver.region);
-		printf("Detected system version (nver): %d.%d.%d%c\n", nver.mainver, nver.minor, nver.build, nver.region);
+		OS_VersionBin ver;
+		Result res = get_os_version(&ver);
+		if (R_FAILED(res)) {
+			printf("osGetSystemVersionData res: %08lX\n", res);
+			
+			printf("Detected system version (cver): %d.%d.%d%c\n", ver.mainver, ver.minor, ver.build, ver.region);
+			u8 region;
+			res = CFGU_SecureInfoGetRegion(&region);
+			printf("Get region (%08lX): %d\n", res, region);
+		}
+
 	
-		if (SYSTEM_VERSION(cver.mainver, cver.minor, 0) < SYSTEM_VERSION(11, 15, 0)) {
+		if (SYSTEM_VERSION(ver.mainver, ver.minor, ver.build) < SYSTEM_VERSION(11, 15, 0)) {
 			scene = getBadOsVersionScene();
 		} else {
 			scene = getLoadingScene(getSwitchScene(lambda(Scene*, (void) {

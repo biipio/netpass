@@ -19,6 +19,7 @@
 #pragma once
 
 #include <3ds.h>
+#include <string.h>
 #include "cecd.h"
 #include "hmac_sha256/sha256.h"
 
@@ -94,3 +95,24 @@ void freeReportMessages(ReportMessages* msgs);
 Result reportGetSomeMsgHeader(CecMessageHeader* msg, u32 transfer_id);
 
 void reportInit(void);
+
+// This number is NOT including the 11th code unit, which is mandated to be a
+// null terminator.
+#define MII_UTF16_NAME_LEN 10
+#define MII_UTF8_NAME_LEN (MII_UTF16_NAME_LEN*3 + 1)
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Waddress-of-packed-member"
+/// Converts a Mii name to UTF-8 in the provided output buffer. The number of
+/// UTF-8 bytes, excluding the null terminator, is returned, or -1 on encoding
+/// error.
+static inline s16 get_mii_name(u8 mii_name[static MII_UTF8_NAME_LEN], MiiData* mii) {
+	// Forcibly insert null terminator: utf16_to_utf8 does not take an
+	// input length bound.
+	mii->mii_name[MII_UTF16_NAME_LEN] = 0;
+	memset(mii_name, 0, MII_UTF8_NAME_LEN);
+	// SAFETY: Wrote the null terminator with memset.
+	return utf16_to_utf8(mii_name, mii->mii_name, MII_UTF8_NAME_LEN-1);
+}
+#pragma GCC diagnostic pop
+

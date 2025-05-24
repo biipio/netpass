@@ -8,6 +8,7 @@ SRCDIR = basepath + "/" + SRCDIR
 DESTDIR = basepath + "/" + DESTDIR
 
 NINTENDO_LANGUAGES = ("JP", "EN", "FR", "DE", "IT", "ES", "ZH", "KO", "NL", "PT", "RU", "TW");
+NOSPACE_LANGUAGES = ("ja", "zh_Hant", "zh_Hans")
 
 language_map = {
 	"ja": "jp",
@@ -55,6 +56,8 @@ for file in os.listdir(SRCDIR):
 			print(f"{language} {total_lang_strings} {this_lang_strings}")
 			if this_lang_strings > total_lang_strings*0.5 or l(language) in NINTENDO_LANGUAGES:
 				translations[language] = strs
+				for key in translations[language].keys():
+					translations[language][key] = _s(translations[language][key])
 
 headerfile = "#pragma once\n\n#include <3ds.h>\n"
 headerfile += f"#define NUM_NINTENDO_LANGUAGES {len(NINTENDO_LANGUAGES)}\n"
@@ -98,10 +101,9 @@ for key in translations["en"].keys():
 	max_len = 0
 	total_len = 0
 	for lang in lang_keys:
-		s = "0"
+		string = "0"
 		if key in translations[lang] and translations[lang][key] != "":
-			s = json.dumps(translations[lang][key], ensure_ascii=False)
-		string = _s(s)
+			string = json.dumps(translations[lang][key], ensure_ascii=False)
 		outfile += f"\t{{CFG_LANGUAGE_{l(lang)}, {string}}},\n"
 		strlen = len(string)
 		max_len = strlen if strlen > max_len else max_len

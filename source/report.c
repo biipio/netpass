@@ -122,21 +122,21 @@ bool loadReportMessages(ReportMessages* msgs, u32 transfer_id) {
 			}
 			case TITLE_MARIO_KART_7: {
 				SETUP_ENTRY(CecMessageBodyMarioKart7, ReportMessageEntryMarioKart7);
-				utf16_to_utf8((u8*)data->greeting, body->message, 16);
+				utf16_to_utf8((u8*)data->greeting, body->message, sizeof(data->greeting)-1);
 				break;
 			}
 			case TITLE_MII_PLAZA: {
 				SETUP_ENTRY(CecMessageBodyMiiPlaza, ReportMessageEntryMiiPlaza);
 				u8 lang = get_nintendo_language();
-				utf16_to_utf8((u8*)data->last_game, body->title[lang].short_description, 64);
-				utf16_to_utf8((u8*)data->country, body->country[lang].name, 32);
-				utf16_to_utf8((u8*)data->region, body->region[lang].name, 32);
-				utf16_to_utf8((u8*)data->greeting, body->message, 16);
+				utf16_to_utf8((u8*)data->last_game, body->title[lang].short_description, sizeof(data->last_game)-1);
+				utf16_to_utf8((u8*)data->country, body->country[lang].name, sizeof(data->country)-1);
+				utf16_to_utf8((u8*)data->region, body->region[lang].name, sizeof(data->region)-1);
+				utf16_to_utf8((u8*)data->greeting, body->message, sizeof(data->greeting)-1);
 				u8* mac = getMacBuf();
 				for (int i = 0; i < 0x10; i++) {
 					if (!memcmp(mac, body->reply_list[i].mac, 6)) {
-						utf16_to_utf8((u8*)data->custom_message, body->reply_msg[i].message, 16);
-						utf16_to_utf8((u8*)data->custom_reply, body->replied_msg[i].message, 16);
+						utf16_to_utf8((u8*)data->custom_message, body->reply_msg[i].message, sizeof(data->custom_message)-1);
+						utf16_to_utf8((u8*)data->custom_reply, body->replied_msg[i].message, sizeof(data->custom_reply)-1);
 						break;
 					}
 				}
@@ -144,7 +144,7 @@ bool loadReportMessages(ReportMessages* msgs, u32 transfer_id) {
 			}
 			case TITLE_TOMODACHI_LIFE: {
 				SETUP_ENTRY(CecMessageBodyTomodachiLife, ReportMessageEntryTomodachiLife);
-				utf16_to_utf8((u8*)data->island_name, body->island_name, 16);
+				utf16_to_utf8((u8*)data->island_name, body->island_name, sizeof(data->island_name)-1);
 			};
 		}
 
@@ -153,11 +153,16 @@ bool loadReportMessages(ReportMessages* msgs, u32 transfer_id) {
 		Result res = cecdOpenAndRead(entry->title_id, CECMESSAGE_BOX_TITLE, 198, (u8*)buf);
 		if (R_FAILED(res)) goto cont_loop;
 		char* game_name = ((char*)buf) + 200;
-		utf16_to_utf8((u8*)game_name, (u16*)buf, 100);
-		int len = strlen(game_name) + 1;
-		entry->name = malloc(len);
-		if (entry->name) {
-			memcpy(entry->name, game_name, len);
+		memset(game_name, 0, 100);
+		// SAFETY: utf16_to_utf8 does not write a zero terminator, so we memset above
+		int len = utf16_to_utf8((u8*)game_name, (u16*)buf, 100 - 1);
+		if (len > -1) {
+			entry->name = malloc(len+1);
+			memcpy(entry->name, game_name, len+1);
+		} else {
+			// Allocate an empty string for cleanup code
+			entry->name = malloc(1);
+			*entry->name = 0;
 		}
 		msgs->count++;
 	cont_loop:

@@ -403,3 +403,44 @@ void open_url(char* url) {
 	aptLaunchSystemApplet(APPID_WEB, buffer, buffer_size, 0);
 	free(buffer);
 }
+
+// from libctru: https://github.com/devkitPro/libctru/blob/master/libctru/source/os-versionbin.c#L36
+static Result osReadVersionBin(u64 tid, OS_VersionBin *versionbin) {
+	Result ret = romfsMountFromTitle(tid, MEDIATYPE_NAND, "ver");
+	if (R_FAILED(ret))
+		return ret;
+
+	FILE* f = fopen("ver:/version.bin", "r");
+	if (!f) {
+		ret = MAKERESULT(RL_PERMANENT, RS_NOTFOUND, RM_APPLICATION, RD_NOT_FOUND);
+	} else {
+		if (fread(versionbin, 1, sizeof(OS_VersionBin), f) != sizeof(OS_VersionBin)) {
+			ret = MAKERESULT(RL_PERMANENT, RS_INVALIDSTATE, RM_APPLICATION, RD_NO_DATA);
+		}
+		fclose(f);
+	}
+
+	romfsUnmount("ver");
+	return ret;
+}
+
+Result get_os_version(OS_VersionBin* ver) {
+	#define TID_HIGH 0x000400DB00000000ULL
+	static const u32 __CVer_tidlow_regionarray[7] = {
+		0x00017202, //JPN
+		0x00017302, //USA
+		0x00017102, //EUR
+		0x00017202, //"AUS"
+		0x00017402, //CHN
+		0x00017502, //KOR
+		0x00017602, //TWN
+	};
+
+	Result res = 0;
+	for (int region = 0; region < 7; region++) {
+		res = osReadVersionBin(TID_HIGH | __CVer_tidlow_regionarray[region], ver);
+		if (R_SUCCEEDED(res)) break;
+	}
+	
+	return res;
+}

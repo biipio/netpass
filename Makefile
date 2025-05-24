@@ -192,6 +192,9 @@ MAKEROM_ARGS	:= -elf $(OUTPUT).elf -rsf meta/netpass.rsf -major ${NETPASS_VERSIO
 
 all: build cia
 
+$(BUILD):
+	@mkdir -p $(BUILD)
+
 patches:
 	@$(MAKE) -C patches
 
