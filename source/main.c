@@ -108,6 +108,7 @@ int main() {
 				}
 				return getLocationScene(location);
 			})), lambda(void, (void) {
+				Result res;
 				// first, we import the locally stored passes for reports to work
 				reportInit();
 				// next, we gotta wait for having internet
