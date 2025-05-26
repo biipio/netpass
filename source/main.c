@@ -184,7 +184,7 @@ int main() {
 	musicExit();
 	C2D_Fini();
 	C3D_Fini();
-	//curlExit();
+	curlExit();
 	romfsExit();
 	fsExit();
 	frdExit();

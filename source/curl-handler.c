@@ -381,7 +381,12 @@ Result curlInit(void) {
 
 void curlExit(void) {
 	running = false;
-	//threadFree(curl_multi_thread);
+	if (curl_multi_thread) {
+		// Wait for the thread to exit (wait 10 sec)
+		const s64 timeout10sec = 10 * 1000 * 1000 * 1000LL;
+		threadJoin(curl_multi_thread, timeout10sec);
+		threadFree(curl_multi_thread);
+	}
 	free(netpass_id);
 	curl_global_cleanup();
 	socExit();
