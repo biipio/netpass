@@ -1,100 +1,99 @@
 str_loading: "Загрузка    "
 str_libcurl_error: "Памылка libCURL (%d): %s"
-str_libcurl_date_and_time: 'Пераканайся, што дата і час тваёй сістэмы ўсталяваны правільна!'
+str_libcurl_date_and_time: 'Пераканайся, што дата i час тваёй сiстэмы yсталяваны правiльна!'
 str_httpstatus_error: 'Код стану HTTP %d'
-str_3ds_error: 'Код памылкі 3DS %08lx'
+str_3ds_error: 'Код памылкi 3DS %08lx'
 str_at_home: 'Ты дома.'
-str_goto_train_station: 'Пайсці на чыгуначны вакзал'
+str_goto_train_station: 'Пайсцi на чыгуначны вакзал'
 str_at_train_station: 'Ты на чыгуначным вакзале.'
-str_goto_plaza: 'Пайсці на плазу'
+str_goto_plaza: 'Пайсцi на плазу'
 str_at_plaza: 'Ты на плошчы.'
-str_goto_mall: 'Пайсці на кірмаш'
-str_at_mall: 'Ты на кірмашы.'
+str_goto_mall: 'Пайсцi на кiрмаш'
+str_at_mall: 'Ты на кiрмашы.'
 str_exit: 'Выхад'
 str_settings: 'Налады'
-str_download_data: 'Cьцягнуць асабістыя дадзеныя'
-str_delete_data: 'Выдаліць асабістыя дадзеныя'
+str_download_data: 'Cьцягнуць асабiстыя дадзеныя'
+str_delete_data: 'Выдалiць асабiстыя дадзеныя'
 str_back: 'Назад'
 str_language: 'Беларуская'
-str_goto_beach: 'Пайсці на пляж'
+str_goto_beach: 'Пайсцi на пляж'
 str_at_beach: 'Ты на пляжы.'
-str_goto_arcade: 'Пайсці ў зал відэагульняў'
-str_at_arcade: 'Ты ў зале відэагульняў.'
-str_goto_catcafe: 'Пайсці ў катакафэ'
-str_at_catcafe: 'Ты ў катакафэ.'
-str_system_language: 'Сістэмная мова'
+str_goto_arcade: 'Пайсцi y зал вiдэагульняy'
+str_at_arcade: 'Ты y зале вiдэагульняy.'
+str_goto_catcafe: 'Пайсцi y катакафэ'
+str_at_catcafe: 'Ты y катакафэ.'
+str_system_language: 'Сiстэмная мова'
 str_language_pick: 'Мова:'
-str_no_location_twice: 'Нельга заходзіць у адно і тое ж месца двойчы запар!'
-str_report_user: 'Паскардзіцца на карыстальніка'
-str_report_user_hint: 'Паскардзіцца на "%s"'
+str_no_location_twice: 'Нельга заходзiць у адно i тое ж месца двойчы запар!'
+str_report_user: 'Паскардзiцца на карыстальнiка'
+str_report_user_hint: 'Паскардзiцца на "%s"'
 str_cancel: 'Скасаваць'
-str_submit: 'Адправіць'
+str_submit: 'Адправiць'
 str_back_alley: 'Завулак'
-str_back_alley_message: 'Урвём-ка яшчэ ледзь "пасаў"!'
-str_back_alley_pay: "Купіць пропуск за {playcoin}%d"
-str_check_inboxes: 'Праверка ўваходных дадзеных'
-str_toggle_titles: 'Пераключыць гульні'
-str_toggle_titles_message: "Націсні {a_button}, каб пачаць або спыніць абмен \"пасамі\"\
-  ."
+str_back_alley_message: 'Урвём-ка яшчэ ледзь пасаy!'
+str_back_alley_pay: "Купiць пропуск за {playcoin}%d"
+str_check_inboxes: 'Праверка yваходных дадзеных'
+str_toggle_titles: 'Пераключыць гульнi'
+str_toggle_titles_message: "Нацiснi {a_button}, каб пачаць або спынiць абмен пасамi."
 str_toggle_titles_on: "(Укл)"
 str_toggle_titles_off: "(Выкл)"
-str_report_mii_name: "Імя Mii: %s"
-str_report_mario_kart_7_greeting: "Прывітанне: %s"
+str_report_mii_name: "Iмя Mii: %s"
+str_report_mario_kart_7_greeting: "Прывiтанне: %s"
 str_report_mii_plaza_last_game: "Апошняя гульня: %s"
-str_report_mii_plaza_country: "Краіна: %s - %s"
-str_report_mii_plaza_greeting: "Прывітанне: %s"
-str_report_mii_plaza_custom_message: "Ваша асабістае паведамленне: %s"
-str_report_mii_plaza_custom_reply: "Іх асабісты адказ: %s"
+str_report_mii_plaza_country: "Краiна: %s - %s"
+str_report_mii_plaza_greeting: "Прывiтанне: %s"
+str_report_mii_plaza_custom_message: "Ваша асабiстае паведамленне: %s"
+str_report_mii_plaza_custom_reply: "Iх асабiсты адказ: %s"
 str_report_tomodachi_life_island_name: "Назва вострава: %s"
 str_b_go_back: "{b_button} Назад"
 str_b_cancel: "{b_button} Скасаваць"
 str_a_ok: "{a_button} ОК"
-str_update_patches: "Абнаўленне патчаў"
-str_update_patches_desc: "Каб правільна ўсталяваць NetPass, зараз будуць створаны
-  некаторыя патчы сістэмных модуляў. Каб яны працавалі, табе трэба ўключыць опцыю
+str_update_patches: "Абнаyленне патчаy"
+str_update_patches_desc: "Каб правiльна yсталяваць NetPass, зараз будуць створаны
+  некаторыя патчы сiстэмных модуляy. Каб яны працавалi, табе трэба yключыць опцыю
   «Enable loading external FIRMs and modules» у наладах Luma3DS. Каб атрымаць доступ
-  да налад, выключы кансоль, а затым націсні і трымай {select_button} падчас уключэння
-  кансолі з дапамогаю {power_button}. Ты можаш зрабіць гэта пасля таго, як патчы будуць
-  запісаны."
-str_update_patches_error_desc: "Падчас абнаўлення патчаў нешта пайшло не так. Паведамі
+  да налад, выключы кансоль, а затым нацiснi i трымай {select_button} падчас уключэння
+  кансолi з дапамогаю {power_button}. Ты можаш зрабiць гэта пасля таго, як патчы будуць
+  запiсаны."
+str_update_patches_error_desc: "Падчас абнаўлення патчаy нешта пайшло не так. Паведамi
   пра гэтую праблему на GitLab, GBAtemp або Discord. https://netpass.cafe/discord"
-str_update_patches_poweroff_desc: "Абнаўленне патчаў паспяхова завершана! Твая кансоль
-  зараз перазагрузіцца."
-str_integrations: "Інтеграцыі"
-str_integrations_message: "Інтэграцыі са староннімі праграмамі не падлягаюць мадэрацыі
-  NetPass. Выкарыстоўвай на свой страх і рызыку!"
-str_report_source: "Крыніца: %s"
-str_report_source_unknown: "Невядомая крыніца"
+str_update_patches_poweroff_desc: "Абнаyленне патчаy паспяхова завершана! Твая кансоль
+  зараз перазагрузiцца."
+str_integrations: "Iнтеграцыi"
+str_integrations_message: "Iнтэграцыi са староннiмi праграмамi не падлягаюць мадэрацыi
+  NetPass. Выкарыстоyвай на свой страх i рызыку!"
+str_report_source: "Крынiца: %s"
+str_report_source_unknown: "Невядомая крынiца"
 str_settings_misc: "Рознае"
 str_settings_about: "Пра прыкладанне"
-str_about_lead_dev: "Вядучы распрацоўшчык"
-str_about_reports: "Сістэма скарг"
-str_about_graphics: "Мастацтва і графіка"
+str_about_lead_dev: "Вядучы распрацоyшчык"
+str_about_reports: "Сiстэма скарг"
+str_about_graphics: "Мастацтва i графiка"
 str_about_music: "Музыка"
-str_about_localisation: "Лакалізацыя"
+str_about_localisation: "Лакалiзацыя"
 str_about_netpass_community: "Супольнасць NetPass"
-str_about_special_thanks: "Асаблівая падзяка"
-str_about_special_thanks_txt: "Homebrew-супольнасці 3DS за ўвеcь рэверс-інжынірынг
-  і дакументацыю"
+str_about_special_thanks: "Асаблiвая падзяка"
+str_about_special_thanks_txt: "Homebrew-супольнасцi 3DS за yвеcь рэверс-iнжынiрынг
+  i дакументацыю"
 str_about_production_cat: "Вытворчы кот"
-str_scan_qr: "Адсканіраваць QR-код"
+str_scan_qr: "Адсканiраваць QR-код"
 str_x_switch_camera: "{x_button} Пераключыць камеру"
-str_prompt_verify: "Ты ўпэўнены, што хочаш праверыць гэту 3DS?"
-str_welcome: "Вітаем у NetPass"
-str_welcome_message: "Перад пачаткам выкарыстання NetPass, калі ласка, прачытай і
-  прымі нашы правілы і палітыку прыватнасці."
-str_view_rules: "Праглядзець правілы"
-str_view_privacy: "Праглядзець палітыку прыватнасці"
+str_prompt_verify: "Ты yпэyнены, што хочаш праверыць гэту 3DS?"
+str_welcome: "Вiтаем у NetPass"
+str_welcome_message: "Перад пачаткам выкарыстання NetPass, калi ласка, прачытай i
+  прымi нашы правiлы i палiтыку прыватнасцi."
+str_view_rules: "Праглядзець правiлы"
+str_view_privacy: "Праглядзець палiтыку прыватнасцi"
 str_continue: "Працягнуць"
-str_bad_os_version: "Для правільнай працы NetPass патрабуецца аперацыйная сістэма
-  3DS версіі 11.15.0 або больш позняя. На жаль, здаецца, што ты выкарыстоўваеш старую
-  версію. Абнаві АС і зноў запусці NetPass.\n\nНацісні любую клавішу для выхаду"
+str_bad_os_version: "Для правiльнай працы NetPass патрабуецца аперацыйная сiстэма
+  3DS версii 11.15.0 або больш позняя. На жаль, здаецца, што ты выкарыстоyваеш старую
+  версiю. Абнаві АС i зноy запусцi NetPass.\n\nНацiснi любую клавiшу для выхаду"
 str_update_patches_poweroff_clear_desc: "Патчы паспяхова выдалены! Твая кансоль зараз
-  перазагрузіцца."
+  перазагрузiцца."
 str_bg_music: "Фонавая музыка"
-str_prompt_dl_pass: "Ты ўпэўнены, што хочаш спампаваць гэты пас?"
-str_report_integration: "Гэта паведамленне паходзіць ад інтэграцыі. Каб паведаміць
-  пра яго, напішы камандзе мадэратараў гэтай інтэграцыі."
-str_skip: "Прапусціць"
+str_prompt_dl_pass: "Ты yпэyнены, што хочаш спампаваць гэты пас?"
+str_report_integration: "Гэта паведамленне паходзiць ад iнтэграцыi. Каб паведамiць
+  пра яго, напiшы камандзе мадэратараў гэтай iнтэграцыi."
+str_skip: "Прапусцiць"
 str_install: "Усталяваць"
-str_remove: "Выдаліць"
+str_remove: "Выдалiць"
