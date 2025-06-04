@@ -34,7 +34,8 @@ include $(DEVKITARM)/3ds_rules
 TARGET			:=	netpass
 OUTDIR			:=	out
 BUILD			:=	build
-SOURCES			:=	source codegen source/scenes source/hmac_sha256 source/quirc/lib
+MAIN_SOURCE		:=	source
+SOURCES			:=	$(MAIN_SOURCE) codegen source/scenes source/hmac_sha256 source/quirc/lib
 DATA			:=	data
 INCLUDES		:=	include
 GRAPHICS		:=	gfx
@@ -98,6 +99,9 @@ LIBS	:= -lcitro2d -lcitro3d -lctru -lopusfile -lopus -logg `curl-config --libs` 
 #---------------------------------------------------------------------------------
 LIBDIRS	:= $(CTRULIB) $(PORTLIBS)
 
+# Cppcheck options
+CPPCHECK_FLAGS = --enable=warning,unusedFunction,performance,portability,missingInclude --std=c11
+CPPCHECK_FLAGS += --language=c --quiet --suppressions-list=.cppcheck.suppress --template=gcc --check-level=exhaustive
 
 #---------------------------------------------------------------------------------
 # no real need to edit anything past this point unless you need to add additional
@@ -187,7 +191,7 @@ ifneq ($(ROMFS),)
 	export _3DSXFLAGS += --romfs=$(CURDIR)/$(ROMFS)
 endif
 
-.PHONY: all clean translations patches submodulecheck
+.PHONY: all clean translations patches submodulecheck cppcheck
 
 MAKEROM		?=	makerom
 
@@ -250,6 +254,9 @@ clean:
 
 submodulecheck:
 	@test -f source/hmac_sha256/hmac_sha256.h || (echo "ERROR: Submodules not pulled!"; exit 1)
+
+cppcheck:
+	cppcheck $(CPPCHECK_FLAGS) $(MAIN_SOURCE)
 
 #---------------------------------------------------------------------------------
 $(GFXBUILD)/%.t3x	$(BUILD)/%.h	:	%.t3s
