@@ -45,7 +45,6 @@ typedef struct {
 
 Result initTitleData(void);
 NetpassTitleData* getTitleData(void);
-int numUsedTitles(void);
 void clearIgnoredTitles(CecMboxListHeader* mbox_list);
 
 Result doSlotExchange(void);

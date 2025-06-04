@@ -85,19 +85,6 @@ cleanup:
 	return res;
 }
 
-Result cecdGetState(u32* state) {
-	Result res = 0;
-	u32* cmdbuf = getThreadCommandBuffer();
-	cmdbuf[0] = IPC_MakeHeader(0x0E, 0, 0);
-	
-	if (R_FAILED(res = svcSendSyncRequest(cecdHandle))) return res;
-	res = (Result)cmdbuf[1];
-
-	*state = cmdbuf[2];
-
-	return res;
-}
-
 Result cecdReadMessage(u32 program_id, bool is_outbox, u32 size, u8* buf, CecMessageId message_id) {
 	waitForNoSpr();
 	Result res = 0;
@@ -112,50 +99,6 @@ Result cecdReadMessage(u32 program_id, bool is_outbox, u32 size, u8* buf, CecMes
 	cmdbuf[6] = (u32)message_id;
 	cmdbuf[7] = IPC_Desc_Buffer(size, IPC_BUFFER_W);
 	cmdbuf[8] = (u32)buf;
-
-	if (R_FAILED(res = svcSendSyncRequest(cecdHandle))) return res;
-	res = (Result)cmdbuf[1];
-
-	return res;
-}
-
-Result cecdReadMessageWithHMAC(u32 program_id, bool is_outbox, u32 size, u8* buf, CecMessageId message_id, u8* hmac) {
-	waitForNoSpr();
-	Result res = 0;
-	u32* cmdbuf = getThreadCommandBuffer();
-	cmdbuf[0] = IPC_MakeHeader(0x03, 4, 4);
-	cmdbuf[1] = program_id;
-	cmdbuf[2] = (u32)is_outbox;
-	cmdbuf[3] = 8; // message id size
-	cmdbuf[4] = size;
-
-	cmdbuf[5] = IPC_Desc_Buffer(8, IPC_BUFFER_R);
-	cmdbuf[6] = (u32)message_id;
-	cmdbuf[7] = IPC_Desc_Buffer(32, IPC_BUFFER_R);
-	cmdbuf[8] = (u32)hmac;
-	cmdbuf[9] = IPC_Desc_Buffer(size, IPC_BUFFER_W);
-	cmdbuf[10] = (u32)buf;
-
-	if (R_FAILED(res = svcSendSyncRequest(cecdHandle))) return res;
-	res = (Result)cmdbuf[1];
-
-	return res;
-}
-
-Result cecdWriteMessage(u32 program_id, bool is_outbox, u32 size, u8* buf, CecMessageId message_id) {
-	waitForNoSpr();
-	Result res = 0;
-	u32* cmdbuf = getThreadCommandBuffer();
-	cmdbuf[0] = IPC_MakeHeader(0x06, 4, 4);
-	cmdbuf[1] = program_id;
-	cmdbuf[2] = (u32)is_outbox;
-	cmdbuf[3] = 8; // message id size
-	cmdbuf[4] = size;
-
-	cmdbuf[5] = IPC_Desc_Buffer(size, IPC_BUFFER_R);
-	cmdbuf[6] = (u32)buf;
-	cmdbuf[7] = IPC_Desc_Buffer(8, IPC_BUFFER_RW);
-	cmdbuf[8] = (u32)message_id;
 
 	if (R_FAILED(res = svcSendSyncRequest(cecdHandle))) return res;
 	res = (Result)cmdbuf[1];
@@ -219,17 +162,6 @@ Result cecdGetCecdState(CecStateAbbrev* state) {
 	if (R_FAILED(res = svcSendSyncRequest(cecdHandle))) return res;
 	res = (Result)cmdbuf[1];
 	*state = cmdbuf[2];
-
-	return res;
-}
-
-Result cecdGetCecInfoEventHandle(Handle* handle) {
-	Result res = 0;
-	u32* cmdbuf = getThreadCommandBuffer();
-	cmdbuf[0] = IPC_MakeHeader(0xF, 0, 0);
-	if (R_FAILED(res = svcSendSyncRequest(cecdHandle))) return res;
-	res = (Result)cmdbuf[1];
-	*handle = cmdbuf[3];
 
 	return res;
 }
@@ -428,115 +360,6 @@ Result cecdSprDone(bool success) {
 	if (R_FAILED(res = svcSendSyncRequest(cecdHandle))) return res;
 	res = (Result)cmdbuf[1];
 
-	return res;
-}
-
-Result cecdGenHashConsoleUnique(u64* out) {
-	Result res = 0;
-	u32* cmdbuf = getThreadCommandBuffer();
-	cmdbuf[0] = IPC_MakeHeader(0x415, 0, 0);
-
-	if (R_FAILED(res = svcSendSyncRequest(cecdHandle))) return res;
-	res = (Result)cmdbuf[1];
-	*out = (u64)cmdbuf[2] | ((u64)cmdbuf[3] << 32);
-
-	return res;
-}
-
-// this method is broken
-Result cecdGetSystemInfo(u32 destbuf_size, void* destbuf) {
-	Result res = 0;
-	u32* cmdbuf = getThreadCommandBuffer();
-	u8 parambuf[32];
-	cmdbuf[0] = IPC_MakeHeader(0x0A, 3, 4); // 0x000A00C4
-	cmdbuf[1] = 32; // dest buffer size
-	cmdbuf[2] = 1; // info type
-	cmdbuf[3] = 32; // param buffer size
-
-	cmdbuf[4] = IPC_Desc_Buffer(32, IPC_BUFFER_R);
-	cmdbuf[5] = (u32)parambuf;
-	cmdbuf[4] = IPC_Desc_Buffer(destbuf_size, IPC_BUFFER_W);
-	cmdbuf[5] = (u32)destbuf;
-
-	
-	if (R_FAILED(res = svcSendSyncRequest(cecdHandle))) return res;
-	res = (Result)cmdbuf[1];
-
-	return res;
-}
-
-Handle cecdGetServHandle(void) {
-	return cecdHandle;
-}
-
-Result updateStreetpassOutbox(u8* msgbuf) {
-	Result res = 0;
-	CecMessageHeader* msgheader = (CecMessageHeader*)msgbuf;
-	// sanity checks
-	if (msgheader->magic != 0x6060) return -1; // bad magic
-	if (msgheader->message_size != msgheader->total_header_size + msgheader->body_size + 0x20) return -1;
-	if (msgheader->message_size > MAX_MESSAGE_SIZE) return -1; // prooobably too large
-
-	// first fetch how large the boxbuf is
-	u8* boxbuf = malloc(sizeof(CecBoxInfoHeader));
-	if (!boxbuf) {
-		return -3;
-	}
-	res = cecdOpenAndRead(msgheader->title_id, CEC_PATH_OUTBOX_INFO, sizeof(CecBoxInfoHeader), boxbuf);
-	if (R_FAILED(res)) {
-		res = -2; // cecd fild not found
-		goto cleanup_box;
-	}
-	// let's open the box buffer to update the metadata in there
-	int max_boxbuf_size = sizeof(CecBoxInfoHeader) + sizeof(CecMessageHeader) * ((CecBoxInfoHeader*)boxbuf)->max_num_messages;
-	free(boxbuf);
-	boxbuf = malloc(max_boxbuf_size);
-	if (!boxbuf) {
-		return -3;
-	}
-	res = cecdOpenAndRead(msgheader->title_id, CEC_PATH_OUTBOX_INFO, max_boxbuf_size, boxbuf);
-	if (R_FAILED(res)) {
-		res = -2; // cecd fild not found
-		goto cleanup_box;
-	}
-	CecBoxInfoHeader* boxheader = (CecBoxInfoHeader*)boxbuf;
-	CecMessageHeader* boxmsgs = (CecMessageHeader*)(boxbuf + sizeof(CecBoxInfoHeader));
-
-	int found_i = -1;
-	for (int i = 0; i < boxheader->num_messages; i++) {
-		if (0 == memcmp(boxmsgs[i].message_id, msgheader->message_id, sizeof(CecMessageId))){
-			found_i = i;
-			break;
-		}
-	}
-	if (found_i < 0) {
-		res = -4; // not found
-		goto cleanup_box;
-	}
-	memcpy(&boxmsgs[found_i], msgheader, sizeof(CecMessageHeader));
-
-	res = cecdOpenAndWrite(msgheader->title_id, CEC_PATH_OUTBOX_INFO, boxheader->file_size, boxbuf);
-	if (R_FAILED(res)) {
-		res = -2; // cecd fild not found
-		goto cleanup_box;
-	}
-	free(boxbuf);
-
-	// now let's fetch the hmac and store the update
-	CecMBoxInfoHeader mboxheader;
-	res = cecdOpenAndRead(msgheader->title_id, CEC_PATH_MBOX_INFO, sizeof(CecMBoxInfoHeader), (u8*)&mboxheader);
-	if (R_FAILED(res)) return -2;
-
-	// great,we have all the bits we need now
-	res = cecdWriteMessageWithHMAC(
-		msgheader->title_id, true,
-		msgheader->message_size, msgbuf,
-		msgheader->message_id, mboxheader.hmac_key);
-	if (R_FAILED(res)) return res;
-
-	return res;
-cleanup_box:
-	free(boxbuf);
 	return res;
 }
 

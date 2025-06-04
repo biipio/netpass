@@ -28,6 +28,7 @@
 #include "boss.h"
 #include "report.h"
 #include "music.h"
+#include "integration.h"
 
 int main() {
 	osSetSpeedupEnable(true); // enable speedup on N3DS
@@ -191,6 +192,7 @@ int main() {
 	C2D_Fini();
 	C3D_Fini();
 	curlExit();
+	integrationExit();
 	romfsExit();
 	fsExit();
 	frdExit();

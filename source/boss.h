@@ -33,10 +33,4 @@ typedef enum BossPropertyId {
 
 typedef BossHTTPHeader* BossHTTPHeaders;
 
-Result bossGetStorageInfo(u64* exdata_id, u32* boss_size, u8* extdata_type);
 Result bossUnregisterTask(char* task_id, u16 step_id);
-Result bossReconfigureTask(char* task_id, u16 step_id);
-Result bossGetTaskIdList(void);
-Result bossReceiveProperty(BossPropertyId propertyId, void* buf, u32 size);
-Result bossStartTask(char* task_id);
-Result bossCancelTask(char* task_id);

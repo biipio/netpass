@@ -88,16 +88,11 @@ typedef struct SlotMetadata {
 
 Result waitForCecdState(bool start, int command, CecStateAbbrev state);
 Result cecdInit(void);
-Result cecdGetState(u32* state);
-Result cecdGetSystemInfo(u32 destbuf_size, void* destbuf);
 Result cecdReadMessage(u32 program_id, bool is_outbox, u32 size, u8* buf, CecMessageId message_id);
-Result cecdReadMessageWithHMAC(u32 program_id, bool is_outbox, u32 size, u8* buf, CecMessageId message_id, u8* hmac);
-Result cecdWriteMessage(u32 program_id, bool is_outbox, u32 size, u8* buf, CecMessageId message_id);
 Result cecdWriteMessageWithHMAC(u32 program_id, bool is_outbox, u32 size, u8* buf, CecMessageId message_id, u8* hmac);
 Result cecdStart(CecCommand command);
 Result cecdStop(CecCommand command);
 Result cecdGetCecdState(CecStateAbbrev* state);
-Result cecdGetCecInfoEventHandle(Handle* handle);
 Result cecdGetChangeStateEventHandle(Handle* handle);
 Result cecdOpenAndWrite(u32 program_id, u32 path_type, u32 size, u8* buf);
 Result cecdOpenAndRead(u32 program_id, u32 path_type, u32 size, u8* buf);
@@ -112,10 +107,7 @@ Result cecdSprAddSlotsMetadata(u32 size, u8* buf);
 Result cecdSprAddSlot(u32 title_id, u32 size, u8* buf);
 Result cecdSprFinaliseRecv(void);
 Result cecdSprDone(bool success);
-Result cecdGenHashConsoleUnique(u64* out);
-Handle cecdGetServHandle(void);
 
-Result updateStreetpassOutbox(u8* msgbuf);
 bool validateStreetpassMessage(u8* msgbuf);
 Result addStreetpassMessage(u8* msgbuf);
 

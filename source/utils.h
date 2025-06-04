@@ -39,12 +39,9 @@
 #define MAX7(a, b, c, d, e, f, g) MAX2(a, MAX6(b, c, d, e, f, g))
 #define MAX8(a, b, c, d, e, f, g, h) MAX2(a, MAX7(b, c, d, e, f, g, h))
 
-void* cecGetExtHeader(CecMessageHeader* msg, u32 type);
-u32 cecGetExtHeaderSize(CecMessageHeader* msg, u32 type);
 char* b64encode(u8* in, size_t len);
 int rmdir_r(char *path);
 void mkdir_p(char* orig_path);
-Result APT_Wrap(u32 in_size, void* in, u32 nonce_offset, u32 nonce_size, u32 out_size, void* out);
 Result APT_Unwrap(u32 in_size, void* in, u32 nonce_offset, u32 nonce_size, u32 out_size, void* out);
 u16 crc16_ccitt(void const *buf, size_t len, uint32_t starting_val);
 Result decryptMii(void* data, MiiData* mii);

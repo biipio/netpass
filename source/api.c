@@ -60,14 +60,6 @@ NetpassTitleData* getTitleData(void) {
 	return &title_data;
 }
 
-int numUsedTitles(void) {
-	int num = 0;
-	for (int i = 0; i < title_data.num_titles; i++) {
-		if (!isTitleIgnored(title_data.titles[i].title_id)) num++;
-	}
-	return num;
-}
-
 void clearIgnoredTitles(CecMboxListHeader* mbox_list) {
 	size_t pos = 0;
 	for (size_t i = 0; i < mbox_list->num_boxes; i++) {

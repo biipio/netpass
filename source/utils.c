@@ -25,31 +25,6 @@
 #define _NJ_INCLUDE_HEADER_ONLY
 #include "nanojpeg.c"
 
-void* cecGetExtHeader(CecMessageHeader* msg, u32 type) {
-	u32 counter = sizeof(CecMessageHeader);
-	while (counter < msg->total_header_size) {
-		u32 this_type = ((u32*)(((u8*)msg) + counter))[0];
-		u32 this_size = ((u32*)(((u8*)msg) + counter))[1];
-		if (this_type == type) return ((u8*)msg) + counter;
-		counter += this_size;
-		// we might have to do extra aligning
-		if (counter %4) counter += 4 - counter % 4;
-	}
-	return NULL;
-}
-
-u32 cecGetExtHeaderSize(CecMessageHeader* msg, u32 type) {
-	u32 counter = sizeof(CecMessageHeader);
-	while (counter < msg->total_header_size) {
-		u32 this_type = ((u32*)(((u8*)msg) + counter))[0];
-		u32 this_size = ((u32*)(((u8*)msg) + counter))[1];
-		if (this_type == type) return this_size;
-		counter += this_size;
-		// we might have to do extra aligning
-		if (counter %4) counter += 4 - counter % 4;
-	}
-	return 0;
-}
 
 // from https://nachtimwald.com/2017/11/18/base64-encode-and-decode-in-c/
 size_t b64_encoded_size(size_t inlen) {
@@ -159,26 +134,6 @@ void mkdir_p(char* orig_path) {
 		*found = '/';
 		pos = (int)found - (int)path;
 	} while(pos < maxlen);
-}
-
-Result APT_Wrap(u32 in_size, void* in, u32 nonce_offset, u32 nonce_size, u32 out_size, void* out) {
-	u32 cmdbuf[16];
-	cmdbuf[0] = IPC_MakeHeader(0x46, 4, 4); // 0x001F0084
-	cmdbuf[1] = out_size;
-	cmdbuf[2] = in_size;
-	cmdbuf[3] = nonce_offset;
-	cmdbuf[4] = nonce_size;
-
-	cmdbuf[5] = IPC_Desc_Buffer(in_size, IPC_BUFFER_R);
-	cmdbuf[6] = (u32)in;
-	cmdbuf[7] = IPC_Desc_Buffer(out_size, IPC_BUFFER_W);
-	cmdbuf[8] = (u32)out;
-
-	Result res = aptSendCommand(cmdbuf);
-	if (R_FAILED(res)) return res;
-	res = (Result)cmdbuf[1];
-
-	return res;
 }
 
 Result APT_Unwrap(u32 in_size, void* in, u32 nonce_offset, u32 nonce_size, u32 out_size, void* out) {
