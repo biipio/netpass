@@ -16,3 +16,4 @@ patches/*/code.bin
 patches/*/build
 patches/*/out
 .idea/
+CmakeLists.txt
