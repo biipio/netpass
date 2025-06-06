@@ -1,12 +1,13 @@
-# NetPass - StreetPass like it's 2014!
+# NetPass for Nintendo 3DS
+## StreetPass like it's 2014!
 
 [![Translation status](https://weblate.sorunome.de/widget/netpass/app/svg-badge.svg)](https://weblate.sorunome.de/engage/netpass/)
 [![GitLab Release](https://img.shields.io/gitlab/v/release/3ds-netpass/netpass)](https://gitlab.com/3ds-netpass/netpass/-/releases/permalink/latest/)
 
+![1000046651](https://github.com/user-attachments/assets/d6d12863-3912-4a13-bfab-f084de69ade0)
 
 ![QR Code](https://gitlab.com/Sorunome/3ds-streetpass/-/raw/release_builds/qr.png)
 
-## Getting Netpass
 #### Scan QR with your 3DS to install Netpass
 
 
